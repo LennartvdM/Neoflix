@@ -72,8 +72,10 @@ function measureBands(grid, media, list) {
   };
 }
 
-// How far the lane reaches past the caption text on its inner end.
-const LANE_INSET = 24;
+// How far each band tucks under the clip. Both bands end beneath it, so
+// neither ever shows a rounded end: from the visitor's side each reads as
+// one unbroken band from the clip to the screen edge.
+const TUCK = 24;
 
 export default function StoryDesktopLayout({
   story,
@@ -138,11 +140,11 @@ export default function StoryDesktopLayout({
         // From the screen edge to (just under) the clip's far corner, so
         // its rounded end is always hidden behind the clip.
         start
-          ? { id: 'shelf', role: 'shelf', top: media.top, height: media.height, left: 0, right: W - media.right + 24, inner: 'right' }
-          : { id: 'shelf', role: 'shelf', top: media.top, height: media.height, left: media.left + 24, right: 0, inner: 'left' },
+          ? { id: 'shelf', role: 'shelf', top: media.top, height: media.height, left: 0, right: W - media.right + TUCK, inner: 'right' }
+          : { id: 'shelf', role: 'shelf', top: media.top, height: media.height, left: media.left + TUCK, right: 0, inner: 'left' },
         start
-          ? { id: 'lane', role: 'lane', top: row.top, height: row.height, left: text.left - LANE_INSET, right: 0, inner: 'left' }
-          : { id: 'lane', role: 'lane', top: row.top, height: row.height, left: 0, right: W - text.right - LANE_INSET, inner: 'right' },
+          ? { id: 'lane', role: 'lane', top: row.top, height: row.height, left: media.right - TUCK, right: 0, inner: 'left' }
+          : { id: 'lane', role: 'lane', top: row.top, height: row.height, left: 0, right: W - media.left - TUCK, inner: 'right' },
       ],
     };
   }

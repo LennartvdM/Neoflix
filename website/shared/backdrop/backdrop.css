@@ -28,13 +28,18 @@
   border-radius: var(--band-radius) 0 0 var(--band-radius);
 }
 
+/* Both bands use overlay (the lane only as a fallback — see below): it pushes the footage's own contrast — darker
+   darks for the shelf, lighter lights for the lane — rather than laying a
+   colour over it, so each band reads as the same scene, lit differently.
+   Chosen by the owner from soft-light / overlay / multiply / screen
+   variants rendered on paused frames, 2026-11. */
+
 /* The shelf: a band at the clip's height running from the clip out to
    the screen edge — the stage the composition sits on. Wipes in from
-   the edge. Dark soft-light deepens the footage without shifting its
-   hue, so the shelf reads as the same scene, sunk a little. */
+   the edge. */
 .backdrop-band--shelf {
-  --band-fill: rgba(0, 0, 0, 0.62);
-  --band-blend: soft-light;
+  --band-fill: rgba(0, 0, 0, 0.35);
+  --band-blend: overlay;
   --band-radius: 22px;
 }
 .backdrop-band--shelf[data-inner='right'] {
@@ -47,17 +52,28 @@
   clip-path: inset(0 0 0 0);
 }
 
-/* The lane: the travelling highlighter behind the current caption,
-   running from the caption out to the opposite screen edge. Multiply is
-   how real highlighter ink works — a transparent tint laid over what is
-   beneath — so the footage stays visible through it, tinted towards the
-   brand teal, and white type on it gains contrast instead of losing it.
-   (Lightening modes — screen, overlay, soft-light white — wash the white
-   captions out on the paler clips; measured in variants, 2026-11.) */
+/* The lane: the travelling highlighter behind the current caption. It
+   runs the full width of the caption side, from under the clip out to
+   the screen edge — an unbroken band is calmer than one that starts and
+   stops beside the text. */
 .backdrop-band--lane {
-  --band-fill: #cfeeee;
-  --band-blend: multiply;
+  --band-fill: rgba(255, 255, 255, 0.32);
+  --band-blend: overlay;
   --band-radius: 14px;
+}
+
+/* Where supported, the lane's fill IS the footage: backdrop-filter takes
+   the live deck beneath it (this band shares the deck's layer, so that is
+   what it samples) and lifts it — a brighter, more saturated strip of the
+   same moving scene, with no second video to decode or keep in sync. The
+   overlay above stays as the fallback. */
+@supports ((backdrop-filter: brightness(1)) or (-webkit-backdrop-filter: brightness(1))) {
+  .backdrop-band--lane {
+    --band-fill: transparent;
+    --band-blend: normal;
+    -webkit-backdrop-filter: brightness(1.25) saturate(1.7);
+    backdrop-filter: brightness(1.25) saturate(1.7);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
