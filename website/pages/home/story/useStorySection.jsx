@@ -187,6 +187,9 @@ export function useMedicalSection({ inView, story = 'pressure' }) {
   // Desktop: not a touch device or outside tablet dimensions
   const isPortraitTablet = isTabletLayout;
   const isDesktopLayout = !isTabletLayout && !isLandscapeTablet;
+  // Read by the entrance effect without making a layout flip replay it.
+  const isDesktopLayoutRef = useRef(isDesktopLayout);
+  isDesktopLayoutRef.current = isDesktopLayout;
 
   // Memoize layout-dependent computed values
   const layoutValues = useMemo(() => ({
@@ -283,16 +286,21 @@ export function useMedicalSection({ inView, story = 'pressure' }) {
       dispatchVisibility({ type: 'RESET' });
       dispatchInteraction({ type: 'DISABLE_INTERACTIONS' });
 
-      // Start entrance ceremony
+      // Start entrance ceremony. The desktop layout reveals everything in
+      // well under a second (its CSS staggers the pieces); the landscape
+      // tablet layout keeps the original slow, multi-second ceremony.
       const timers = [];
+      const t = isDesktopLayoutRef.current
+        ? { header: 120, video: 280, captions: 420, interactive: 1400 }
+        : { header: 450, video: 2925, captions: 3225, interactive: 6000 };
 
-      timers.push(setTimeout(() => dispatchVisibility({ type: 'SHOW_HEADER' }), 450));
-      timers.push(setTimeout(() => dispatchVisibility({ type: 'SHOW_VIDEO' }), 2925));
-      timers.push(setTimeout(() => dispatchVisibility({ type: 'SHOW_CAPTIONS' }), 3225));
+      timers.push(setTimeout(() => dispatchVisibility({ type: 'SHOW_HEADER' }), t.header));
+      timers.push(setTimeout(() => dispatchVisibility({ type: 'SHOW_VIDEO' }), t.video));
+      timers.push(setTimeout(() => dispatchVisibility({ type: 'SHOW_CAPTIONS' }), t.captions));
       timers.push(setTimeout(() => {
         dispatchInteraction({ type: 'ENABLE_INTERACTIONS' });
         dispatchInteraction({ type: 'SET_PAUSED', payload: false });
-      }, 6000));
+      }, t.interactive));
 
       return () => timers.forEach(timer => clearTimeout(timer));
     }

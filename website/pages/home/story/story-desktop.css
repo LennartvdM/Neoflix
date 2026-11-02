@@ -1,0 +1,258 @@
+/* Homepage story sections, desktop layout (StoryDesktopLayout.jsx). */
+
+.story-desk {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --accent: #48c1c4;
+  --scrim: 4, 14, 18;
+  transition: opacity 0.3s ease;
+}
+
+/* While the section is leaving or parked, nothing animates — otherwise the
+   visibility reset would play the entrance backwards on the way out. */
+.story-desk[data-animate='false'] * {
+  transition: none !important;
+}
+
+/* Darkens only the side the type sits on, so white text keeps its
+   contrast on the lighter backdrop clips without a heavy text-shadow. */
+.story-desk__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    55% 75% at 70% 55%,
+    rgba(var(--scrim), 0.46),
+    rgba(var(--scrim), 0.18) 55%,
+    rgba(var(--scrim), 0) 85%
+  );
+}
+.story-desk[data-media-side='end'] .story-desk__scrim {
+  background: radial-gradient(
+    55% 75% at 30% 55%,
+    rgba(var(--scrim), 0.46),
+    rgba(var(--scrim), 0.18) 55%,
+    rgba(var(--scrim), 0) 85%
+  );
+}
+
+.story-desk__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  box-sizing: border-box;
+  width: min(1160px, calc(100vw - 280px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  column-gap: clamp(48px, 6vw, 96px);
+  align-items: center;
+}
+.story-desk[data-media-side='end'] .story-desk__grid {
+  grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+}
+.story-desk[data-media-side='end'] .story-desk__media {
+  order: 2;
+}
+
+/* ---- The clip ---------------------------------------------------------- */
+
+.story-desk__media {
+  width: 100%;
+  /* Never taller than the viewport leaves room for (3:2 clips). */
+  max-width: calc((100vh - 220px) * 1.5);
+  justify-self: end;
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  transition: opacity 0.9s ease, transform 1.2s var(--ease-out);
+}
+.story-desk[data-media-side='end'] .story-desk__media {
+  justify-self: start;
+}
+.story-desk__media[data-visible='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+.story-desk__frame {
+  /* flex, not block: the carousel root is inline-flex, and as an inline
+     box it would sit on a text baseline and leave a strip under the clip. */
+  display: flex;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 50px 90px -40px rgba(0, 0, 0, 0.65),
+    0 16px 36px -18px rgba(0, 0, 0, 0.4);
+  transition: transform 0.7s var(--ease-out), box-shadow 0.7s var(--ease-out);
+}
+.story-desk__frame[data-hover='true'] {
+  transform: scale(1.012);
+  box-shadow:
+    0 60px 110px -40px rgba(0, 0, 0, 0.75),
+    0 20px 44px -18px rgba(0, 0, 0, 0.45);
+}
+
+/* A hairline of light on the edge instead of a border. */
+.story-desk__ring {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.story-desk__cta {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 6;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font: 500 14px/1 Inter, sans-serif;
+  letter-spacing: -0.005em;
+  color: #fff;
+  background: rgba(10, 18, 22, 0.36);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.5s var(--ease-out);
+}
+.story-desk__frame[data-hover='true'] .story-desk__cta {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Headline ---------------------------------------------------------- */
+
+.story-desk__headline {
+  margin: 0 0 clamp(28px, 4.5vh, 48px);
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: clamp(40px, 3.6vw, 56px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.16);
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s ease, transform 1s var(--ease-out);
+}
+.story-desk__headline[data-visible='true'] {
+  opacity: 1;
+  transform: none;
+}
+.story-desk__accent {
+  color: var(--accent);
+}
+
+/* ---- Captions ---------------------------------------------------------- */
+
+.story-desk__captions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.story-desk__captions > li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.6s ease calc(var(--i) * 80ms),
+    transform 0.8s var(--ease-out) calc(var(--i) * 80ms);
+}
+.story-desk__captions[data-visible='true'] > li {
+  opacity: 1;
+  transform: none;
+}
+
+.story-desk__caption {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  width: 100%;
+  padding: 14px 0 16px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.story-desk__caption:disabled {
+  cursor: default;
+}
+.story-desk__caption:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.story-desk__num {
+  padding-top: 7px;
+  font: 600 12px/1 Inter, sans-serif;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.5s ease;
+}
+.story-desk__copy {
+  font: 500 21px/1.32 Inter, sans-serif;
+  letter-spacing: -0.012em;
+  color: rgba(255, 255, 255, 0.46);
+  transition: color 0.5s ease;
+}
+.story-desk__caption[aria-current='true'] .story-desk__num {
+  color: var(--accent);
+}
+.story-desk__caption[aria-current='true'] .story-desk__copy {
+  color: #fff;
+}
+
+.story-desk__arrow {
+  display: inline-block;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s ease, transform 0.45s var(--ease-out);
+}
+.story-desk__caption[data-hovered='true'] .story-desk__arrow,
+.story-desk__caption:focus-visible .story-desk__arrow,
+.story-desk__frame[data-hover='true'] .story-desk__arrow {
+  opacity: 1;
+  transform: none;
+}
+.story-desk__cta .story-desk__arrow {
+  color: inherit;
+}
+
+.story-desk__track {
+  grid-column: 2;
+  display: block;
+  height: 2px;
+  margin-top: 14px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.16);
+}
+.story-desk__fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  animation: grow 7000ms linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-desk__media,
+  .story-desk__headline,
+  .story-desk__captions > li,
+  .story-desk__frame,
+  .story-desk__cta,
+  .story-desk__arrow {
+    transform: none !important;
+  }
+}

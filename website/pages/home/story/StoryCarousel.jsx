@@ -36,7 +36,17 @@ DO NOT "fix" this to crossfade between A and B.
 The stacking is intentional to avoid ugly transitions.
 */
 
-const MedicalCarousel = memo(function MedicalCarousel({ current, hoveredIndex, isActive, videoHover, setVideoHover, interactionsEnabled, videos, enableTouchNavigation, onTouchChange, sectionActive = true, onCarouselClick, onReady }) {
+// `settle`: the card that becomes current eases from a slight zoom down to
+// rest while the card above it fades away. It only moves the layer that is
+// already fully opaque underneath, so the deck still never shows the
+// backdrop through a half-faded pair.
+const SETTLE_SCALE = 1.045;
+const SETTLE_TRANSITION = 'transform 1.8s cubic-bezier(0.22, 1, 0.36, 1)';
+
+const MedicalCarousel = memo(function MedicalCarousel({ current, hoveredIndex, isActive, videoHover, setVideoHover, interactionsEnabled, videos, enableTouchNavigation, onTouchChange, sectionActive = true, onCarouselClick, onReady, maxWidth = '480px', settle = false }) {
+  const settleStyle = (idx) => (settle
+    ? { transform: idx === current ? 'scale(1)' : `scale(${SETTLE_SCALE})`, transition: SETTLE_TRANSITION }
+    : null);
   const [deckLoaded, setDeckLoaded] = React.useState(false);
 
   // Use videos prop if provided, otherwise fallback to default slides
@@ -86,7 +96,7 @@ const MedicalCarousel = memo(function MedicalCarousel({ current, hoveredIndex, i
         position: 'relative', 
         minHeight: '0px',
         minWidth: '0px',
-        maxWidth: '480px',
+        maxWidth,
         width: '100%',
         height: 'auto',
         aspectRatio: '3 / 2',
@@ -115,7 +125,8 @@ const MedicalCarousel = memo(function MedicalCarousel({ current, hoveredIndex, i
             outline: 'none',
             transition: 'outline 0.2s',
             background: 'none',
-            opacity: 1
+            opacity: 1,
+            ...settleStyle(2),
           }}
         />
       </div>
@@ -160,7 +171,8 @@ const MedicalCarousel = memo(function MedicalCarousel({ current, hoveredIndex, i
                 transition: 'outline 0.2s',
                 background: 'none',
                 opacity: 1, // The clip itself is always at full opacity
-                willChange: 'opacity'
+                willChange: settle ? 'opacity, transform' : 'opacity',
+                ...settleStyle(i),
               }}
             />
           </div>

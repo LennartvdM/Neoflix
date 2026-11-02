@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 import { useMedicalSection } from './useStorySection.jsx';
 import MedicalMobileLayout from './StoryPhoneLayout';
 import MedicalTabletLayout from './StoryTabletLayout';
-import MedicalDesktopLayout from './StoryDesktopLayout';
+import StoryDesktopLayout from './StoryDesktopLayout';
+import StoryLandscapeTabletLayout from './StoryLandscapeTabletLayout';
 import { useBackdropTarget } from '../../../shared/backdrop/useBackdrop';
 import { MEDICAL_PRESSURE_DECK, MEDICAL_REFLECTION_DECK } from '../../../shared/backdrop/decks';
 import useTransitionNavigate from '../../../lib/hooks/useTransitionNavigate';
@@ -47,7 +48,13 @@ const MedicalSection = ({ inView, sectionRef, story = 'pressure' }) => {
     return <MedicalTabletLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
   }
 
-  return <MedicalDesktopLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
+  // Landscape tablets keep the original Framer-era layout (scaled to 0.7,
+  // touch handlers); a real pointer gets the editorial desktop layout.
+  if (state.isLandscapeTablet) {
+    return <StoryLandscapeTabletLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
+  }
+
+  return <StoryDesktopLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
 };
 
 export default MedicalSection;
