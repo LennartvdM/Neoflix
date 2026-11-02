@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import MedicalCarousel from './StoryCarousel';
+import { useBackdropBands } from '../../../shared/backdrop/useBackdrop';
 import { VIDEO_CONTROLS_HIDDEN_CSS } from './story.styles';
 import './story-desktop.css';
 
@@ -11,6 +12,13 @@ import './story-desktop.css';
 // in an opaque grey card, ran decorative punch-out rails to the screen edge
 // and zoomed white "targeting" outlines onto whatever was hovered. Layout is
 // plain CSS grid here: no JS measuring, no absolute offsets.
+//
+// Structure comes from two tonal bands, the descendants of the 2024 ones:
+// a "shelf" at the clip's height running from the clip to the screen edge,
+// and a "lane" behind the current caption that travels between captions
+// and runs out to the opposite edge. They are drawn in the BACKDROP layer
+// (useBackdropBands), not here — only there can their blend modes act on
+// the footage. This component just measures where they go.
 //
 // What did NOT change is the clip transition. StoryCarousel is a deck of
 // cards — the incoming clip is already fully opaque underneath while the
@@ -40,7 +48,35 @@ function Headline({ header }) {
   );
 }
 
+// Where the bands go, in section px. Offsets (not getBoundingClientRect)
+// so the entrance transforms and the route slide don't skew the numbers.
+function measureBands(grid, media, list) {
+  if (!grid || !media || !list || !grid.offsetParent) return null;
+  const W = grid.offsetParent.clientWidth;
+  const gx = grid.offsetLeft;
+  const gy = grid.offsetTop;
+  const rows = Array.from(list.children).map((li) => ({
+    top: gy + li.offsetTop,
+    height: li.offsetHeight,
+  }));
+  return {
+    W,
+    media: {
+      top: gy + media.offsetTop,
+      height: media.offsetHeight,
+      left: gx + media.offsetLeft,
+      right: gx + media.offsetLeft + media.offsetWidth,
+    },
+    text: { left: gx + list.offsetLeft, right: gx + list.offsetLeft + list.offsetWidth },
+    rows,
+  };
+}
+
+// How far the lane reaches past the caption text on its inner end.
+const LANE_INSET = 24;
+
 export default function StoryDesktopLayout({
+  story,
   sectionRef,
   sectionState,
   headlines,
@@ -75,6 +111,43 @@ export default function StoryDesktopLayout({
   // line, which is where the name came from. Preserve what visitors see.
   const mediaSide = isVideoLeft ? 'end' : 'start';
 
+  const gridRef = useRef(null);
+  const listRef = useRef(null);
+  const [geom, setGeom] = useState(null);
+  const measure = useCallback(() => {
+    setGeom(measureBands(gridRef.current, videoAnchorRef.current, listRef.current));
+  }, [videoAnchorRef]);
+  useLayoutEffect(() => {
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (gridRef.current) ro.observe(gridRef.current);
+    if (videoAnchorRef.current) ro.observe(videoAnchorRef.current);
+    // Inter swaps in after first paint and re-wraps the captions.
+    document.fonts?.ready?.then(measure);
+    return () => ro.disconnect();
+  }, [measure, videoAnchorRef]);
+
+  let bands = null;
+  if (geom && mounted) {
+    const row = geom.rows[currentVideo] || geom.rows[0];
+    const { media, text, W } = geom;
+    const start = mediaSide === 'start';
+    bands = {
+      visible: videoVisible,
+      items: [
+        // From the screen edge to (just under) the clip's far corner, so
+        // its rounded end is always hidden behind the clip.
+        start
+          ? { id: 'shelf', role: 'shelf', top: media.top, height: media.height, left: 0, right: W - media.right + 24, inner: 'right' }
+          : { id: 'shelf', role: 'shelf', top: media.top, height: media.height, left: media.left + 24, right: 0, inner: 'left' },
+        start
+          ? { id: 'lane', role: 'lane', top: row.top, height: row.height, left: text.left - LANE_INSET, right: 0, inner: 'left' }
+          : { id: 'lane', role: 'lane', top: row.top, height: row.height, left: 0, right: W - text.right - LANE_INSET, inner: 'right' },
+      ],
+    };
+  }
+  useBackdropBands(`medical-${story}`, bands);
+
   return (
     <div
       ref={sectionRef}
@@ -86,7 +159,7 @@ export default function StoryDesktopLayout({
       <style>{VIDEO_CONTROLS_HIDDEN_CSS}</style>
       <div className="story-desk__scrim" aria-hidden="true" />
 
-      <div className="story-desk__grid" style={{ paddingTop: navbarHeight }}>
+      <div ref={gridRef} className="story-desk__grid" style={{ paddingTop: navbarHeight }}>
         <div
           ref={videoAnchorRef}
           className="story-desk__media"
@@ -128,7 +201,7 @@ export default function StoryDesktopLayout({
             <Headline header={header} />
           </h2>
 
-          <ol className="story-desk__captions" data-visible={captionsVisible ? 'true' : 'false'}>
+          <ol ref={listRef} className="story-desk__captions" data-visible={captionsVisible ? 'true' : 'false'}>
             {headlines.map((headline, i) => {
               const isCurrent = currentVideo === i;
               return (
@@ -145,7 +218,6 @@ export default function StoryDesktopLayout({
                     onBlur={interactionsEnabled ? handleHoverEnd : undefined}
                     onClick={interactionsEnabled ? () => navigateToSection?.(i) : undefined}
                   >
-                    <span className="story-desk__num">{String(i + 1).padStart(2, '0')}</span>
                     <span className="story-desk__copy">
                       {headline.firstLine}
                       <br />

@@ -54,7 +54,7 @@ const MedicalSection = ({ inView, sectionRef, story = 'pressure' }) => {
     return <StoryLandscapeTabletLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
   }
 
-  return <StoryDesktopLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
+  return <StoryDesktopLayout {...state} story={story} sectionRef={sectionRef} navigateToSection={navigateToSection} />;
 };
 
 export default MedicalSection;

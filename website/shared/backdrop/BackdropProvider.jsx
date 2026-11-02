@@ -4,9 +4,10 @@ import React, {
   useReducer,
 } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useIsPresent } from 'framer-motion';
 import BackdropCell from './BackdropCell';
 import { BackdropContext } from './context';
+import './backdrop.css';
 
 /**
  * BackdropProvider — the one backdrop for the whole site.
@@ -78,6 +79,7 @@ const HOME_CELLS = [
 const initialState = {
   homeScrollProgress: 0,
   targets: {},
+  bands: {},
 };
 
 function reducer(state, action) {
@@ -94,6 +96,15 @@ function reducer(state, action) {
       if (target === null) delete nextTargets[id];
       else nextTargets[id] = target;
       return { ...state, targets: nextTargets };
+    }
+    case 'set-bands': {
+      const { id, bands } = action;
+      const prev = state.bands[id] || null;
+      if (bands === null && prev === null) return state;
+      const nextBands = { ...state.bands };
+      if (bands === null) delete nextBands[id];
+      else nextBands[id] = bands;
+      return { ...state, bands: nextBands };
     }
     default:
       return state;
@@ -121,12 +132,15 @@ export default function BackdropProvider({ children }) {
   const setHomeScrollProgress = useCallback((progress) => {
     dispatch({ type: 'set-scroll', progress });
   }, []);
+  const setBands = useCallback((id, bands) => {
+    dispatch({ type: 'set-bands', id, bands });
+  }, []);
 
   // Stable context value — setter identities never change, so children
   // that depend on the context don't re-render from this alone.
   const api = useMemo(
-    () => ({ setTarget, setHomeScrollProgress }),
-    [setTarget, setHomeScrollProgress]
+    () => ({ setTarget, setHomeScrollProgress, setBands }),
+    [setTarget, setHomeScrollProgress, setBands]
   );
 
   return (
@@ -200,7 +214,11 @@ function BackdropRenderer({ state }) {
  * When parked on a cell, only that cell decodes.
  */
 function HomeBackdrop({ state }) {
-  const { homeScrollProgress, targets } = state;
+  const { homeScrollProgress, targets, bands } = state;
+  // False while AnimatePresence plays this mode's 2s exit. The bands
+  // belong to the page's layout, which slides away in ~0.45s, so they
+  // fade fast rather than lingering where the page used to be.
+  const isPresent = useIsPresent();
   const floor = Math.floor(homeScrollProgress);
   const ceil = Math.min(HOME_CELLS.length - 1, Math.ceil(homeScrollProgress));
 
@@ -245,11 +263,37 @@ function HomeBackdrop({ state }) {
               camo={cell.camo}
               decodeState={onScreen ? 'active' : 'idle'}
             />
+            <BackdropBands bands={bands[cell.targetKey]} present={isPresent} />
           </div>
         );
       })}
     </>
   );
+}
+
+/**
+ * Tonal bands over a cell's footage — published by the page through
+ * useBackdropBands. Siblings of the deck inside the cell's transformed
+ * wrapper, so they share its isolated group and their blend modes act
+ * on the footage itself.
+ */
+function BackdropBands({ bands, present }) {
+  if (!bands) return null;
+  const shown = bands.visible && present;
+  return bands.items.map((band) => (
+    <div
+      key={band.id}
+      className={`backdrop-band backdrop-band--${band.role}`}
+      data-inner={band.inner}
+      data-shown={shown ? 'true' : 'false'}
+      style={{
+        left: band.left ?? 0,
+        right: band.right ?? 0,
+        height: band.height,
+        transform: `translateY(${band.top}px)`,
+      }}
+    />
+  ));
 }
 
 /**

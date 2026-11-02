@@ -14,8 +14,12 @@ import { createContext } from 'react';
  *   setHomeScrollProgress(p)     — publish Home's scroll container
  *                                  progress in cell-heights (0 at top,
  *                                  1 = one cell down, etc.)
+ *   setBands(id, bands)          — publish or clear the tonal bands
+ *                                  drawn over a cell's footage (see
+ *                                  useBackdropBands).
  */
 export const BackdropContext = createContext({
   setTarget: () => {},
   setHomeScrollProgress: () => {},
+  setBands: () => {},
 });

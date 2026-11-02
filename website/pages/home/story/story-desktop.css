@@ -174,10 +174,10 @@
 .story-desk__caption {
   all: unset;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: 34px 1fr;
+  position: relative;
+  display: block;
   width: 100%;
-  padding: 14px 0 16px;
+  padding: 16px 0 18px;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -191,22 +191,11 @@
   border-radius: 8px;
 }
 
-.story-desk__num {
-  padding-top: 7px;
-  font: 600 12px/1 Inter, sans-serif;
-  letter-spacing: 0.08em;
-  font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.4);
-  transition: color 0.5s ease;
-}
 .story-desk__copy {
   font: 500 21px/1.32 Inter, sans-serif;
   letter-spacing: -0.012em;
   color: rgba(255, 255, 255, 0.46);
   transition: color 0.5s ease;
-}
-.story-desk__caption[aria-current='true'] .story-desk__num {
-  color: var(--accent);
 }
 .story-desk__caption[aria-current='true'] .story-desk__copy {
   color: #fff;
@@ -230,10 +219,12 @@
 }
 
 .story-desk__track {
-  grid-column: 2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: block;
   height: 2px;
-  margin-top: 14px;
   border-radius: 2px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.16);

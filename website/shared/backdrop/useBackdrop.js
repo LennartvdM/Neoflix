@@ -52,6 +52,35 @@ export function useBackdropTarget(id, target) {
   }, [id, kind, deck, topIdx, setTarget]);
 }
 
+/**
+ * useBackdropBands(id, bands) — tonal bands painted INSIDE a backdrop
+ * cell, over its footage.
+ *
+ * Why they live here and not in the page: a mix-blend-mode only blends
+ * with what is painted beneath it in the same isolated group, and the
+ * page sits in a different one from this fixed backdrop layer (the home
+ * sections carry `contain: content` and scroll inside a will-change
+ * container). A `screen` band drawn in the page therefore blends with
+ * transparency and renders as a flat translucent fill — which is what the
+ * 2024 story bands did without anyone noticing. Drawn in the cell, a band
+ * genuinely multiplies / soft-lights the moving footage.
+ *
+ * `bands`: null | { visible: boolean, items: Band[] } where each Band is
+ *   { id, role, top, height, left, right, inner: 'left' | 'right' }
+ * in px relative to the viewport-sized cell (the home sections are
+ * viewport-sized too, so section coordinates can be passed straight
+ * through). `role` picks the look from backdrop.css; `inner` is the end
+ * that gets rounded — the other end runs off the screen edge. A change
+ * of `top` alone animates, so a band can travel.
+ */
+export function useBackdropBands(id, bands) {
+  const { setBands } = useContext(BackdropContext);
+  const key = bands ? JSON.stringify(bands) : null;
+  useEffect(() => {
+    setBands(id, key ? JSON.parse(key) : null);
+  }, [id, key, setBands]);
+}
+
 export function useBackdropPublisher() {
   return useContext(BackdropContext);
 }
