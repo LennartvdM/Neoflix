@@ -28,11 +28,12 @@
   border-radius: var(--band-radius) 0 0 var(--band-radius);
 }
 
-/* Both bands use overlay (the lane only as a fallback — see below): it pushes the footage's own contrast — darker
-   darks for the shelf, lighter lights for the lane — rather than laying a
-   colour over it, so each band reads as the same scene, lit differently.
-   Chosen by the owner from soft-light / overlay / multiply / screen
-   variants rendered on paused frames, 2026-11. */
+/* Both bands are filled with the footage itself where the browser
+   supports backdrop-filter (see the @supports block below). The overlay
+   fills here are the fallback: they push the footage's own contrast —
+   darker darks for the shelf, lighter lights for the lane — and were the
+   owner's pick from soft-light / overlay / multiply / screen variants
+   rendered on paused frames, 2026-11. */
 
 /* The shelf: a band at the clip's height running from the clip out to
    the screen edge — the stage the composition sits on. Wipes in from
@@ -62,12 +63,13 @@
   --band-radius: 14px;
 }
 
-/* Where supported, the lane's fill IS the footage: backdrop-filter takes
-   the live deck beneath it (this band shares the deck's layer, so that is
-   what it samples) and lifts it — a brighter, more saturated strip of the
+/* Where supported, each band's fill IS the footage: backdrop-filter takes
+   the live deck beneath it (the bands share the deck's layer, so that is
+   what they sample) and lifts it — a brighter, more saturated strip of the
    same moving scene, with no second video to decode or keep in sync. The
-   overlay above stays as the fallback. */
+   overlay fills above stay as the fallback. */
 @supports ((backdrop-filter: brightness(1)) or (-webkit-backdrop-filter: brightness(1))) {
+  .backdrop-band--shelf,
   .backdrop-band--lane {
     --band-fill: transparent;
     --band-blend: normal;
