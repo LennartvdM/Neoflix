@@ -200,3 +200,23 @@ export function captionLines(sentence) {
   }
   return [words.slice(0, best).join(' '), words.slice(best).join(' ')];
 }
+
+/**
+ * The loop — the toolbox's five parts, the board's other axis. A beat's
+ * exits hang in the column of the part their planned toolbox page belongs
+ * to (`plan` numbering from the blueprint's toolbox outline: 1.x is Before
+ * you record, 2.x Record, …; "Start here" sits at the start of the loop).
+ */
+export const LOOP = [
+  { id: 'before', name: 'Before you record' },
+  { id: 'record', name: 'Record' },
+  { id: 'reflect', name: 'Reflect' },
+  { id: 'refine', name: 'Refine' },
+  { id: 'keep', name: 'Keep going' },
+];
+
+export function loopPartOf(plan) {
+  if (/^start here/i.test(plan || '')) return 'before';
+  const n = Number(/^(\d)\./.exec(plan || '')?.[1]);
+  return LOOP[n - 1]?.id || null;
+}

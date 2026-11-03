@@ -1,75 +1,374 @@
-/* /neoflix on the board (NeoflixDesktop.jsx). Only what the composition
-   needs — hook shapes live in shared/board. */
+/* /neoflix as a board (NeoflixDesktop.jsx).
 
-.nf-beat__margin-proofs {
+   One grid for the whole page, with named column lines:
+
+     label | arg (the beat's 8-column strip) | loop1 … loop5 | papers
+
+   Every row takes the page's columns through `subgrid`, so the loop
+   columns and paper threads line up from the first beat to the last and
+   read as continuous rails, while each row's modules pack themselves
+   densely inside its own strip. */
+
+.ab {
+  --loop-w: clamp(90px, 7.4vw, 116px);
+  --papers-w: 108px;
+  --rail: rgba(255, 255, 255, 0.1);
   display: grid;
-  gap: var(--s-line);
-  padding-top: 6px;
-}
-.nf-beat__proofs {
-  display: grid;
-  gap: var(--s-panel);
-}
-/* The answer beats carry the weight: the act a beat belongs to only
-   changes how much room its proof gets, never its order or its hooks. */
-.nf-beat[data-act='problem'] .hook-proof--panel {
-  max-width: 34em;
+  grid-template-columns:
+    [label] 96px
+    [arg] minmax(0, 1fr)
+    [loop1] var(--loop-w) [loop2] var(--loop-w) [loop3] var(--loop-w) [loop4] var(--loop-w) [loop5] var(--loop-w)
+    [papers] var(--papers-w) [end];
+  column-gap: 0;
 }
 
-.nf-section-title {
-  max-width: 17em;
-  font-size: var(--t-headline);
+/* ── Intro + column heads ────────────────────────────────────────────── */
+
+.ab-intro {
+  grid-column: arg / end;
+  padding: 0 0 var(--s-panel);
+}
+.ab-intro__kicker {
+  margin-bottom: 14px !important;
+  font-size: var(--t-margin);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ab-intro__title {
+  max-width: 22em;
+  font-size: clamp(30px, 2.8vw, 44px);
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.03em;
   text-shadow: var(--shadow-text);
 }
 
-.nf-units__map .docs-worldmap-embed {
-  margin: 0 !important;
-  border-radius: 14px !important;
-}
-.nf-units__list {
-  list-style: none;
-  margin: var(--s-line) 0 0;
-  padding: 0;
+.ab-head {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--gutter);
-}
-.nf-units__list li {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  padding-top: 14px;
-  border-top: 2px solid var(--accent);
-}
-.nf-units__city {
+  grid-template-columns: subgrid;
+  position: sticky;
+  top: var(--nav-h, 60px);
+  z-index: 6;
+  padding: 12px 0;
+  background: var(--pill);
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px;
   font-weight: 700;
-  font-size: calc(var(--t-body) + 2px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  color: var(--ink-soft);
 }
-.nf-units__city span {
+.ab-head__arg {
+  grid-column: arg;
+  padding-left: 4px;
+}
+.ab-head__loop {
+  padding: 0 10px;
+  border-left: 1px solid var(--rail);
+}
+.ab-head__papers {
+  grid-column: papers;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  text-align: center;
+  border-left: 1px solid var(--rail);
+  color: var(--accent);
+}
+
+/* ── A beat ──────────────────────────────────────────────────────────── */
+
+.ab-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: calc(var(--nav-h, 60px) + 48px);
+  transition: background 0.4s ease;
+}
+.ab-row:hover,
+.ab-row[data-open='true'] {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.ab-instrument {
+  grid-column: arg / papers;
+  grid-row: 2;
+  padding: 0 22px 26px 0;
+}
+.ab-label {
+  grid-column: label;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 22px 10px 22px 4px;
+}
+.ab-label__n {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.ab-label__name {
+  font-size: 13px;
+  font-weight: 700;
+}
+.ab-label__toggle {
+  all: unset;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule);
+}
+.ab-label__toggle:hover,
+.ab-label__toggle:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* The beat's own strip: eight columns, packed densely, so modules of
+   different weights find their own arrangement. */
+.ab-arg {
+  grid-column: arg;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  align-items: start;
+  gap: 14px;
+  padding: 22px 22px 22px 0;
+}
+.ab-tile {
+  min-width: 0;
+}
+.ab-tile--claim .hook-claim__universal {
+  font-size: clamp(22px, 1.8vw, 28px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.ab-tile--claim .hook-claim__practice {
+  margin-top: 12px;
+  font-size: var(--t-margin);
+}
+.ab-tile--clip {
+  cursor: pointer;
+}
+.ab-row[data-open='true'] .ab-tile--clip {
+  cursor: default;
+}
+.ab-tile--clip .hook-witness__frame {
+  border-radius: 10px;
+}
+/* The clip fills its share of the strip; at rest it's cropped wide, open
+   it shows the whole frame. */
+.ab-tile--clip .hook-witness__frame {
+  aspect-ratio: 16 / 10 !important;
+}
+.ab-row[data-open='true'] .ab-tile--clip .hook-witness__frame {
+  aspect-ratio: 3 / 2 !important;
+}
+.ab-tile--proof .hook-proof {
+  font-size: var(--t-margin);
+}
+.ab-tile--proof .hook-proof--panel .hook-proof__text {
+  font-size: var(--t-body);
+}
+.ab-tile--door {
+  align-self: center;
+}
+
+/* ── The loop columns: rails with pegs ───────────────────────────────── */
+
+.ab-loop {
+  grid-row: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 8px;
+  border-left: 1px solid var(--rail);
+}
+/* An empty hole on the board: a peg-hole mark, nothing hung. */
+.ab-loop[data-empty='true']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--rail);
+  transform: translateX(-50%);
+}
+.ab-peg {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+  text-decoration: none;
+}
+.ab-peg__head {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(72, 193, 196, 0.18);
+  transform: translateY(-1px);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s ease;
+}
+.ab-peg:hover {
+  color: var(--accent);
+}
+.ab-peg:hover .ab-peg__head {
+  transform: translateY(-1px) scale(1.35);
+  box-shadow: 0 0 0 5px rgba(72, 193, 196, 0.22);
+}
+
+/* ── Paper threads ───────────────────────────────────────────────────── */
+
+.ab-threads {
+  grid-column: papers;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border-left: 1px solid var(--rail);
+}
+.ab-thread {
+  position: relative;
+}
+.ab-thread::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(72, 193, 196, 0.22);
+}
+.ab-thread__dot {
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s var(--ease);
+}
+.ab-thread__dot:hover,
+.ab-thread__dot:focus-visible {
+  transform: translate(-50%, -50%) scale(1.5);
+  outline: none;
+}
+
+/* ── Closing bands ───────────────────────────────────────────────────── */
+
+.ab-row--band .ab-arg {
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+.ab-band-title {
+  max-width: 18em;
+  margin-bottom: 20px !important;
+  font-size: clamp(26px, 2.2vw, 34px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+.ab-map .docs-worldmap-embed {
+  margin: 0 !important;
+  border-radius: 12px !important;
+}
+.ab-units {
+  grid-column: loop1 / end;
+  list-style: none;
+  margin: 0;
+  padding: 34px 0 34px 18px;
+  display: grid;
+  gap: 18px;
+  border-left: 1px solid var(--rail);
+}
+.ab-units li {
+  display: grid;
+  gap: 4px;
+}
+.ab-units__city {
+  font-weight: 700;
+}
+.ab-units__city span {
   font-weight: 500;
   color: var(--ink-soft);
 }
-.nf-units__line {
+.ab-units__line {
   font-size: var(--t-margin);
   color: var(--ink-soft);
 }
-
-.nf-signoff__mail {
-  display: inline-block;
-  margin-top: var(--s-line);
-  font-size: clamp(26px, 2.6vw, 38px);
+.ab-mail {
+  font-size: clamp(24px, 2.2vw, 32px);
   font-weight: 700;
-  letter-spacing: -0.02em;
   color: var(--accent);
   text-decoration: none;
   border-bottom: 2px solid currentColor;
 }
+.ab-signoff-side {
+  grid-column: loop1 / end;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 34px 0 34px 18px;
+  border-left: 1px solid var(--rail);
+  font-size: var(--t-margin);
+  color: var(--ink-soft);
+}
+
+/* ── Narrower laptops: the loop folds under each beat ─────────────────── */
 
 @media (max-width: 1100px) {
-  .nf-units__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .ab {
+    display: block;
+  }
+  .ab-head,
+  .ab-threads {
+    display: none;
+  }
+  .ab-row {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 18px;
+  }
+  .ab-label {
+    flex-direction: row;
+    align-items: baseline;
+    width: 100%;
+    padding: 18px 0 0;
+    gap: 10px;
+  }
+  .ab-arg {
+    width: 100%;
+    padding-right: 0;
+  }
+  .ab-loop {
+    border-left: 0;
+    padding: 0 18px 0 0;
+  }
+  .ab-loop[data-empty='true'] {
+    display: none;
+  }
+  .ab-units,
+  .ab-signoff-side {
+    border-left: 0;
+    padding-left: 0;
   }
 }

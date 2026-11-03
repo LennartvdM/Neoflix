@@ -86,3 +86,41 @@ export function useScrollProgress(ref, { onProgress, rest = 1 } = {}) {
     };
   }, [ref, rest]);
 }
+
+/**
+ * Progress from the pointer instead of the scroll: 0 at the element's
+ * left edge, 1 at its right. Writes `--p` and calls `onProgress`, like
+ * useScrollProgress. Letting go leaves it where it is (blueprint,
+ * "Instrument"); arrow keys step it for keyboard users. Starts at `rest`,
+ * which is also where reduced motion keeps it.
+ */
+export function usePointerProgress(ref, { onProgress, rest = 0 } = {}) {
+  const cb = useRef(onProgress);
+  cb.current = onProgress;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    let p = rest;
+    const write = (next) => {
+      p = Math.min(1, Math.max(0, next));
+      el.style.setProperty('--p', p.toFixed(4));
+      cb.current?.(p);
+    };
+    write(rest);
+    if (prefersReducedMotion()) return undefined;
+    const onMove = (e) => {
+      const r = el.getBoundingClientRect();
+      write((e.clientX - r.left) / Math.max(1, r.width));
+    };
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') { write(p + 0.1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { write(p - 0.1); e.preventDefault(); }
+    };
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('keydown', onKey);
+    return () => {
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('keydown', onKey);
+    };
+  }, [ref, rest]);
+}

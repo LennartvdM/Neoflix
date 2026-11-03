@@ -16,7 +16,7 @@ import { BLOG_DECK, blogIdxForSection } from '../backdrop/decks';
 import { FilmProvider } from './FilmDoor';
 import './board.css';
 
-export default function BoardPage({ tone = 'dark', sectionIds = [], scrollTo, title, children }) {
+export default function BoardPage({ tone = 'dark', sectionIds = [], scrollTo, title, activeId, wide = false, children }) {
   const scrollRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -29,7 +29,10 @@ export default function BoardPage({ tone = 'dark', sectionIds = [], scrollTo, ti
     root.scrollTo({ top, behavior: 'instant' });
   }, [scrollTo]);
 
-  const active = useScrollSpy(sectionIds, 140, scrollRef);
+  // `activeId` (e.g. the beat being looked at on a board page) overrides
+  // the scroll position as what the backdrop shows.
+  const spied = useScrollSpy(sectionIds, 140, scrollRef);
+  const active = activeId || spied;
   const idx = tone === 'dark' ? blogIdxForSection(active) : -1;
   useBackdropTarget('blog', idx >= 0 ? { kind: 'video', deck: BLOG_DECK, topIdx: idx } : null);
 
@@ -46,7 +49,7 @@ export default function BoardPage({ tone = 'dark', sectionIds = [], scrollTo, ti
     <div className="board board__scroller" data-tone={tone} ref={scrollRef}>
       {tone === 'dark' && <div className="board__scrim" aria-hidden="true" />}
       <FilmProvider>
-        <main className="board__page">
+        <main className={`board__page${wide ? ' board__page--wide' : ''}`}>
           {title && <h1 className="sr-only">{title}</h1>}
           {children}
         </main>

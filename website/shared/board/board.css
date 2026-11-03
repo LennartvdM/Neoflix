@@ -166,3 +166,6 @@
 .board__page {
   position: relative;
 }
+.board__page--wide {
+  width: min(1400px, calc(100vw - 2 * var(--gutter)));
+}

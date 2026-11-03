@@ -1,24 +1,27 @@
 /**
- * /publications on a laptop — the arc, as a still page on the board.
+ * /publications on a laptop — the six papers as a board, on their time
+ * axis.
  *
- * The six papers as one line of work, in the order the questions were
- * asked (content blueprint, "/publications"). Each card is a paper page in
- * small: eyebrow, title as the door to its page, Asked / Found / Changed,
- * one lifted proof in the margin, and doors to the author PDF and the
- * journal. Still page: no choreography beyond the pinned orientation line
- * and the proofs settling once.
+ * Columns are the years 2022–2026; each paper hangs in its own year, so
+ * the shape of the page is the shape of the work: one paper, a gap, four
+ * at once, a gap, one more. Years with nothing published stay as open
+ * holes on the board. Veerle's letter takes the first column, where the
+ * line of work begins (the blueprint later moves it to the toolbox's
+ * Start here).
+ *
+ * At rest a card shows the paper's short name, title and one finding.
+ * It opens in place — the board reflows around it — to Asked / Found /
+ * Changed and its doors: the paper's page or the journal, the author PDF,
+ * and the beats of the argument it supports.
  *
  * Words: arc.js (what we say about each paper), records.js (the facts).
- * Section ids are the old anchors, so /publications#narrative still lands.
- *
- * Veerle's preface closes the page for now; the blueprint moves it to the
- * door of the toolbox (Start here) once that is rebuilt.
+ * Card ids are the old anchors, so /publications#narrative still lands.
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { LayoutGroup, motion } from 'framer-motion';
 import BoardPage from '../../shared/board/BoardPage';
-import { Block, Proof, Exit, Exits, Orientation } from '../../shared/board/hooks';
+import { Exit, Proof } from '../../shared/board/hooks';
 import useDownloadGuard from '../../lib/hooks/useDownloadGuard';
-import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
 import { renderMarkdown } from '../../lib/utils/renderMarkdown';
 import { assetUrl } from '../../lib/utils/assetUrl';
 import { beatsForPaper } from '../../shared/argument';
@@ -27,7 +30,14 @@ import { publicationOrder, publicationRecords, paperPath, doiUrl, shortAuthors }
 import { publicationPdfs, sections, bundle } from './content';
 import './publications-board.css';
 
-const SECTION_IDS = ['arc', ...publicationOrder, 'preface'];
+const LAYOUT = { type: 'spring', stiffness: 260, damping: 32, mass: 0.9 };
+const YEARS = (() => {
+  const ys = publicationOrder.map((id) => publicationRecords[id].year);
+  const out = [];
+  for (let y = Math.min(...ys); y <= Math.max(...ys); y++) out.push(y);
+  return out;
+})();
+const SECTION_IDS = ['preface', ...publicationOrder];
 
 function PdfDoor({ id }) {
   const pdf = publicationPdfs[id];
@@ -41,100 +51,131 @@ function PdfDoor({ id }) {
       aria-disabled={guard.cooling || undefined}
       onClick={guard.onClick}
     >
-      <span>{guard.cooling ? `Ready again in ${guard.secondsLeft}s` : `Author PDF · ${pdf.pages} pages, ${pdf.size}`}</span>
+      <span>{guard.cooling ? `Ready again in ${guard.secondsLeft}s` : `Author PDF · ${pdf.pages} pages`}</span>
       <span aria-hidden="true" className="hook-exit__arrow">↓</span>
     </a>
   );
 }
 
-function PaperCard({ id, n }) {
-  const navigate = useTransitionNavigate();
+function PaperCard({ id, n, open, onToggle }) {
   const record = publicationRecords[id];
   const arc = ARC[id];
   const page = paperPath(id);
   const journal = doiUrl(record);
   const beats = beatsForPaper(id);
   return (
-    <section id={id} className="board-section pub-card">
-      <Orientation>Paper {n} of 6 · {record.year}</Orientation>
-      <Block
-        margin={
-          <div className="pub-card__margin">
-            <Proof size="line" text={arc.lifted.text} />
-            <Exits>
-              <PdfDoor id={id} />
-              {journal && <Exit href={journal} label={record.journal} direction="across" />}
-              {beats.map((b) => (
-                <Exit key={b.id} href={`/neoflix#${b.id}`} label={`The argument · ${b.name}`} />
-              ))}
-            </Exits>
-          </div>
-        }
-      >
-        <p className="pub-card__eyebrow">{record.year} · {record.journal} · {arc.short}</p>
-        <h2 className="pub-card__title">
-          {page ? (
-            <a href={page} onClick={(e) => { e.preventDefault(); navigate(page); }}>
-              {record.title}
-              <span aria-hidden="true" className="hook-exit__arrow"> →</span>
-            </a>
-          ) : (
-            <a href={journal} target="_blank" rel="noopener noreferrer">
-              {record.title}
-              <span aria-hidden="true" className="hook-exit__arrow"> ↗</span>
-            </a>
-          )}
-        </h2>
-        <p className="pub-card__byline">{shortAuthors(record)}</p>
-        <dl className="pub-card__afc">
-          <div><dt>Asked</dt><dd>{arc.asked}</dd></div>
-          <div><dt>Found</dt><dd>{arc.found}</dd></div>
-          <div><dt>Changed</dt><dd>{arc.changed}</dd></div>
-        </dl>
-      </Block>
-    </section>
+    <motion.article layout transition={LAYOUT} id={id} className="pb-card" data-open={open ? 'true' : 'false'}>
+      <motion.button layout="position" type="button" className="pb-card__head" onClick={onToggle} aria-expanded={open}>
+        <span className="pb-card__n">Paper {n}</span>
+        <span className="pb-card__short">{arc.short}</span>
+        <span className="pb-card__journal">{record.journal}</span>
+      </motion.button>
+      <motion.h2 layout="position" className="pb-card__title">
+        {record.title}
+      </motion.h2>
+      <motion.div layout="position">
+        <Proof size="line" text={arc.lifted.text} />
+      </motion.div>
+      {open && (
+        <motion.div
+          className="pb-card__more"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.1 }}
+        >
+          <p className="pb-card__byline">{shortAuthors(record)}</p>
+          <dl className="pb-card__afc">
+            <div><dt>Asked</dt><dd>{arc.asked}</dd></div>
+            <div><dt>Found</dt><dd>{arc.found}</dd></div>
+            <div><dt>Changed</dt><dd>{arc.changed}</dd></div>
+          </dl>
+          <nav className="pb-card__doors">
+            {page && <Exit href={page} label="The paper’s page" />}
+            {journal && <Exit href={journal} label={record.journal} direction="across" />}
+            <PdfDoor id={id} />
+            {beats.map((b) => (
+              <Exit key={b.id} href={`/neoflix#${b.id}`} label={`The argument · ${b.name}`} />
+            ))}
+          </nav>
+        </motion.div>
+      )}
+      <motion.button layout="position" type="button" className="pb-card__toggle" onClick={onToggle}>
+        {open ? 'Close' : 'Asked, found, changed'}
+      </motion.button>
+    </motion.article>
   );
 }
 
-function Preface() {
-  const html = useMemo(() => renderMarkdown(sections.find((s) => s.id === 'preface')?.content || ''), []);
+function Letter({ open, onToggle }) {
+  const paragraphs = useMemo(() => {
+    const md = sections.find((s) => s.id === 'preface')?.content || '';
+    return md.split(/\n\s*\n+/).map((p) => renderMarkdown(p));
+  }, []);
+  const shown = open ? paragraphs : paragraphs.slice(0, 1);
   return (
-    <section id="preface" className="board-section pub-preface">
-      <Orientation>From Veerle</Orientation>
-      <Block>
-        <div className="pub-preface__letter" dangerouslySetInnerHTML={{ __html: html }} />
-      </Block>
-    </section>
+    <motion.article layout transition={LAYOUT} id="preface" className="pb-letter" data-open={open ? 'true' : 'false'}>
+      <motion.p layout="position" className="pb-letter__kicker">From Veerle</motion.p>
+      <motion.div layout="position" className="pb-letter__body">
+        {shown.map((html, i) => (
+          <div key={i} dangerouslySetInnerHTML={{ __html: html }} />
+        ))}
+      </motion.div>
+      <motion.button layout="position" type="button" className="pb-card__toggle" onClick={onToggle}>
+        {open ? 'Fold the letter' : 'Read the letter'}
+      </motion.button>
+    </motion.article>
   );
 }
 
 export default function PublicationsDesktop() {
+  const initial = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
+  const [open, setOpen] = useState(SECTION_IDS.includes(initial) ? initial : null);
+  const toggle = (id) => setOpen((o) => (o === id ? null : id));
+
   return (
-    <BoardPage tone="light" sectionIds={SECTION_IDS} title="Publications">
-      <section id="arc" className="board-section pub-intro">
-        <Orientation>Six papers, 2022 to 2026</Orientation>
-        <Block
-          margin={
-            bundle && (
-              <Exits>
-                <a className="hook-exit" href={assetUrl(bundle.file)} download>
-                  <span>All six papers · ZIP, {bundle.size}</span>
-                  <span aria-hidden="true" className="hook-exit__arrow">↓</span>
-                </a>
-              </Exits>
-            )
-          }
-        >
-          <h2 className="pub-intro__title">{ARC_INTRO.headline}</h2>
-          {ARC_INTRO.body.map((p) => (
-            <p key={p.slice(0, 20)} className="pub-intro__body">{p}</p>
-          ))}
-        </Block>
-      </section>
-      {publicationOrder.map((id, i) => (
-        <PaperCard key={id} id={id} n={i + 1} />
-      ))}
-      <Preface />
+    <BoardPage tone="light" wide sectionIds={SECTION_IDS} title="Publications">
+      <div className="pb">
+        <header className="pb-intro">
+          <h2 className="pb-intro__title">{ARC_INTRO.headline}</h2>
+          <div className="pb-intro__body">
+            {ARC_INTRO.body.map((p) => <p key={p.slice(0, 20)}>{p}</p>)}
+          </div>
+          {bundle && (
+            <a className="hook-exit pb-intro__bundle" href={assetUrl(bundle.file)} download>
+              <span>All six papers · ZIP, {bundle.size}</span>
+              <span aria-hidden="true" className="hook-exit__arrow">↓</span>
+            </a>
+          )}
+        </header>
+
+        <LayoutGroup>
+          <div className="pb-board">
+            <div className="pb-col pb-col--letter" data-count="letter">
+              <span className="pb-col__year">Before</span>
+              <Letter open={open === 'preface'} onToggle={() => toggle('preface')} />
+            </div>
+            {YEARS.map((year) => {
+              const ids = publicationOrder.filter((id) => publicationRecords[id].year === year);
+              return (
+                <div key={year} className="pb-col" data-count={ids.length}>
+                  <span className="pb-col__year">{year}</span>
+                  <div className="pb-col__cards">
+                    {ids.map((id) => (
+                      <PaperCard
+                        key={id}
+                        id={id}
+                        n={publicationOrder.indexOf(id) + 1}
+                        open={open === id}
+                        onToggle={() => toggle(id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </LayoutGroup>
+      </div>
     </BoardPage>
   );
 }

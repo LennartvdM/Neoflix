@@ -6,19 +6,38 @@
 .inst-retype {
   position: relative;
   --p: 1;
+  cursor: ew-resize;
+  border-radius: 14px;
+  outline: none;
 }
-.inst-narrow { height: 230vh; }
-.inst-rows { height: 190vh; }
-.inst-retype { height: 210vh; }
+.inst-narrow:focus-visible,
+.inst-rows:focus-visible,
+.inst-retype:focus-visible {
+  box-shadow: 0 0 0 2px #48c1c4;
+}
 
 .inst-narrow__stage,
 .inst-rows__stage,
 .inst-retype__stage {
-  position: sticky;
-  top: calc(var(--nav-h, 60px) + 70px);
-  height: calc(100vh - var(--nav-h, 60px) - 110px);
-  border-radius: 16px;
+  position: relative;
+  border-radius: 14px;
   overflow: hidden;
+}
+.inst-narrow__stage { aspect-ratio: 21 / 9; }
+.inst-rows__stage { min-height: 360px; }
+.inst-retype__stage { min-height: 360px; }
+
+.inst-hint {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
+  z-index: 3;
+  font: 600 11px/1 Inter, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
 }
 
 /* ── Narrowing frame ─────────────────────────────────────────────────── */

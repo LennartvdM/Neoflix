@@ -1,8 +1,8 @@
 /**
  * Instruments — the one hook whose motion is made per instance (blueprint,
- * "Instruments"). Scroll position drives the state; nothing plays on its
- * own; letting go leaves it where it is. Each is complete at rest: with
- * reduced motion it shows its final state.
+ * "Instruments"). They are tiles on the board, scrubbed by moving the
+ * pointer across them (or the arrow keys): nothing plays on its own and
+ * letting go leaves it where it is. Each is complete at its rest state.
  *
  * These are v1 SKETCHES: cheap, sharp, built from the beat's own clip, and
  * meant to be replaced by the extravagant versions later without touching
@@ -11,7 +11,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import IllustrationClip from '../IllustrationClip';
 import { Instrument } from './hooks';
-import { useInView, useScrollProgress } from './motion';
+import { useInView, usePointerProgress } from './motion';
 import './instruments.css';
 
 /* ── The narrowing frame · beat 3, focus ──────────────────────────────────
@@ -22,7 +22,8 @@ export function NarrowingFrame({ clip }) {
   const ref = useRef(null);
   const clockRef = useRef(null);
   const onScreen = useInView(ref, { threshold: 0.05 });
-  useScrollProgress(ref, {
+  usePointerProgress(ref, {
+    rest: 0,
     onProgress: (p) => {
       if (!clockRef.current) return;
       // Two minutes of procedure pass over the length of the scroll.
@@ -32,8 +33,9 @@ export function NarrowingFrame({ clip }) {
   });
   return (
     <Instrument label="The narrowing frame">
-      <div ref={ref} className="inst-narrow">
+      <div ref={ref} className="inst-narrow" tabIndex={0} aria-label="Move across to narrow the frame">
         <div className="inst-narrow__stage">
+          <span className="inst-hint" aria-hidden="true">Move across ⟷</span>
           <div className="inst-narrow__periphery" aria-hidden="true">
             <span className="inst-narrow__clock" ref={clockRef}>00:54</span>
             <svg className="inst-narrow__trace" viewBox="0 0 400 60" preserveAspectRatio="none">
@@ -52,7 +54,7 @@ export function NarrowingFrame({ clip }) {
 
 /* ── Twenty rows · beat 4, skills ─────────────────────────────────────────
    The same procedure twenty times, as blocks of different lengths in
-   different orders — the guideline a single row on top. Scrolling lifts
+   different orders — the guideline a single row on top. Moving across lifts
    the rows that differ away from it. Illustrative, and labelled so: the
    recordings weren't annotated with step timings (blueprint open question). */
 const STEPS = 7;
@@ -65,7 +67,7 @@ function rng(seed) {
 }
 export function TwentyRows({ clip }) {
   const ref = useRef(null);
-  useScrollProgress(ref);
+  usePointerProgress(ref, { rest: 1 });
   const rows = useMemo(() => {
     const rand = rng(84120);
     return Array.from({ length: 20 }, (_, r) => {
@@ -89,8 +91,9 @@ export function TwentyRows({ clip }) {
   }, []);
   return (
     <Instrument label="Twenty rows">
-      <div ref={ref} className="inst-rows" style={{ '--still': `url(${clip.still})` }}>
+      <div ref={ref} className="inst-rows" tabIndex={0} aria-label="Move across to lift the rows that differ" style={{ '--still': `url(${clip.still})` }}>
         <div className="inst-rows__stage">
+          <span className="inst-hint" aria-hidden="true">Move across ⟷</span>
           <div className="inst-rows__row inst-rows__row--guideline">
             {Array.from({ length: STEPS }, (_, i) => (
               <span key={i} className="inst-rows__block" style={{ flexGrow: 1 }} />
@@ -134,7 +137,8 @@ export function RetypedSentence({ clip }) {
   const ref = useRef(null);
   const onScreen = useInView(ref, { threshold: 0.05 });
   const [typed, setTyped] = useState(AFTER.length);
-  useScrollProgress(ref, {
+  usePointerProgress(ref, {
+    rest: 1,
     onProgress: (p) => {
       const t = Math.min(1, Math.max(0, (p - 0.42) / 0.38));
       setTyped(Math.round(t * AFTER.length));
@@ -142,8 +146,9 @@ export function RetypedSentence({ clip }) {
   });
   return (
     <Instrument label="The retyped sentence">
-      <div ref={ref} className="inst-retype">
+      <div ref={ref} className="inst-retype" tabIndex={0} aria-label="Move across to retype the sentence">
         <div className="inst-retype__stage">
+          <span className="inst-hint" aria-hidden="true">Move across ⟷</span>
           <IllustrationClip src={clip.blur || clip.video} play={onScreen} preload="metadata" className="inst-retype__bg" />
           <div className="inst-retype__copy">
             <p className="inst-retype__before">
