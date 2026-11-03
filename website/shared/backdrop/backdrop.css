@@ -68,13 +68,26 @@
    what they sample) and lifts it — a brighter, more saturated strip of the
    same moving scene, with no second video to decode or keep in sync. The
    overlay fills above stay as the fallback. */
+/* The two lifts differ on purpose. brightness() multiplies, so the same
+   factor adds more light where the footage is already light — and the
+   shelf sits on the brighter part of both backdrops. At an equal 1.25 it
+   gained +26 / +23 luminance against the lane's +14 / +19 (pressure /
+   reflection, paused frames, 2026-11) and read as the brighter band. The
+   shelf's gentler 1.15 / 1.5 lands it at +15 / +14: level with the lane,
+   which stays the accent. */
 @supports ((backdrop-filter: brightness(1)) or (-webkit-backdrop-filter: brightness(1))) {
   .backdrop-band--shelf,
   .backdrop-band--lane {
     --band-fill: transparent;
     --band-blend: normal;
-    -webkit-backdrop-filter: brightness(1.25) saturate(1.7);
-    backdrop-filter: brightness(1.25) saturate(1.7);
+    -webkit-backdrop-filter: var(--band-lift);
+    backdrop-filter: var(--band-lift);
+  }
+  .backdrop-band--shelf {
+    --band-lift: brightness(1.15) saturate(1.5);
+  }
+  .backdrop-band--lane {
+    --band-lift: brightness(1.25) saturate(1.7);
   }
 }
 
