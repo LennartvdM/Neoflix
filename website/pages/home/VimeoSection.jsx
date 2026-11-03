@@ -69,6 +69,8 @@ const VimeoSection = ({ inView }) => {
 
   return (
     <div
+      // A light slide — the slide nav switches to navy ink.
+      data-nav-tone="dark"
       style={{
         position: 'relative',
         width: '100%',

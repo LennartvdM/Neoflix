@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { useViewport } from '../../lib/hooks/useViewport';
 import HeroScrollCue from './HeroScrollCue';
 import { useBackdropPublisher } from '../backdrop/useBackdrop';
+import './section-dot-nav.css';
 
 const NAV_FALLBACK = 60;
 
@@ -258,6 +259,10 @@ const ScrollSnap = ({ children }) => {
     const nav = dotNavRef.current;
     if (!nav) return;
     const activeSection = sectionsRef.current[currentIndexRef.current];
+    // Light slides (intro, showcase, world map) mark themselves with
+    // data-nav-tone="dark"; everything else is footage, where the nav is
+    // white. Without this the nav vanished white-on-white on light slides.
+    nav.dataset.tone = activeSection?.querySelector('[data-nav-tone]')?.dataset.navTone || 'light';
     const target = activeSection?.querySelector('[data-dot-nav-target]');
     const rect = target?.getBoundingClientRect();
     if (rect && rect.height !== 0) {
@@ -448,107 +453,15 @@ const ScrollSnap = ({ children }) => {
         </div>
       </div>
 
-      {/* ── SectionDotNav: right-side vertical dots + up/down arrows ── */}
+      {/* ── SectionDotNav: right-side vertical dots + up/down arrows ──
+          Styles: section-dot-nav.css. */}
       {dotNavReady && (<>
-      <style>{`
-        .arrow-btn {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          border: 3px solid rgba(255,255,255,0.45);
-          /* Flat fill, no backdrop-filter: a permanently-animating
-             element (pulse ring + bouncing chevron) with backdrop
-             blur forced the video behind it to be re-blurred every
-             frame, indefinitely. */
-          background: rgba(255,255,255,0.16);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.25s ease;
-          position: relative;
-          overflow: hidden;
-        }
-        .arrow-btn:hover {
-          background: rgba(255,255,255,0.2);
-          border-color: rgba(255,255,255,0.7);
-          transform: scale(1.1);
-        }
-        .arrow-btn:active {
-          transform: scale(0.95);
-        }
-        .arrow-btn.arrow-hidden {
-          opacity: 0;
-          pointer-events: none;
-        }
-        .arrow-btn svg {
-          width: 26px;
-          height: 26px;
-          fill: none;
-          stroke: #fff;
-          stroke-width: 3;
-          stroke-linecap: round;
-          stroke-linejoin: round;
-        }
-        .arrow-btn.up svg {
-          animation: bounceUp 1.8s ease-in-out infinite;
-        }
-        .arrow-btn.down svg {
-          animation: bounceDown 1.8s ease-in-out infinite;
-        }
-        @keyframes bounceUp {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        @keyframes bounceDown {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(5px); }
-        }
-        .arrow-btn::before {
-          content: '';
-          position: absolute;
-          inset: -5px;
-          border-radius: 50%;
-          border: 2px solid rgba(255,255,255,0.3);
-          animation: pulse-ring 2.5s ease-out infinite;
-        }
-        @keyframes pulse-ring {
-          0% { transform: scale(1); opacity: 0.6; }
-          70% { transform: scale(1.35); opacity: 0; }
-          100% { transform: scale(1.35); opacity: 0; }
-        }
-        .arrow-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.25);
-          transition: all 0.35s ease;
-          cursor: pointer;
-        }
-        .arrow-dot.active {
-          background: #fff;
-          box-shadow: 0 0 8px rgba(255,255,255,0.5);
-          transform: scale(1.3);
-        }
-        .arrow-dot:hover:not(.active) {
-          background: rgba(255,255,255,0.5);
-        }
-        @media (max-width: 599px) {
-          .scrollsnap-dotnav {
-            right: 12px !important;
-            gap: 8px !important;
-          }
-          .scrollsnap-dotnav .arrow-btn { display: none !important; }
-          .scrollsnap-dotnav .arrow-dot { width: 6px; height: 6px; }
-          .scrollsnap-dotnav .arrow-dot.active { transform: scale(1.4); }
-        }
-      `}</style>
 
       <nav
         ref={dotNavRef}
         className="scrollsnap-dotnav fixed right-7 z-50 flex flex-col items-center"
         style={{
-          gap: '12px',
+          gap: '10px',
           // `top` is written imperatively by updateDotNavPosition; it
           // tracks the carousel 1:1 per scroll frame, so it needs no
           // transition (a transition retargeted every frame never
@@ -566,16 +479,15 @@ const ScrollSnap = ({ children }) => {
           <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15" /></svg>
         </button>
 
-        <div className="flex flex-col items-center" style={{ gap: '8px' }}>
+        <div className="flex flex-col items-center">
           {Array.from({ length: sectionCount }, (_, i) => (
-            <div
+            <button
               key={i}
+              type="button"
               className={`arrow-dot${i === currentIndex ? ' active' : ''}`}
               onClick={() => scrollToIndex(i)}
-              role="button"
-              tabIndex={0}
               aria-label={`Go to section ${i + 1}`}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollToIndex(i); }}
+              aria-current={i === currentIndex ? 'true' : undefined}
             />
           ))}
         </div>
@@ -586,7 +498,9 @@ const ScrollSnap = ({ children }) => {
           onClick={() => scrollToIndex(currentIndex + 1)}
           aria-label="Scroll down"
         >
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" /></svg>
+          {/* Keyed on the slide so its one-shot "there's more below"
+              nudge replays on each arrival, then stays still. */}
+          <svg key={currentIndex} viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" /></svg>
         </button>
       </nav>
       </>)}

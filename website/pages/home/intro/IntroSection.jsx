@@ -21,7 +21,8 @@ const IntroSection = ({ inView }) => {
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+    // data-nav-tone: a light slide — the slide nav switches to navy ink.
+    <div data-nav-tone="dark" style={{ position: 'relative', width: '100%', height: '100vh' }}>
       {/* The visible headline is animated display type built from divs;
           this gives the desktop homepage a real document outline. */}
       <h1 className="sr-only">Neoflix — Record. Reflect. Refine. {TAGLINE}</h1>
