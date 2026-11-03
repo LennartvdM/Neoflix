@@ -9,6 +9,7 @@ import { useBackdropTarget, useBackdropBands, blogBandsId } from './backdrop/use
 import { BLOG_DECK, blogIdxForSection } from './backdrop/decks';
 import IllustrationClip from './IllustrationClip';
 import { stillFor } from '../lib/utils/reducedMedia';
+import StoryHeadline from '../pages/home/story/StoryHeadline';
 import PublicationAttachment from '../pages/publications/PublicationAttachment';
 import PublicationBundle from '../pages/publications/PublicationBundle';
 import { paperPath } from '../pages/publications/records';
@@ -89,7 +90,16 @@ const PUBLICATION_PREVIEW_OVERRIDES = new Map([
   ],
 ]);
 
-export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }) {
+export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page, acts, ledes }) {
+  // Optional structure above the sections (/neoflix passes both; see
+  // NeoflixPage): `acts` group sections under a display opener, and
+  // `ledes` give a section a statement to open with in place of a title
+  // bar. Without them every section renders the same way.
+  const actStartingAt = {};
+  (acts || []).forEach((act) => {
+    if (act.sectionIds?.length) actStartingAt[act.sectionIds[0]] = act;
+  });
+  const inAct = new Set((acts || []).flatMap((act) => act.sectionIds || []));
   // Internal scroll container. BlogPage renders inside RouteSlider,
   // which is `position: fixed; inset: 0` — window never scrolls under
   // that layout, so the page scrolls on this inner element instead.
@@ -391,8 +401,14 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }
                   idx === 0 && !myNumber && sections.length > 1 && !!nextNumber;
                 // Divider above the Contact pin in the /neoflix index.
                 const dividerAbove = s.id === 'contact' && idx > 0;
+                const actHere = actStartingAt[s.id];
                 return (
                   <React.Fragment key={s.id}>
+                    {actHere && (
+                      <li aria-hidden="true" className="blog-index__act">
+                        {actHere.numeral} · {actHere.label}
+                      </li>
+                    )}
                     {dividerAbove && <li aria-hidden="true" className="blog-index__divider" />}
                     <li>
                       <button
@@ -442,12 +458,27 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }
             });
             const { numberPart, titlePart } = splitHeading(section.title);
             const hasPublicationLead = Boolean(parsed.titleCard || parsed.citation);
+            const act = actStartingAt[section.id];
+            const lede = ledes?.[section.id];
+            // Inside an act the chapter title sits one level under the
+            // act's own heading.
+            const TitleTag = inAct.has(section.id) ? 'h3' : 'h2';
             const publicationPreview = hasPublicationLead && parsed.titleCard
               ? getPublicationPreview(parsed.titleCard.href)
               : null;
             return (
+              <React.Fragment key={section.id}>
+              {act && (
+                <header id={act.id} className="blog-act">
+                  {/* No label: the headline says what the act is (a lone
+                      numeral read as a stray mark); the index carries the
+                      short "I · In the moment" label. */}
+                  <h2 className="blog-act__title">
+                    <StoryHeadline header={act.header} accentClassName="blog-act__accent" />
+                  </h2>
+                </header>
+              )}
               <section
-                key={section.id}
                 id={section.id}
                 className={`blog-section${hasPublicationLead ? ' blog-section--with-publication' : ' blog-section--plain'}`}
                 style={{
@@ -478,38 +509,48 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }
                   {publicationPreview && (
                     <PublicationGlassPreview preview={publicationPreview} />
                   )}
-                  <div className="blog-section__header">
-                    <h2
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        margin: 0,
-                        display: 'flex',
-                        alignItems: 'baseline',
-                        gap: 14,
-                        flexWrap: 'wrap',
-                        color: '#f8fbff',
-                        letterSpacing: 0,
-                        lineHeight: 1.08,
-                        textShadow: '0 2px 14px rgba(8, 17, 24, 0.24)',
-                      }}
-                    >
-                      {numberPart && (
-                        <span
-                          style={{
-                            fontWeight: 300,
-                            fontSize: 42,
-                            color: 'rgba(248, 251, 255, 0.72)',
-                            fontVariantNumeric: 'tabular-nums',
-                          }}
-                        >
-                          {numberPart}
+                  {lede ? (
+                    // A chapter opens on its statement — the same sentence
+                    // the homepage caption that links here shows — with
+                    // the title as a kicker above it.
+                    <div className="blog-section__header blog-section__header--chapter">
+                      <TitleTag className="blog-chapter__kicker">{section.title}</TitleTag>
+                      <p className="blog-chapter__lede">{lede}</p>
+                    </div>
+                  ) : (
+                    <div className="blog-section__header">
+                      <TitleTag
+                        style={{
+                          fontFamily: 'Inter, sans-serif',
+                          margin: 0,
+                          display: 'flex',
+                          alignItems: 'baseline',
+                          gap: 14,
+                          flexWrap: 'wrap',
+                          color: '#f8fbff',
+                          letterSpacing: 0,
+                          lineHeight: 1.08,
+                          textShadow: '0 2px 14px rgba(8, 17, 24, 0.24)',
+                        }}
+                      >
+                        {numberPart && (
+                          <span
+                            style={{
+                              fontWeight: 300,
+                              fontSize: 42,
+                              color: 'rgba(248, 251, 255, 0.72)',
+                              fontVariantNumeric: 'tabular-nums',
+                            }}
+                          >
+                            {numberPart}
+                          </span>
+                        )}
+                        <span style={{ fontWeight: 740, fontSize: 38 }}>
+                          {titlePart}
                         </span>
-                      )}
-                      <span style={{ fontWeight: 740, fontSize: 38 }}>
-                        {titlePart}
-                      </span>
-                    </h2>
-                  </div>
+                      </TitleTag>
+                    </div>
+                  )}
 
                   {hasPublicationLead && (
                     <PublicationLead
@@ -562,6 +603,7 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }
                 )}
                 </div>
               </section>
+              </React.Fragment>
             );
           })}
           {/* Bottom scroll spacer: lets the last (possibly short) post
@@ -642,6 +684,65 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }
           background: #48c1c4;
           transform-origin: left center;
           transform: scaleX(0);
+        }
+        .blog-index__act {
+          list-style: none;
+          padding: 22px 0 4px;
+          font-size: 11px;
+          font-weight: 600;
+          line-height: 1;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.5);
+        }
+        .blog-index__list > .blog-index__act:first-child {
+          padding-top: 0;
+        }
+        /* Act opener: the page's two halves announced on the footage, in
+           the homepage's display type, instead of starting on a title bar. */
+        .blog-act {
+          min-height: min(48vh, 440px);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 0 0 24px;
+          scroll-margin-top: 96px;
+          font-family: Inter, sans-serif;
+        }
+        .blog-act__title {
+          margin: 0;
+          font-size: clamp(48px, 4.4vw, 66px);
+          font-weight: 700;
+          line-height: 1.03;
+          letter-spacing: -0.035em;
+          color: #fff;
+          text-shadow: 0 2px 30px rgba(0, 0, 0, 0.16);
+        }
+        .blog-act__accent {
+          color: #48c1c4;
+        }
+        .blog-section__header--chapter {
+          padding: 40px 54px 34px;
+          font-family: Inter, sans-serif;
+        }
+        .blog-chapter__kicker {
+          margin: 0 0 14px;
+          font-size: 12px;
+          font-weight: 600;
+          line-height: 1.2;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.8);
+        }
+        .blog-chapter__lede {
+          margin: 0;
+          max-width: 17em;
+          font-size: 36px;
+          font-weight: 700;
+          line-height: 1.12;
+          letter-spacing: -0.025em;
+          color: #f8fbff;
+          text-shadow: 0 2px 14px rgba(8, 17, 24, 0.24);
         }
         .blog-index__divider {
           list-style: none;
@@ -1013,8 +1114,19 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }
         }
         .blog-body p { margin: 0 0 1.35em 0; }
         .blog-body p:last-child { margin-bottom: 0; }
-        .blog-body a { color: #529c9c; text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
-        .blog-body a:hover { color: #48c1c4; }
+        /* Links read as part of the sentence, not a keyword spray: normal
+           weight (the content bolds its link text), a soft teal underline,
+           and only on hover do they announce themselves. */
+        .blog-body a {
+          color: inherit;
+          text-decoration: underline;
+          text-decoration-color: rgba(72, 193, 196, 0.6);
+          text-decoration-thickness: 1.5px;
+          text-underline-offset: 3px;
+          transition: color 0.2s, text-decoration-color 0.2s;
+        }
+        .blog-body a strong { font-weight: inherit; color: inherit; }
+        .blog-body a:hover { color: #2d6a6a; text-decoration-color: #48c1c4; }
         .blog-body strong { font-weight: 700; color: #383437; }
         .blog-body em { font-style: italic; }
         .blog-body h2 {

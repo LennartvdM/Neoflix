@@ -2,6 +2,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import MedicalCarousel from './StoryCarousel';
 import { useBackdropBands } from '../../../shared/backdrop/useBackdrop';
 import { VIDEO_CONTROLS_HIDDEN_CSS } from './story.styles';
+import StoryHeadline from './StoryHeadline';
 import './story-desktop.css';
 
 // The homepage story sections on a laptop/desktop: a large clip on one
@@ -25,28 +26,6 @@ import './story-desktop.css';
 // outgoing one fades off the top — so the backdrop never shows through a
 // half-faded pair the way a symmetric crossfade would. `settle` only adds
 // a slow zoom-to-rest on the card being revealed.
-
-// Headline lines as story.data.js describes them. `line1suffix` (the
-// reflection story's " ") keeps line 1 and the highlight on one line;
-// without it they break.
-function Headline({ header }) {
-  return (
-    <>
-      {header.line1}
-      {header.line1suffix ?? <br />}
-      <span className="story-desk__accent">{header.line2highlight}</span>
-      {header.line2suffix}
-      <br />
-      {header.line3}
-      {header.line4 && (
-        <>
-          <br />
-          {header.line4}
-        </>
-      )}
-    </>
-  );
-}
 
 // Where the bands go, in section px. Offsets (not getBoundingClientRect)
 // so the entrance transforms and the route slide don't skew the numbers.
@@ -200,7 +179,7 @@ export default function StoryDesktopLayout({
             className="story-desk__headline"
             data-visible={headerVisible ? 'true' : 'false'}
           >
-            <Headline header={header} />
+            <StoryHeadline header={header} accentClassName="story-desk__accent" />
           </h2>
 
           <ol ref={listRef} className="story-desk__captions" data-visible={captionsVisible ? 'true' : 'false'}>

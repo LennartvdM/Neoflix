@@ -29,6 +29,7 @@ the phone version, that page's words and that page's styles, side by side.
 | What you see | Where it lives |
 |---|---|
 | All section prose + titles (both desktop and phone) | `pages/neoflix/content.js` |
+| The two big act headlines and each chapter's opening statement (desktop) | `pages/home/story/story.data.js` — they are the homepage story's headlines and captions, shown again here |
 | Phone-only hero ("Record. Reflect. Refine." + subtitle, intro band) | `pages/neoflix/NeoflixPhone.jsx` — search the file for the sentence you want to change |
 | Section backdrop videos / accent colours | `pages/neoflix/backdrop.js` (desktop); map at the top of `NeoflixPhone.jsx` (phone) |
 

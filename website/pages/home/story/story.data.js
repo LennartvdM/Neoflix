@@ -1,3 +1,8 @@
+// ALSO SHOWN ON /neoflix: each story's `header` opens one of that page's
+// two acts, and each headline (matched by `sectionTarget`) is the opening
+// statement of the /neoflix chapter it links to. Read from here — no copy
+// to keep in step — but a wording change lands in both places.
+//
 // CONTENT WARNING — duplicated copy, edit BOTH surfaces.
 // The phone homepage restates these headlines in
 // components/mobile/MobileHome.jsx (MOBILE_PANELS), in a different
