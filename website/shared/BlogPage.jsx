@@ -478,142 +478,156 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page, 
                   </h2>
                 </header>
               )}
-              <section
-                id={section.id}
-                className={`blog-section${hasPublicationLead ? ' blog-section--with-publication' : ' blog-section--plain'}`}
-                style={{
-                  position: 'relative',
-                  borderRadius: 0,
-                  padding: 0,
-                  scrollMarginTop: 96,
-                  opacity: 1,
-                  isolation: 'isolate',
-                  overflow: 'visible',
-                }}
-              >
-                {/* This article's own PDF, out on the background beside
-                    it. Anchored to the section rather than the viewport,
-                    so it travels with the paper it hands over. */}
-                {hasPublicationLead && (
-                  <PublicationAttachment
-                    pdf={section.pdf}
-                    variant="gutter"
-                    title={parsed.titleCard?.title}
-                  />
-                )}
-
-                <div className={`blog-section__lead${hasPublicationLead ? ' blog-section__lead--publication' : ' blog-section__lead--plain'}`}>
+              {section.Module ? (
+                // A bespoke module renders the whole section itself (see
+                // pages/neoflix/modules) — no title slab, no reading card.
+                // It still gets the section's id, so the index, scroll spy,
+                // backdrop and lane work as for any other section.
+                <section
+                  id={section.id}
+                  className="blog-module"
+                  style={{ position: 'relative', scrollMarginTop: 96 }}
+                >
+                  <section.Module section={section} lede={lede} TitleTag={TitleTag} />
+                </section>
+              ) : (
+                <section
+                  id={section.id}
+                  className={`blog-section${hasPublicationLead ? ' blog-section--with-publication' : ' blog-section--plain'}`}
+                  style={{
+                    position: 'relative',
+                    borderRadius: 0,
+                    padding: 0,
+                    scrollMarginTop: 96,
+                    opacity: 1,
+                    isolation: 'isolate',
+                    overflow: 'visible',
+                  }}
+                >
+                  {/* This article's own PDF, out on the background beside
+                      it. Anchored to the section rather than the viewport,
+                      so it travels with the paper it hands over. */}
                   {hasPublicationLead && (
-                    <div aria-hidden="true" className="blog-section__glass" />
+                    <PublicationAttachment
+                      pdf={section.pdf}
+                      variant="gutter"
+                      title={parsed.titleCard?.title}
+                    />
                   )}
-                  {publicationPreview && (
-                    <PublicationGlassPreview preview={publicationPreview} />
-                  )}
-                  {lede ? (
-                    // A chapter opens on its statement — the same sentence
-                    // the homepage caption that links here shows — with
-                    // the title as a kicker above it.
-                    <div className="blog-section__header blog-section__header--chapter">
-                      <TitleTag className="blog-chapter__kicker">{section.title}</TitleTag>
-                      <p className="blog-chapter__lede">{lede}</p>
-                    </div>
+
+                  <div className={`blog-section__lead${hasPublicationLead ? ' blog-section__lead--publication' : ' blog-section__lead--plain'}`}>
+                    {hasPublicationLead && (
+                      <div aria-hidden="true" className="blog-section__glass" />
+                    )}
+                    {publicationPreview && (
+                      <PublicationGlassPreview preview={publicationPreview} />
+                    )}
+                    {lede ? (
+                      // A chapter opens on its statement — the same sentence
+                      // the homepage caption that links here shows — with
+                      // the title as a kicker above it.
+                      <div className="blog-section__header blog-section__header--chapter">
+                        <TitleTag className="blog-chapter__kicker">{section.title}</TitleTag>
+                        <p className="blog-chapter__lede">{lede}</p>
+                      </div>
+                    ) : (
+                      <div className="blog-section__header">
+                        <TitleTag
+                          style={{
+                            fontFamily: 'Inter, sans-serif',
+                            margin: 0,
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            gap: 14,
+                            flexWrap: 'wrap',
+                            color: '#f8fbff',
+                            letterSpacing: 0,
+                            lineHeight: 1.08,
+                            textShadow: '0 2px 14px rgba(8, 17, 24, 0.24)',
+                          }}
+                        >
+                          {numberPart && (
+                            <span
+                              style={{
+                                fontWeight: 300,
+                                fontSize: 42,
+                                color: 'rgba(248, 251, 255, 0.72)',
+                                fontVariantNumeric: 'tabular-nums',
+                              }}
+                            >
+                              {numberPart}
+                            </span>
+                          )}
+                          <span style={{ fontWeight: 740, fontSize: 38 }}>
+                            {titlePart}
+                          </span>
+                        </TitleTag>
+                      </div>
+                    )}
+
+                    {hasPublicationLead && (
+                      <PublicationLead
+                        card={parsed.titleCard}
+                        citation={parsed.citation}
+                        preview={publicationPreview}
+                        pdf={section.pdf}
+                        paperHref={paperPath(section.id)}
+                      />
+                    )}
+                  </div>
+
+                  <div className="blog-section__content">
+                    <div aria-hidden="true" className="blog-section__content-wash" />
+
+                  {/* A section may bring its own body (`Component`, e.g. the
+                      film or the toolbox route on /neoflix) and something to
+                      follow its prose (`After`, e.g. a chapter's toolbox
+                      links). Both receive the section. */}
+                  {section.Component ? (
+                    <section.Component section={section} />
                   ) : (
-                    <div className="blog-section__header">
-                      <TitleTag
+                    <>
+                    {parsed.bodyHtmlBefore && (
+                      <div
+                        className="blog-body"
                         style={{
                           fontFamily: 'Inter, sans-serif',
-                          margin: 0,
-                          display: 'flex',
-                          alignItems: 'baseline',
-                          gap: 14,
-                          flexWrap: 'wrap',
-                          color: '#f8fbff',
-                          letterSpacing: 0,
-                          lineHeight: 1.08,
-                          textShadow: '0 2px 14px rgba(8, 17, 24, 0.24)',
+                          fontWeight: 500,
+                          fontSize: 16,
+                          lineHeight: 1.8,
+                          color: '#383437',
+                          maxWidth: 620,
+                          marginTop: hasPublicationLead ? 4 : 0,
                         }}
-                      >
-                        {numberPart && (
-                          <span
-                            style={{
-                              fontWeight: 300,
-                              fontSize: 42,
-                              color: 'rgba(248, 251, 255, 0.72)',
-                              fontVariantNumeric: 'tabular-nums',
-                            }}
-                          >
-                            {numberPart}
-                          </span>
-                        )}
-                        <span style={{ fontWeight: 740, fontSize: 38 }}>
-                          {titlePart}
-                        </span>
-                      </TitleTag>
-                    </div>
+                        dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlBefore }}
+                        onClick={handleBodyClick}
+                      />
+                    )}
+                    {section.video && (
+                      <InlineVideo src={section.video} />
+                    )}
+                    {parsed.bodyHtmlAfter && (
+                      <div
+                        className="blog-body"
+                        style={{
+                          fontFamily: 'Inter, sans-serif',
+                          fontWeight: 500,
+                          fontSize: 16,
+                          lineHeight: 1.8,
+                          color: '#383437',
+                          maxWidth: 620,
+                          marginTop: section.video ? 24 : (hasPublicationLead ? 12 : 0),
+                        }}
+                        dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlAfter }}
+                        onClick={handleBodyClick}
+                      />
+                    )}
+                    </>
                   )}
-
-                  {hasPublicationLead && (
-                    <PublicationLead
-                      card={parsed.titleCard}
-                      citation={parsed.citation}
-                      preview={publicationPreview}
-                      pdf={section.pdf}
-                      paperHref={paperPath(section.id)}
-                    />
-                  )}
-                </div>
-
-                <div className="blog-section__content">
-                  <div aria-hidden="true" className="blog-section__content-wash" />
-
-                {/* A section may bring its own body (`Component`, e.g. the
-                    film or the toolbox route on /neoflix) and something to
-                    follow its prose (`After`, e.g. a chapter's toolbox
-                    links). Both receive the section. */}
-                {section.Component ? (
-                  <section.Component section={section} />
-                ) : (
-                  <>
-                  {parsed.bodyHtmlBefore && (
-                    <div
-                      className="blog-body"
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: 500,
-                        fontSize: 16,
-                        lineHeight: 1.8,
-                        color: '#383437',
-                        maxWidth: 620,
-                        marginTop: hasPublicationLead ? 4 : 0,
-                      }}
-                      dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlBefore }}
-                      onClick={handleBodyClick}
-                    />
-                  )}
-                  {section.video && (
-                    <InlineVideo src={section.video} />
-                  )}
-                  {parsed.bodyHtmlAfter && (
-                    <div
-                      className="blog-body"
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: 500,
-                        fontSize: 16,
-                        lineHeight: 1.8,
-                        color: '#383437',
-                        maxWidth: 620,
-                        marginTop: section.video ? 24 : (hasPublicationLead ? 12 : 0),
-                      }}
-                      dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlAfter }}
-                      onClick={handleBodyClick}
-                    />
-                  )}
-                  </>
-                )}
-                {section.After && <section.After section={section} />}
-                </div>
-              </section>
+                  {section.After && <section.After section={section} />}
+                  </div>
+                </section>
+              )}
               </React.Fragment>
             );
           })}

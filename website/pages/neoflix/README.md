@@ -7,6 +7,7 @@ same page, scrolled to the contact section.
 |---|---|
 | `NeoflixPage.jsx` | Picks the surface: laptop or phone |
 | `NeoflixDesktop.jsx` | The laptop page: the essay in three acts, on `../../shared/BlogPage.jsx` |
+| `modules/` | One composition per chapter (`Chapters.jsx`) and per Act III part (`InPractice.jsx`), mapped by section id in `NeoflixDesktop.jsx`. A chapter without a module falls back to the standard card. |
 | `practice/` | Act III — the film, the toolbox as a route, the success-story map, the sign-off — and the "In the toolbox" row under each chapter |
 | `NeoflixPhone.jsx` | The phone version, including its own hero text |
 | `content.js` | All the section prose and titles — shared by both surfaces |
@@ -27,3 +28,10 @@ Act III and the chapter rows are read from the toolbox itself
 toolbox sidebar shows them, and each page's opening sentence. Rename or
 reorder something in GitBook and this page follows on the next build — there
 is nothing to update here.
+
+The chapter modules lift a few phrases out of the prose — the cast of roles in
+*Like a dance*, the pull quote in *But this comes at a cost*, the lists in the
+last two chapters. Each is matched against `content.js` at render time: reword
+the sentence and the lifted phrase simply disappears rather than going stale.
+The lists of candidate phrases are at the top of each module in
+`modules/Chapters.jsx`.

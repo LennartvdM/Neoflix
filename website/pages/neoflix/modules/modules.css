@@ -1,0 +1,491 @@
+/* /neoflix bespoke modules (Chapters.jsx, InPractice.jsx). Each module
+   picks its own surface — straight on the footage, a light sheet, a dark
+   panel — so consecutive chapters stop looking like one repeated card. */
+
+.blog-module {
+  font-family: Inter, sans-serif;
+  --nf-ink: #1d2b36;
+  --nf-ink-soft: rgba(29, 43, 54, 0.66);
+  --nf-teal: #2d6a6a;
+  --nf-teal-bright: #48c1c4;
+  --nf-line: rgba(29, 43, 54, 0.12);
+}
+
+/* ── Surfaces ──────────────────────────────────────────────────────────── */
+
+.nf-sheet {
+  position: relative;
+  padding: 52px 56px;
+  border-radius: 16px;
+  background: rgba(245, 249, 252, 0.95);
+  box-shadow: 0 40px 90px -50px rgba(4, 14, 18, 0.55);
+  color: var(--nf-ink);
+}
+.nf-dark {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0b1622;
+  color: #e9f1f5;
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.6);
+  --nf-ink: #e9f1f5;
+  --nf-ink-soft: rgba(233, 241, 245, 0.7);
+  --nf-teal: #7fd6d8;
+  --nf-line: rgba(255, 255, 255, 0.12);
+}
+.nf-on-footage {
+  padding: 0 0 30px;
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+
+.nf-kicker {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--nf-teal);
+}
+.nf-kicker--light {
+  color: rgba(255, 255, 255, 0.82);
+}
+.nf-lede {
+  margin: 0;
+  max-width: 17em;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -0.025em;
+  color: var(--nf-ink);
+}
+.nf-lede--light {
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.18);
+}
+.nf-lede--xl {
+  max-width: 15em;
+  font-size: clamp(36px, 3.4vw, 50px);
+  line-height: 1.06;
+  letter-spacing: -0.032em;
+}
+
+.nf-prose {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.8;
+  color: #383437;
+}
+.nf-prose p {
+  margin: 0 0 1.2em;
+}
+.nf-prose p:last-child {
+  margin-bottom: 0;
+}
+.nf-prose a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(72, 193, 196, 0.6);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.nf-prose a strong {
+  font-weight: inherit;
+}
+.nf-prose a:hover {
+  color: var(--nf-teal);
+  text-decoration-color: var(--nf-teal-bright);
+}
+.nf-prose--intro {
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--nf-ink);
+  margin-bottom: 28px;
+}
+.nf-prose--two-col {
+  column-count: 2;
+  column-gap: 44px;
+}
+.nf-prose--two-col p {
+  break-inside: avoid-column;
+}
+.nf-prose--light {
+  color: rgba(233, 241, 245, 0.82);
+}
+.nf-prose--light a:hover {
+  color: #fff;
+}
+
+.nf-quote {
+  margin: 0;
+  padding: 4px 0 4px 26px;
+  border-left: 3px solid var(--nf-teal-bright);
+}
+.nf-quote p {
+  margin: 0;
+  max-width: 24em;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  color: var(--nf-ink);
+}
+.nf-quote--light p {
+  color: #fff;
+}
+
+/* ── Clip ──────────────────────────────────────────────────────────────── */
+
+.nf-clip {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0e1c31;
+  box-shadow: 0 24px 50px -28px rgba(4, 14, 18, 0.6);
+}
+.nf-clip__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Bridges, per surface ──────────────────────────────────────────────── */
+
+.nf-bridge .toolbox-bridge {
+  margin-top: 40px;
+}
+.nf-bridge--dark .toolbox-bridge {
+  border-top-color: rgba(255, 255, 255, 0.14);
+}
+.nf-bridge--dark .toolbox-bridge__label,
+.nf-bridge--dark .toolbox-bridge__arrow {
+  color: #7fd6d8;
+}
+.nf-bridge--dark .toolbox-bridge__link {
+  color: #e9f1f5;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(127, 214, 216, 0.35);
+}
+.nf-bridge--dark .toolbox-bridge__link:hover {
+  background: rgba(127, 214, 216, 0.16);
+}
+
+/* ── I.1 The clock ─────────────────────────────────────────────────────── */
+
+.nf-clock__clip {
+  border-radius: 16px;
+}
+.nf-clock__sheet {
+  margin: -110px 0 0 64px;
+  z-index: 1;
+}
+
+/* ── I.2 Ensemble ──────────────────────────────────────────────────────── */
+
+.nf-ensemble {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: 52px;
+  align-items: start;
+}
+.nf-ensemble__aside {
+  position: sticky;
+  top: 120px;
+}
+.nf-ensemble__main > * + * {
+  margin-top: 30px;
+}
+.nf-ensemble__cast {
+  list-style: none;
+  margin: 34px 0 0;
+  padding: 0;
+}
+.nf-ensemble__cast li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--nf-line);
+  font-size: 21px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--nf-ink);
+}
+/* Each role's marker lights in turn, around and around: a team keeping
+   time with one another. */
+.nf-ensemble__beat {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nf-teal-bright);
+  opacity: 0.3;
+  animation: nf-beat calc(var(--n) * 0.42s) ease-in-out calc(var(--i) * 0.42s) infinite;
+}
+@keyframes nf-beat {
+  0%, 22%, 100% { opacity: 0.3; transform: scale(1); }
+  8% { opacity: 1; transform: scale(1.7); }
+}
+
+/* ── I.3 Tunnel vision ─────────────────────────────────────────────────── */
+
+/* The frame closes in when it comes into view: a radial mask shrinks from
+   wider than the clip to a soft spotlight. */
+.nf-tunnel__clip {
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 260% 260%;
+  mask-size: 260% 260%;
+  transition: -webkit-mask-size 2.6s cubic-bezier(0.45, 0, 0.2, 1), mask-size 2.6s cubic-bezier(0.45, 0, 0.2, 1);
+}
+/* The statement is set over the clip's lower half; darken that half into
+   the panel so the type stays legible over the bright operating light. */
+.nf-tunnel__clip::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(11, 22, 34, 0), rgba(11, 22, 34, 0.88));
+}
+.nf-tunnel__clip[data-in-view='true'] {
+  -webkit-mask-size: 112% 135%;
+  mask-size: 112% 135%;
+}
+.nf-tunnel__head {
+  position: relative;
+  margin-top: -150px;
+  padding: 0 56px 40px;
+}
+.nf-tunnel .nf-quote {
+  margin: 0 56px 44px;
+}
+.nf-tunnel .nf-prose,
+.nf-tunnel .nf-bridge {
+  padding: 0 56px;
+}
+
+/* ── II.1 Quiet ────────────────────────────────────────────────────────── */
+
+.nf-quiet {
+  padding: 80px 56px;
+}
+.nf-quiet__column {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.nf-quiet__column .nf-lede {
+  margin-bottom: 30px;
+}
+.nf-quiet__figure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 32px;
+  align-items: end;
+  margin: 56px 0;
+}
+.nf-quiet__note {
+  padding-left: 18px;
+  border-left: 2px solid var(--nf-teal-bright);
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--nf-teal);
+}
+
+/* ── II.2 The debrief ──────────────────────────────────────────────────── */
+
+.nf-debrief__head {
+  margin-bottom: 36px;
+}
+.nf-debrief__review {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
+  margin-bottom: 40px;
+}
+.nf-debrief__looks {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.nf-debrief__looks li {
+  padding: 12px 16px;
+  border-left: 3px solid var(--nf-teal-bright);
+  border-radius: 0 8px 8px 0;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.nf-debrief__outcomes {
+  list-style: none;
+  margin: 44px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.nf-debrief__outcomes li {
+  padding-top: 16px;
+  border-top: 2px solid var(--nf-teal-bright);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+}
+
+/* ── II.3 Shared ground ────────────────────────────────────────────────── */
+
+.nf-shared__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: 44px;
+  align-items: center;
+  margin-bottom: 44px;
+}
+.nf-shared__gains {
+  list-style: none;
+  counter-reset: gain;
+  margin: 30px 0 0;
+  padding: 0;
+}
+.nf-shared__gains li {
+  counter-increment: gain;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--nf-line);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.nf-shared__gains li::before {
+  content: counter(gain, decimal-leading-zero);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--nf-teal);
+}
+
+/* ── III Film, route, stories, close ───────────────────────────────────── */
+
+.nf-route {
+  padding: 52px 56px 56px;
+}
+.nf-route__head {
+  margin-bottom: 40px;
+}
+.nf-dark .toolbox-path {
+  --ink: #e9f1f5;
+  --ink-soft: rgba(233, 241, 245, 0.66);
+  --teal: #7fd6d8;
+  --line: rgba(255, 255, 255, 0.12);
+}
+.nf-dark .toolbox-path__node {
+  background: #0b1622;
+}
+.nf-dark .toolbox-path__groups--phased .toolbox-path__group {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.nf-stories .success-stories {
+  --ink: #fff;
+  --ink-soft: rgba(255, 255, 255, 0.8);
+  --line: rgba(255, 255, 255, 0.22);
+  --teal: #fff;
+}
+.nf-stories .success-stories__excerpt {
+  margin-bottom: 4px;
+  max-width: 40em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.2);
+}
+.nf-stories .success-stories__story {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+.nf-stories .success-stories__story:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.nf-stories .success-stories__list {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.nf-close__head {
+  padding-top: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-ensemble__beat {
+    animation: none;
+    opacity: 0.8;
+  }
+  .nf-tunnel__clip {
+    transition: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .nf-ensemble,
+  .nf-debrief__review,
+  .nf-shared__top {
+    grid-template-columns: 1fr;
+    row-gap: 32px;
+  }
+  .nf-ensemble__aside {
+    position: static;
+  }
+  .nf-prose--two-col {
+    column-count: 1;
+  }
+  .nf-quiet__figure {
+    grid-template-columns: 1fr;
+  }
+  .nf-stories .success-stories__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .nf-clock__sheet {
+    margin-left: 24px;
+  }
+}
+@media (max-width: 900px) {
+  .nf-sheet,
+  .nf-quiet,
+  .nf-route {
+    padding: 32px 24px;
+  }
+  .nf-tunnel__head,
+  .nf-tunnel .nf-prose,
+  .nf-tunnel .nf-bridge {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .nf-tunnel .nf-quote {
+    margin: 0 24px 32px;
+  }
+  .nf-debrief__outcomes {
+    grid-template-columns: 1fr;
+  }
+  .nf-clock__sheet {
+    margin: -40px 0 0;
+  }
+}

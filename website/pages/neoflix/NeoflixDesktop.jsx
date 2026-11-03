@@ -21,37 +21,45 @@ import BlogPage from '../../shared/BlogPage';
 import { STORIES } from '../home/story/story.data';
 import { TAGLINE } from '../home/content';
 import { sections as chapters } from './content';
+import { successStories, networkPage } from './practice/toolbox';
 import {
-  ToolboxBridge,
-  FilmBlock,
-  ToolboxPath,
-  SuccessStories,
-  SignOff,
-} from './practice/Practice';
-import { toolboxLinksIn, successStories, networkPage } from './practice/toolbox';
+  TimeSensitive,
+  LikeADance,
+  TheCost,
+  Sharpening,
+  TeamDynamics,
+  Perspectives,
+} from './modules/Chapters';
+import { FilmModule, ToolboxModule, StoriesModule, SignOffModule } from './modules/InPractice';
 
-// Each essay chapter ends with the toolbox pages its prose links to.
-// Built once per chapter at module level so the component identity is
-// stable across renders.
-const withBridge = (section) => {
-  const pages = toolboxLinksIn(section.content);
-  if (!pages.length) return section;
-  const After = () => <ToolboxBridge pages={pages} />;
-  return { ...section, After };
+// Every chapter is its own composition (modules/), chosen for what it
+// says — not one card template repeated. Keyed by content.js section id.
+const MODULES = {
+  'time-sensitive': TimeSensitive,
+  'like-a-dance': LikeADance,
+  cost: TheCost,
+  sharpening: Sharpening,
+  'team-dynamics': TeamDynamics,
+  perspectives: Perspectives,
+  contact: SignOffModule,
 };
 
-const essay = chapters.filter((s) => s.id !== 'contact').map(withBridge);
+const essay = chapters.filter((s) => s.id !== 'contact');
 const contact = chapters.find((s) => s.id === 'contact');
 const stories = successStories();
 const network = networkPage();
 
 const PRACTICE = [
-  { id: 'film', title: 'The film', Component: FilmBlock },
-  { id: 'the-toolbox', title: 'The toolbox', Component: ToolboxPath },
-  { id: 'success-stories', title: 'Success stories', Component: SuccessStories },
+  { id: 'film', title: 'The film', Module: FilmModule },
+  { id: 'the-toolbox', title: 'The toolbox', Module: ToolboxModule },
+  { id: 'success-stories', title: 'Success stories', Module: StoriesModule },
 ];
 
-const SECTIONS = [...essay, ...PRACTICE, { ...contact, Component: SignOff }];
+// A section without a module (a chapter added to content.js later) falls
+// back to BlogPage's standard rendering until it gets one.
+const withModule = (section) => (MODULES[section.id] ? { ...section, Module: MODULES[section.id] } : section);
+
+const SECTIONS = [...essay, ...PRACTICE, contact].filter(Boolean).map((s) => (s.Module ? s : withModule(s)));
 
 const ACTS = [
   { id: 'in-the-moment', numeral: 'I', label: 'In the moment', story: 'pressure' },
