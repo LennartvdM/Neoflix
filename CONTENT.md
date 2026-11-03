@@ -15,7 +15,7 @@ the phone version, that page's words and that page's styles, side by side.
 |---|---|
 | Tagline under the logo ("Video review for neonatal teams…") | `TAGLINE` in `pages/home/content.js` (one string, used everywhere) |
 | The animated "Record / Reflect / Refine" words | `pages/home/intro/RecordReflectRefine.jsx` (`WORDS`) |
-| The six captions (and the small proof line under the three answer captions) | `shared/argument.js` — each beat's `claim` and `homeProof`. Desktop and phone both read it. |
+| The six captions | `shared/argument.js` — each beat's `claim`. Desktop and phone both read it. |
 | The two story headlines ("In the moment…", "Yet, reflection…") | `header` in `pages/home/story/story.data.js` **and** `chapterHeader` in `pages/home/HomePhone.jsx` — keep in step |
 | Story section videos | `public/videos/*.mp4`, mapped in `story.data.js`. Replacing a clip? Read CLAUDE.md rule 7 first, and regenerate its still in `public/videos/stills/`. |
 | Phone hero lines + label | top of `pages/home/HomePhone.jsx` |

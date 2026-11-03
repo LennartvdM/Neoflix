@@ -201,18 +201,6 @@
   color: #fff;
 }
 
-.story-desk__proof {
-  display: block;
-  margin-top: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: rgba(127, 214, 216, 0.75);
-  transition: color 0.5s ease;
-}
-.story-desk__caption[aria-current='true'] .story-desk__proof {
-  color: #7fd6d8;
-}
 .story-desk__arrow {
   display: inline-block;
   color: var(--accent);

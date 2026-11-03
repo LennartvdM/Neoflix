@@ -9,12 +9,12 @@ import { assetUrl } from '../../../lib/utils/assetUrl';
 import { beatById, captionLines } from '../../../shared/argument';
 
 // The captions are the beats' claims — the universal line at its smallest
-// (shared/argument.js). The answer beats also carry a proof beneath.
+// (shared/argument.js).
 const captions = (ids) =>
   ids.map((id) => {
     const beat = beatById(id);
     const [firstLine, secondLine] = captionLines(beat.claim);
-    return { firstLine, secondLine, sectionTarget: id, proof: beat.homeProof };
+    return { firstLine, secondLine, sectionTarget: id };
   });
 
 export const BASE_INDEX = 2; // index of the always-visible base video

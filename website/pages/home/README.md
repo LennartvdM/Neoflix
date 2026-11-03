@@ -28,8 +28,8 @@ That name is used end to end: the slide list in `HomeDesktop.jsx`, the `story`
 prop, `STORIES` in the data file, and the backdrop's `medical-<story>` keys.
 
 **The six captions are not written here.** They are the beats' claims in
-`../../shared/argument.js`, split into two lines automatically; the answer
-captions also show each beat's `homeProof`. Desktop and phone both read them.
+`../../shared/argument.js`, split into two lines automatically. Desktop and
+phone both read them.
 Only the two headlines ("In the moment…", "Yet, reflection…") are written
 twice — `header` in `story/story.data.js` and `chapterHeader` in
 `HomePhone.jsx`.

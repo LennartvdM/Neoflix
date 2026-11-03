@@ -111,7 +111,6 @@ function Beat({ beat }) {
                 text={p.text}
                 breakdown={p.breakdown}
                 cite={paperCite(p.paper)}
-                clip={p.size === 'screen' ? beat.clip : undefined}
               />
             ))}
           </div>

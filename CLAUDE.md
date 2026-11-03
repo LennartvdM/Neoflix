@@ -51,10 +51,11 @@ working in; they're short, and GitHub renders them when browsing too.
    `public/previews/` or another tracked directory.
 3. **The argument has one home: `shared/argument.js`.** The six beats —
    each one's claim, in-practice line, proofs, witness, instrument and
-   exits — live there, and the homepage captions (desktop and phone),
-   the answer-slide proof lines and every hook on `/neoflix` read from
-   it. Figures are written exactly as the papers report them and cite
-   the paper (P1–P6). The two act headlines are still written twice:
+   exits — live there, and the homepage captions (desktop and phone)
+   and every hook on `/neoflix` read from it. Figures are written
+   exactly as the papers report them, inside a sentence, and cite the
+   paper (P1–P6). No big standalone numbers or count-ups: the site
+   reports findings, it doesn't advertise them. The two act headlines are still written twice:
    `pages/home/story/story.data.js` (`header`) and `HomePhone.jsx`
    (`chapterHeader`) — keep those in step. The phone `/neoflix` and
    `/publications` pages still read the older `content.js` prose.

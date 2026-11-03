@@ -17,7 +17,7 @@
 import React, { useRef } from 'react';
 import IllustrationClip from '../IllustrationClip';
 import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
-import { useInView, useCountUp } from './motion';
+import { useInView } from './motion';
 import { useFilm } from './FilmDoor';
 import './hooks.css';
 
@@ -68,48 +68,39 @@ export function Cite({ cite }) {
 }
 
 /**
- * The figure counts up once as the proof enters, the words and source
- * follow, then it rests and never re-animates. At `screen` size the
- * figure is cut out of the beat's own clip.
+ * A finding, as a sentence: the figure set into the words at text size
+ * (tabular numerals), then the source. Never a big number on its own —
+ * the site reports what the papers found, it doesn't advertise it. The
+ * proof settles into place once and rests; nothing counts.
+ *
+ * Sizes: `line` (a sentence, margin or stream), `panel` (a larger
+ * sentence with a rule, and optionally its breakdown as a small table).
  */
-export function Proof({ figure, text, cite, size = 'panel', breakdown, clip }) {
+export function Proof({ figure, text, cite, size = 'panel', breakdown }) {
   const ref = useRef(null);
   const settled = useInView(ref, { once: true, threshold: 0.4 });
-  const shown = useCountUp(figure, settled);
+  const panel = size !== 'line';
   return (
-    <div ref={ref} className={`hook-proof hook-proof--${size}`} data-settled={settled ? 'true' : 'false'}>
-      {figure && size === 'screen' && clip ? (
-        <ClipFigure figure={shown} clip={clip} play={settled} />
-      ) : figure ? (
-        <span className="hook-proof__figure">{shown}</span>
-      ) : null}
-      <span className="hook-proof__text">{text}</span>
+    <div ref={ref} className={`hook-proof hook-proof--${panel ? 'panel' : 'line'}`} data-settled={settled ? 'true' : 'false'}>
+      <p className="hook-proof__text">
+        {figure && <span className="hook-proof__figure">{figure}</span>}
+        {figure && ' '}
+        {text}
+      </p>
       {breakdown && (
-        <ul className="hook-proof__breakdown">
-          {breakdown.map(([n, label], i) => (
-            <li key={label} style={{ '--i': i, '--share': Number(n) / Number(figure) }}>
-              <span className="hook-proof__bar" aria-hidden="true" />
-              <span><b>{n}</b> {label}</span>
-            </li>
-          ))}
-        </ul>
+        <table className="hook-proof__breakdown">
+          <tbody>
+            {breakdown.map(([n, label]) => (
+              <tr key={label}>
+                <td className="hook-proof__n">{n}</td>
+                <td>{label}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
       <Cite cite={cite} />
     </div>
-  );
-}
-
-// The figure as a window onto the clip: white type multiplied over the
-// footage shows the footage through the letters and the panel colour
-// everywhere else.
-function ClipFigure({ figure, clip, play }) {
-  return (
-    <span className="hook-proof__knock" aria-label={figure}>
-      <IllustrationClip src={clip.video} poster={clip.still} play={play} preload="metadata" className="hook-proof__knock-media" />
-      <span className="hook-proof__knock-type" aria-hidden="true">{figure}</span>
-      {/* A hairline on the letters, so dark footage can't swallow a digit. */}
-      <span className="hook-proof__knock-type hook-proof__knock-type--outline" aria-hidden="true">{figure}</span>
-    </span>
   );
 }
 

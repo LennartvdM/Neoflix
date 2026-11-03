@@ -4,7 +4,6 @@
  * place a beat's words live:
  *
  *   - the homepage captions are each beat's `claim` (pages/home/story)
- *   - the homepage answer slide adds each answer beat's `homeProof`
  *   - /neoflix renders every hook of every beat (pages/neoflix)
  *   - paper pages point back to the beat they prove (`paper` ids)
  *
@@ -53,8 +52,8 @@ export const BEATS = [
     claim: 'Some work has to be done right now, and right the first time.',
     inPractice: 'Some babies are born before they can breathe on their own. There are a few minutes to fix that.',
     proofs: [
-      { size: 'panel', figure: '8 of 20', text: 'infants born before 30 weeks were not breathing at birth.', paper: 'drivingresearch' },
-      { size: 'line', figure: '25 beds', text: '600–650 admissions a year in Leiden.', paper: 'recordreflectrefine' },
+      { size: 'panel', text: 'In one of our studies, 8 of 20 infants born before 30 weeks were not breathing at birth.', paper: 'drivingresearch' },
+      { size: 'line', text: 'Leiden’s unit has 25 beds and 600–650 admissions a year.', paper: 'recordreflectrefine' },
     ],
     witness: { caption: 'The delivery room, the wide shot.', film: 12 },
     exits: [
@@ -113,9 +112,9 @@ export const BEATS = [
     inPractice: 'Leiden has recorded every stabilization at birth since 2009, and intubations and lines since 2021.',
     proofs: [
       {
-        size: 'screen',
+        size: 'panel',
         figure: '120',
-        text: 'things worth changing, found in nine months of sessions.',
+        text: 'things worth changing came out of nine months of sessions:',
         breakdown: [
           ['84', 'colleagues doing the same thing differently'],
           ['20', 'something to teach'],
@@ -124,11 +123,10 @@ export const BEATS = [
         ],
         paper: 'recordreflectrefine',
       },
-      { size: 'line', figure: '93%', text: 'of the time the vocal cords were closed while infants who weren’t breathing were ventilated.', paper: 'drivingresearch' },
+      { size: 'line', text: 'One finding became a study of its own: in infants who weren’t breathing, the vocal cords were closed 93% of the time they were ventilated.', paper: 'drivingresearch' },
     ],
     witness: { caption: 'Previewing the footage at the monitor.', film: 66 },
     instrument: 'twenty-rows',
-    homeProof: '120 things to change in nine months',
     exits: [
       { slug: 'level-2-in-action/11.-lets-neoflix/11.4-unlocking-insights', plan: '3.5 What to look for' },
       { slug: 'level-2-in-action/13.1-the-neoflix-approach', plan: '4.2 Four kinds of change' },
@@ -144,13 +142,12 @@ export const BEATS = [
     claim: 'If you watch it with the people who were there, everyone sees the same thing for once.',
     inPractice: 'Thirty minutes, every other week, doctors and nurses together, one person chairing.',
     proofs: [
-      { size: 'panel', figure: '101 of 125', text: 'staff came to at least one session in nine months; 80 of 125 had themselves recorded.', paper: 'practicalguidance' },
-      { size: 'line', figure: '99%', text: 'of 179 questionnaires were positive.', paper: 'practicalguidance' },
-      { size: 'line', figure: '28', text: 'interviews: it felt safe because consent was real and judgment was not allowed.', paper: 'providers' },
+      { size: 'panel', text: 'In nine months, 101 of the unit’s 125 doctors and nurses came to at least one session, and 80 had themselves recorded.', paper: 'practicalguidance' },
+      { size: 'line', text: '177 of 179 questionnaires afterwards were positive.', paper: 'practicalguidance' },
+      { size: 'line', text: 'In 28 interviews, colleagues said it felt safe because consent was real and judgment was not allowed.', paper: 'providers' },
     ],
     witness: { caption: 'A session: the room watches, then talks.', film: 215 },
     instrument: 'retyped-sentence',
-    homeProof: '101 of 125 staff came',
     film: true,
     exits: [
       { slug: 'level-2-in-action/11.-lets-neoflix/11.1-getting-the-most-out-of-your-neoflix-session', plan: '3.2 Running a session' },
@@ -169,11 +166,10 @@ export const BEATS = [
     claim: 'If you watch it with people who do it differently, you notice what you do.',
     inPractice: 'Leiden and Vienna reviewed each other’s recordings.',
     proofs: [
-      { size: 'panel', figure: '19', text: 'differences found in five joint sessions between December 2022 and March 2024; 7 led to a change or a new insight.', paper: 'internationalcollab' },
+      { size: 'panel', text: 'In five joint sessions between December 2022 and March 2024, the two units found 19 differences in how they work; 7 led to a change or a new insight.', paper: 'internationalcollab' },
       { size: 'line', text: 'Parents were invited to watch their own child’s stabilization and say what they needed.', paper: 'recordreflectrefine' },
     ],
     witness: { caption: 'Four units that record.' },
-    homeProof: '19 differences found with Vienna',
     exits: [
       { slug: 'level-1-fundamentals/4.-learning-from-success-stories', plan: '5.2 Four units' },
       { slug: 'level-3-growth/18.-expanding-your-video-program', plan: '5.3 Reviewing across units' },

@@ -86,30 +86,3 @@ export function useScrollProgress(ref, { onProgress, rest = 1 } = {}) {
     };
   }, [ref, rest]);
 }
-
-/**
- * A figure that counts up once when `run` turns true: "101 of 125" counts
- * the 101, "93%" the 93. Years and anything without a leading number are
- * returned as they are (counting to 2009 is not information).
- */
-export function useCountUp(figure, run, duration = 1100) {
-  const match = /^(\d[\d,.]*)(.*)$/.exec(figure || '');
-  const target = match ? Number(match[1].replace(/,/g, '')) : null;
-  const countable = target != null && !(target >= 1900 && target <= 2100) && !prefersReducedMotion();
-  const [value, setValue] = useState(countable ? 0 : null);
-  useEffect(() => {
-    if (!countable || !run) return undefined;
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (now) => {
-      const t = Math.min(1, (now - t0) / duration);
-      const eased = 1 - Math.pow(1 - t, 4);
-      setValue(Math.round(target * eased));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [countable, run, target, duration]);
-  if (!countable || value == null) return figure;
-  return `${value}${match[2]}`;
-}

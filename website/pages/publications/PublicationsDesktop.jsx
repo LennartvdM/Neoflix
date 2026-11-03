@@ -60,7 +60,7 @@ function PaperCard({ id, n }) {
       <Block
         margin={
           <div className="pub-card__margin">
-            <Proof size="panel" figure={arc.lifted.figure} text={arc.lifted.text} />
+            <Proof size="line" text={arc.lifted.text} />
             <Exits>
               <PdfDoor id={id} />
               {journal && <Exit href={journal} label={record.journal} direction="across" />}
