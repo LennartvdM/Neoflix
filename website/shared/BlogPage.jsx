@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import useScrollSpy from '../lib/hooks/useScrollSpy';
 import useTransitionNavigate from '../lib/hooks/useTransitionNavigate';
 import { useTransitionState } from './motion/TransitionContext';
+import { SLIDE_EASE } from './motion/RouteSlider';
 import { renderMarkdown } from '../lib/utils/renderMarkdown';
-import { useBackdropTarget } from './backdrop/useBackdrop';
+import { useBackdropTarget, useBackdropBands, blogBandsId } from './backdrop/useBackdrop';
 import { BLOG_DECK, blogIdxForSection } from './backdrop/decks';
 import IllustrationClip from './IllustrationClip';
+import { stillFor } from '../lib/utils/reducedMedia';
 import PublicationAttachment from '../pages/publications/PublicationAttachment';
 import PublicationBundle from '../pages/publications/PublicationBundle';
 import { paperPath } from '../pages/publications/records';
@@ -36,10 +38,12 @@ import { paperPath } from '../pages/publications/records';
 // The leader rides the outer slide without extra motion; the trailer
 // gets an additional inner slide from STAGGER_OFFSET → 0, delayed so
 // it lands after the outer slide settles.
-const STAGGER_OFFSET = '40%';
-const STAGGER_DELAY = 0.25;
-const STAGGER_DURATION = 0.5;
-const STAGGER_EASE = [0.4, 0, 0.2, 1];
+const STAGGER_OFFSET = '32%';
+const STAGGER_DELAY = 0.1;
+const STAGGER_DURATION = 0.75;
+// The page slide's own curve, so the trailing column decelerates into
+// place with the page instead of on a beat of its own.
+const STAGGER_EASE = SLIDE_EASE;
 const PUBLICATION_PREVIEW_OVERRIDES = new Map([
   [
     'https://www.frontiersin.org/articles/10.3389/fped.2022.931055/full',
@@ -85,7 +89,7 @@ const PUBLICATION_PREVIEW_OVERRIDES = new Map([
   ],
 ]);
 
-export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
+export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page }) {
   // Internal scroll container. BlogPage renders inside RouteSlider,
   // which is `position: fixed; inset: 0` — window never scrolls under
   // that layout, so the page scrolls on this inner element instead.
@@ -97,10 +101,20 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
   // Reading directly from context on every render would let a later
   // navigation (which mutates context direction before the next
   // transition starts) retroactively change our stagger half-way.
-  const { direction } = useTransitionState();
+  const { direction, isSliding } = useTransitionState();
   const [entryDir] = useState(direction);
   const sidebarTrails = entryDir < 0;
   const articleTrails = entryDir > 0;
+  // True once this page's arrival choreography has finished — the slide
+  // plus the trailing column. Things drawn outside the sliding subtree
+  // (the backdrop lane) wait for it, and measure only then. A direct
+  // visit has no choreography and starts settled.
+  const [settled, setSettled] = useState(entryDir === 0);
+  useEffect(() => {
+    if (settled) return undefined;
+    const id = setTimeout(() => setSettled(true), (STAGGER_DELAY + STAGGER_DURATION) * 1000 + 50);
+    return () => clearTimeout(id);
+  }, [settled]);
 
   // Synchronously place the internal scroll container at the right spot
   // on mount and whenever the route's `scrollTo` changes. useLayoutEffect
@@ -145,13 +159,108 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
 
   const sectionIds = sections.map((s) => s.id);
   const active = useScrollSpy(sectionIds, 120, scrollRef);
-  const [hovered, setHovered] = useState(null);
 
   const activeIdx = blogIdxForSection(active);
   useBackdropTarget(
     'blog',
     activeIdx >= 0 ? { kind: 'video', deck: BLOG_DECK, topIdx: activeIdx } : null
   );
+
+  // ── The index lane ──
+  // The homepage's travelling highlighter, carried over: a band of lifted
+  // footage behind the current index entry, running from the screen edge
+  // to the article card. It is drawn in the backdrop (useBackdropBands —
+  // only there can it sample the footage), so it can't ride the page
+  // slide: it waits for the slide to finish, then fades in where the
+  // index has landed.
+  const gridRef = useRef(null);
+  const articleRef = useRef(null);
+  const indexItemRefs = useRef({});
+  const progressFillRef = useRef(null);
+  const [lane, setLane] = useState(null);
+  const measureLane = useCallback(() => {
+    const root = scrollRef.current;
+    const grid = gridRef.current;
+    const article = articleRef.current;
+    const item = indexItemRefs.current[active];
+    const index = item?.closest('.blog-index');
+    // The lane is fixed to the viewport, so it only makes sense while the
+    // index is pinned. Below 900px the index stacks above the article and
+    // scrolls away (see the media query) — no lane there.
+    if (!root || !grid || !article || !item || getComputedStyle(index).position !== 'sticky') {
+      setLane(null);
+      return;
+    }
+    // Relative to the scroll root, so a slide offset in flight cancels
+    // out. The item's own translateX (a trailing index) doesn't move it
+    // vertically, and the card edge comes from offsets, not rects, so
+    // neither entrance transform skews the band.
+    const rootRect = root.getBoundingClientRect();
+    const r = item.getBoundingClientRect();
+    const cardLeft = grid.getBoundingClientRect().left - rootRect.left + article.offsetLeft;
+    const next = {
+      top: Math.round(r.top - rootRect.top),
+      height: Math.round(r.height),
+      // Flush with the card's edge, square-ended: it reads as the band
+      // running into the card. (A rounded end tucked underneath showed
+      // through the card's translucent header.)
+      right: Math.round(root.offsetWidth - cardLeft),
+    };
+    // Re-measured on scroll (below), so only re-render on a real change.
+    setLane((prev) => (prev && prev.top === next.top && prev.height === next.height && prev.right === next.right ? prev : next));
+  }, [active]);
+  useLayoutEffect(() => {
+    measureLane();
+  }, [measureLane, isSliding, settled]);
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(measureLane);
+    ro.observe(root);
+    if (gridRef.current) ro.observe(gridRef.current);
+    document.fonts?.ready?.then(measureLane);
+    return () => ro.disconnect();
+  }, [measureLane]);
+  useBackdropBands(
+    blogBandsId(page),
+    lane
+      ? {
+          visible: settled && !isSliding,
+          items: [{ id: 'lane', role: 'lane', top: lane.top, height: lane.height, left: 0, right: lane.right }],
+        }
+      : null
+  );
+
+  // ── Reading progress ──
+  // The teal line under the current index entry fills as that section is
+  // read — the vertical page's version of the homepage captions' timer.
+  // Written straight to the element on scroll; no re-render per frame.
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return undefined;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const section = document.getElementById(active);
+      const fill = progressFillRef.current;
+      if (!section || !fill) return;
+      const top = (gridRef.current?.offsetTop || 0) + section.offsetTop;
+      const p = (root.scrollTop + 120 - top) / Math.max(1, section.offsetHeight);
+      fill.style.transform = `scaleX(${Math.min(1, Math.max(0, p))})`;
+      // A sticky index can still release near the very end of the page;
+      // keep the lane on its entry if it does.
+      measureLane();
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    root.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      root.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [active, measureLane]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -231,6 +340,10 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
         overflowX: 'hidden',
       }}
     >
+      {/* Keeps the index — now type straight on the footage — legible on
+          the paler clips. Fixed inside the route slide, so it travels with
+          the page during a transition and stays put while reading. */}
+      <div aria-hidden="true" className="blog-scrim" />
       <div
         style={{
           position: 'relative',
@@ -240,143 +353,74 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
           padding: '104px 24px 120px',
           display: 'grid',
           gridTemplateColumns: 'minmax(220px, 284px) minmax(0, 900px)',
-          columnGap: 46,
+          columnGap: 64,
           alignItems: 'start',
+          // Centred: the pair used to hug the left edge (24px of margin
+          // against 186px on the right at 1440 wide).
+          justifyContent: 'center',
         }}
         className="blog-grid"
+        ref={gridRef}
       >
         {/* Sticky sidebar. Tagged with data-blog-sidebar for styling
             hooks; slides as part of the page's RouteSlider wrapper,
             plus an optional inner translate when it trails. */}
         <motion.aside
           data-blog-sidebar="true"
+          className="blog-index"
           initial={sidebarTrails ? { x: `-${STAGGER_OFFSET}` } : false}
           animate={sidebarTrails ? { x: 0 } : undefined}
           transition={sidebarTrails ? { duration: STAGGER_DURATION, delay: STAGGER_DELAY, ease: STAGGER_EASE } : undefined}
-          style={{
-            position: 'sticky',
-            top: 104,
-            backgroundColor: '#0e1c31',
-            border: '1px solid var(--edge-1d)',
-            borderRadius: 12,
-            padding: '56px 22px',
-            color: '#f5f9fc',
-            fontFamily: 'Inter, sans-serif',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            minHeight: 'min(620px, calc(100vh - 148px))',
-          }}
         >
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {sections.map((s, idx) => {
-              const isActive = s.id === active;
-              const isHovered = hovered === s.id;
-              const markerWidth = isActive ? 26 : isHovered ? 14 : 4;
-              const markerColor = isActive
-                ? '#ffffff'
-                : isHovered
-                ? '#c4ccd6'
-                : '#666f7c';
-              const textColor = isActive
-                ? '#ffffff'
-                : isHovered
-                ? '#c4ccd6'
-                : '#666f7c';
-              // Intro divider: render below the first item only when
-              // it's unnumbered and the next item IS numbered (e.g.
-              // "Preface" → "1. Narrative Review"). The /neoflix index
-              // has no numbering, so it doesn't get this divider.
-              const { numberPart: myNumber } = splitHeading(s.title);
-              const nextNumber = sections[idx + 1]
-                ? splitHeading(sections[idx + 1].title).numberPart
-                : '';
-              const isIntro =
-                idx === 0 && !myNumber && sections.length > 1 && !!nextNumber;
-              // Divider above the Contact pin in the /neoflix index.
-              const dividerAbove = s.id === 'contact' && idx > 0;
-              return (
-                <React.Fragment key={s.id}>
-                  {dividerAbove && (
-                    <li aria-hidden="true" style={{ listStyle: 'none', padding: '10px 0' }}>
-                      <div
-                        style={{
-                          height: 1,
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          margin: '0 8px',
-                        }}
-                      />
+          {/* The index used to sit in an opaque navy box held at 620px
+              tall and mostly empty. It is type on the footage now, with
+              the backdrop lane (above) behind the current entry. */}
+          <nav aria-label="On this page">
+            <ul className="blog-index__list">
+              {sections.map((s, idx) => {
+                const isActive = s.id === active;
+                // Intro divider: below the first item only when it's
+                // unnumbered and the next item IS numbered (e.g.
+                // "Preface" → "1. Narrative Review"). The /neoflix index
+                // has no numbering, so it doesn't get this divider.
+                const { numberPart: myNumber } = splitHeading(s.title);
+                const nextNumber = sections[idx + 1]
+                  ? splitHeading(sections[idx + 1].title).numberPart
+                  : '';
+                const isIntro =
+                  idx === 0 && !myNumber && sections.length > 1 && !!nextNumber;
+                // Divider above the Contact pin in the /neoflix index.
+                const dividerAbove = s.id === 'contact' && idx > 0;
+                return (
+                  <React.Fragment key={s.id}>
+                    {dividerAbove && <li aria-hidden="true" className="blog-index__divider" />}
+                    <li>
+                      <button
+                        type="button"
+                        ref={(el) => { indexItemRefs.current[s.id] = el; }}
+                        className="blog-index__item"
+                        aria-current={isActive ? 'true' : undefined}
+                        onClick={() => handleSidebarClick(s.id)}
+                      >
+                        <span className="blog-index__label">{s.title}</span>
+                        {isActive && (
+                          <span className="blog-index__progress" aria-hidden="true">
+                            <span ref={progressFillRef} className="blog-index__progress-fill" />
+                          </span>
+                        )}
+                      </button>
                     </li>
-                  )}
-                  <li>
-                    <motion.button
-                      type="button"
-                      onClick={() => handleSidebarClick(s.id)}
-                      onMouseEnter={() => setHovered(s.id)}
-                      onMouseLeave={() => setHovered((h) => (h === s.id ? null : h))}
-                      animate={{ color: textColor }}
-                      transition={{ color: { duration: 0.32, ease: [0.4, 0, 0.2, 1] } }}
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        padding: '10px 8px',
-                        border: 'none',
-                        background: 'transparent',
-                        fontSize: 14,
-                        lineHeight: 1.4,
-                        fontWeight: isActive ? 700 : isHovered ? 600 : 500,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 12,
-                        transition: 'font-weight 0.25s ease',
-                      }}
-                    >
-                      <motion.span
-                        aria-hidden="true"
-                        animate={{ width: markerWidth, backgroundColor: markerColor }}
-                        transition={{
-                          width: { type: 'spring', stiffness: 320, damping: 26 },
-                          backgroundColor: { duration: 0.3 },
-                        }}
-                        style={{
-                          display: 'inline-block',
-                          height: 2,
-                          borderRadius: 1,
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span>{s.title}</span>
-                    </motion.button>
-                  </li>
-                  {isIntro && (
-                    <li aria-hidden="true" style={{ listStyle: 'none', padding: '10px 0' }}>
-                      <div
-                        style={{
-                          height: 1,
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          margin: '0 8px',
-                        }}
-                      />
-                    </li>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </ul>
+                    {isIntro && <li aria-hidden="true" className="blog-index__divider" />}
+                  </React.Fragment>
+                );
+              })}
+            </ul>
+          </nav>
 
-          {/* Foot of the index: everything at once. Divider matches the
-              one the numbered sections already sit under. */}
+          {/* Foot of the index: everything at once. */}
           {bundle && (
             <>
-              <div
-                aria-hidden="true"
-                style={{
-                  height: 1,
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  margin: '18px 8px 0',
-                }}
-              />
+              <div aria-hidden="true" className="blog-index__divider" />
               <PublicationBundle bundle={bundle} variant="sidebar" />
             </>
           )}
@@ -385,6 +429,7 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
         {/* Content column */}
         {pageTitle ? <h1 className="sr-only">{pageTitle}</h1> : null}
         <motion.article
+          ref={articleRef}
           initial={articleTrails ? { x: STAGGER_OFFSET } : false}
           animate={articleTrails ? { x: 0 } : undefined}
           transition={articleTrails ? { duration: STAGGER_DURATION, delay: STAGGER_DELAY, ease: STAGGER_EASE } : undefined}
@@ -527,6 +572,83 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle }) {
       </div>
 
       <style>{`
+        .blog-scrim {
+          position: fixed;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          background: linear-gradient(90deg,
+            rgba(4, 14, 18, 0.4) 0,
+            rgba(4, 14, 18, 0.2) 380px,
+            rgba(4, 14, 18, 0) 720px);
+        }
+        .blog-index {
+          position: sticky;
+          top: max(120px, calc(50vh - 230px));
+          font-family: Inter, sans-serif;
+          color: #fff;
+        }
+        .blog-index__list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+        }
+        .blog-index__item {
+          all: unset;
+          box-sizing: border-box;
+          position: relative;
+          display: block;
+          width: 100%;
+          padding: 12px 0 14px;
+          cursor: pointer;
+        }
+        .blog-index__label {
+          display: block;
+          font-size: 15px;
+          font-weight: 500;
+          line-height: 1.35;
+          letter-spacing: -0.005em;
+          color: rgba(255, 255, 255, 0.6);
+          text-shadow: 0 1px 12px rgba(0, 0, 0, 0.16);
+          transition: color 0.35s ease;
+        }
+        .blog-index__item:hover .blog-index__label {
+          color: rgba(255, 255, 255, 0.9);
+        }
+        .blog-index__item[aria-current='true'] .blog-index__label {
+          color: #fff;
+        }
+        .blog-index__item:focus-visible {
+          outline: 2px solid #48c1c4;
+          outline-offset: 2px;
+          border-radius: 6px;
+        }
+        .blog-index__progress {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 2px;
+          border-radius: 2px;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.18);
+        }
+        .blog-index__progress-fill {
+          display: block;
+          width: 100%;
+          height: 100%;
+          background: #48c1c4;
+          transform-origin: left center;
+          transform: scaleX(0);
+        }
+        .blog-index__divider {
+          list-style: none;
+          height: 1px;
+          margin: 10px 0;
+          background: rgba(255, 255, 255, 0.16);
+        }
         .blog-section {
           z-index: 0;
         }
@@ -1148,6 +1270,9 @@ function InlineVideo({ src }) {
     >
       <IllustrationClip
         src={src}
+        // The clip's still stands in until a frame decodes — otherwise
+        // the frame shows as a black box, often mid page slide.
+        poster={stillFor(src) || undefined}
         play={inView}
         preload="metadata"
         style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: '3 / 2', objectFit: 'cover', background: '#000' }}

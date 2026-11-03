@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import useTransitionNavigate from '../lib/hooks/useTransitionNavigate';
+import { SLIDE_DURATION, SLIDE_EASE } from './motion/RouteSlider';
 import { assetUrl } from '../lib/utils/assetUrl';
 
 const NAV_LINKS = [
@@ -286,13 +287,21 @@ export default function Navbar() {
               >
                 <AnimatePresence>
                   {active && (
+                    // One pill, shared across the links by layoutId: it
+                    // travels to the new link in step with the page slide
+                    // (same duration and curve) instead of fading out
+                    // here and in there.
                     <motion.span
                       key="active-pill"
+                      layoutId="navbar-active-pill"
                       className="absolute inset-0 z-20 rounded-full bg-[#529c9c]"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      transition={{
+                        layout: { duration: SLIDE_DURATION, ease: SLIDE_EASE },
+                        opacity: { duration: 0.18, ease: 'easeOut' },
+                      }}
                       style={{
                         boxShadow: '0 0 0 1px rgba(31, 95, 88, 0.5), 0 2px 8px 0 rgba(82,156,156,0.10)',
                         pointerEvents: 'none',

@@ -26,7 +26,7 @@ export default function NeoflixPage({ scrollTo }) {
       {mobile ? (
         <MobileNeoflixPage sections={sections} scrollTo={scrollTo} />
       ) : (
-        <BlogPage sections={sections} scrollTo={scrollTo} pageTitle="Neoflix" />
+        <BlogPage sections={sections} scrollTo={scrollTo} pageTitle="Neoflix" page="neoflix" />
       )}
     </Suspense>
   );

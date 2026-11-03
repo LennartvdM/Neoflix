@@ -24,7 +24,7 @@ export default function PublicationsPage() {
       {mobile ? (
         <MobilePublicationsPage sections={sections} bundle={bundle} />
       ) : (
-        <BlogPage sections={sections} bundle={bundle} pageTitle="Publications" />
+        <BlogPage sections={sections} bundle={bundle} pageTitle="Publications" page="publications" />
       )}
     </Suspense>
   );

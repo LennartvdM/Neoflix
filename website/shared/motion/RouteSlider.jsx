@@ -32,8 +32,15 @@ import useTabletLayout from '../../lib/hooks/useTabletLayout';
  * viewport so old and new stack cleanly while transforming on X.
  */
 
-const SLIDE_DURATION = 0.45;
-const EASE = [0.4, 0, 0.2, 1];
+// A decelerating curve: the click answers at once and the pages glide
+// into place. (Was 0.45s on the symmetric Material curve, which spends
+// its first third barely moving; a full expo-out overshot the other way —
+// 90% there in 120ms, which read as a cut rather than travel.) Shared
+// with the navbar pill, which travels to the new link on the same beat,
+// and BlogPage's trailing column.
+export const SLIDE_DURATION = 0.65;
+export const SLIDE_EASE = [0.32, 0.72, 0, 1];
+const EASE = SLIDE_EASE;
 
 export default function RouteSlider({ children }) {
   const location = useLocation();
