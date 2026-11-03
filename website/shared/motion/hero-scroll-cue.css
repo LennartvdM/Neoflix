@@ -1,0 +1,86 @@
+/* HeroScrollCue — see the component for why it exists and keeps moving. */
+
+.hero-scroll-cue {
+  all: unset;
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  z-index: 20;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 8px 18px;
+  border-radius: 999px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  --cue-ink: rgba(28, 54, 100, 0.75);
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+.hero-scroll-cue[data-visible='true'] {
+  opacity: 1;
+}
+.hero-scroll-cue:hover {
+  --cue-ink: #1c3664;
+}
+.hero-scroll-cue:focus-visible {
+  outline: 2px solid #48c1c4;
+  outline-offset: 4px;
+}
+
+.hero-scroll-cue__label {
+  font: 600 12px/1 Inter, sans-serif;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  /* Optical centring: tracking adds space after the last letter. */
+  padding-left: 0.24em;
+  color: var(--cue-ink);
+  transition: color 0.3s ease;
+}
+
+.hero-scroll-cue__track {
+  position: relative;
+  display: block;
+  width: 3px;
+  height: 72px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(28, 54, 100, 0.16);
+}
+
+.hero-scroll-cue__runner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 45%;
+  border-radius: 3px;
+  background: #48c1c4;
+  transform: translateY(-100%);
+  /* Gentle in-out: a strong one lingers at both ends, which is exactly
+     where the runner is outside the line, so the cue blinked out. */
+  animation: hero-scroll-cue-run 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-play-state: paused;
+}
+.hero-scroll-cue[data-visible='true'][data-running='true'] .hero-scroll-cue__runner {
+  animation-play-state: running;
+}
+
+/* Enters at the top, travels the line, drains out of the bottom, and
+   the next run starts straight away (the runner is 45% of the track, so
+   222% is just clear of its foot). */
+@keyframes hero-scroll-cue-run {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(222%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-cue__runner {
+    animation: none;
+    transform: none;
+    height: 50%;
+  }
+}
