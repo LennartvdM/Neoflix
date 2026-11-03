@@ -73,7 +73,7 @@ const HOME_CELLS = [
   // blends instead of flashing the dark default.
   { kind: 'video', targetKey: 'medical-pressure', camo: '#739780' },
   { kind: 'video', targetKey: 'medical-reflection' },
-  { kind: 'camo' },
+  // The exit slide paints its own pale fill.
   { kind: 'camo' },
 ];
 

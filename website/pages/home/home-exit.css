@@ -1,0 +1,97 @@
+.home-exit {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(to top, #ffffff, var(--cool-page));
+  font-family: Inter, sans-serif;
+  color: #15242e;
+}
+.home-exit__inner {
+  width: min(1100px, calc(100vw - 96px));
+  display: grid;
+  gap: 34px;
+}
+.home-exit__door {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 18px;
+  justify-self: start;
+  font-size: clamp(30px, 3vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: inherit;
+  text-decoration: none;
+}
+.home-exit__door--primary {
+  font-size: clamp(42px, 4.6vw, 72px);
+}
+.home-exit__arrow {
+  color: #2b8f92;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.home-exit__door:hover .home-exit__arrow {
+  transform: translateX(8px);
+}
+.home-exit__beats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+.home-exit__beat {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+  background: #0b1622;
+}
+.home-exit__beat img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.04);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  filter: brightness(0.82);
+}
+.home-exit__beat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(4, 12, 16, 0.75), rgba(4, 12, 16, 0) 55%);
+}
+.home-exit__beat:hover img {
+  transform: scale(1.12);
+  filter: brightness(1);
+}
+.home-exit__beat-n,
+.home-exit__beat-name {
+  position: absolute;
+  left: 14px;
+  z-index: 1;
+}
+.home-exit__beat-n {
+  bottom: 38px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7fd6d8;
+}
+.home-exit__beat-name {
+  bottom: 14px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.home-exit__door:focus-visible,
+.home-exit__beat:focus-visible {
+  outline: 2px solid #48c1c4;
+  outline-offset: 4px;
+  border-radius: 12px;
+}

@@ -204,6 +204,7 @@ export default function StoryDesktopLayout({
                       <br />
                       {headline.secondLine}
                       <span className="story-desk__arrow" aria-hidden="true"> →</span>
+                      {headline.proof && <span className="story-desk__proof">{headline.proof}</span>}
                     </span>
                     {/* The progress line also drives autoplay: its
                         animationend advances the deck (handleBarEnd). */}

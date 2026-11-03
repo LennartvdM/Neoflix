@@ -1,0 +1,396 @@
+/* The seven hooks' shapes and motion (hooks.jsx). Colours come only from
+   the board's tone variables (board.css). */
+
+/* ── Claim · still ───────────────────────────────────────────────────── */
+
+.hook-claim__universal {
+  max-width: 17em;
+  font-size: var(--t-headline);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  text-shadow: var(--shadow-text);
+}
+.hook-claim__practice {
+  margin-top: 22px;
+  max-width: 34em;
+  padding-left: 16px;
+  border-left: 2px solid var(--accent);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.hook-claim--line {
+  font-size: var(--t-margin);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* ── Proof · settles ─────────────────────────────────────────────────── */
+
+.hook-proof {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+.hook-proof__figure {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--accent);
+}
+.hook-proof__text {
+  max-width: 30em;
+  color: var(--ink);
+}
+.hook-cite {
+  font-size: var(--t-margin);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.hook-cite:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+/* Settling: the figure is there at once (it counts), the words and the
+   source follow it in. */
+.hook-proof .hook-proof__text,
+.hook-proof .hook-cite,
+.hook-proof .hook-proof__breakdown {
+  transition: opacity 0.7s ease, transform 0.9s var(--ease);
+}
+.hook-proof[data-settled='false'] .hook-proof__text,
+.hook-proof[data-settled='false'] .hook-cite,
+.hook-proof[data-settled='false'] .hook-proof__breakdown {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.hook-proof[data-settled='true'] .hook-proof__text { transition-delay: 0.35s; }
+.hook-proof[data-settled='true'] .hook-proof__breakdown { transition-delay: 0.55s; }
+.hook-proof[data-settled='true'] .hook-cite { transition-delay: 0.75s; }
+
+.hook-proof--line {
+  display: block;
+}
+.hook-proof--line .hook-proof__figure {
+  font-size: 1.25em;
+  margin-right: 0.35em;
+}
+.hook-proof--line .hook-proof__text {
+  display: inline;
+}
+.hook-proof--line .hook-cite {
+  margin-left: 0.5em;
+}
+.hook-proof--panel .hook-proof__figure {
+  font-size: clamp(40px, 4vw, 60px);
+}
+.hook-proof--panel .hook-proof__text {
+  font-size: calc(var(--t-body) + 2px);
+}
+.hook-proof--screen .hook-proof__figure {
+  font-size: var(--t-figure);
+}
+.hook-proof--screen .hook-proof__text {
+  font-size: calc(var(--t-body) + 5px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* The figure cut out of the clip. */
+.hook-proof__knock {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--panel-solid);
+}
+.hook-proof__knock-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.15);
+  /* Lifted so the footage reads through the letters, dark shots included. */
+  filter: brightness(1.55) saturate(1.25) contrast(0.95);
+  transition: transform 2.4s var(--ease);
+}
+.hook-proof[data-settled='true'] .hook-proof__knock-media {
+  transform: scale(1);
+}
+.hook-proof__knock-type {
+  position: relative;
+  display: block;
+  padding: 0.04em 0.16em 0;
+  font-size: clamp(150px, 17vw, 260px);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: var(--panel-solid);
+  mix-blend-mode: multiply;
+}
+
+.hook-proof__knock-type--outline {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: none;
+  mix-blend-mode: normal;
+  -webkit-text-stroke: 1.5px rgba(159, 230, 232, 0.85);
+}
+.hook-proof__breakdown {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  width: min(100%, 520px);
+  display: grid;
+  gap: 8px;
+  font-size: var(--t-margin);
+  color: var(--ink-soft);
+}
+.hook-proof__breakdown li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+.hook-proof__breakdown b {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.hook-proof__bar {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.hook-proof__bar::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: calc(var(--share) * 100%);
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1.1s var(--ease) calc(0.6s + var(--i) * 0.12s);
+}
+.hook-proof[data-settled='true'] .hook-proof__bar::after {
+  transform: scaleX(1);
+}
+
+/* ── Witness · reveals ───────────────────────────────────────────────── */
+
+.hook-witness__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--panel-solid);
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.7);
+  clip-path: inset(0 0 0 0 round 14px);
+  transition: clip-path 1.1s var(--ease);
+}
+.hook-witness[data-seen='false'] .hook-witness__frame {
+  clip-path: inset(18% 8% 18% 8% round 14px);
+}
+.hook-witness__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hook-witness__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  margin-top: 12px;
+  font-size: var(--t-margin);
+  color: var(--ink-soft);
+}
+.hook-witness__film {
+  all: unset;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent);
+}
+.hook-witness__film:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hook-witness--quote blockquote {
+  max-width: 26em;
+  font-size: calc(var(--t-body) + 6px);
+  font-weight: 600;
+  line-height: 1.35;
+  transition: opacity 0.8s ease;
+}
+.hook-witness--quote[data-seen='false'] blockquote {
+  opacity: 0;
+}
+.hook-witness--quote figcaption {
+  margin-top: 10px;
+  font-size: var(--t-margin);
+  color: var(--ink-soft);
+}
+
+/* ── Instruction · still ─────────────────────────────────────────────── */
+
+.hook-instruction {
+  display: grid;
+  gap: 14px;
+}
+.hook-instruction__label {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ── Exit · still ────────────────────────────────────────────────────── */
+
+.hook-exits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.hook-exit {
+  all: unset;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  cursor: pointer;
+  font-size: var(--t-margin);
+  font-weight: 600;
+  color: var(--ink);
+}
+.hook-exit__arrow {
+  color: var(--accent);
+  transition: transform 0.35s var(--ease);
+}
+.hook-exit:hover .hook-exit__arrow {
+  transform: translateX(4px);
+}
+.hook-exit:focus-visible,
+.hook-cite:focus-visible,
+.hook-witness__film:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Orientation · pinned ────────────────────────────────────────────── */
+
+.hook-orientation {
+  position: sticky;
+  top: calc(var(--nav-h, 60px) + 14px);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--s-line);
+  padding: 7px 14px;
+  border-radius: 999px;
+  /* Opaque enough that what scrolls beneath it never reads through. */
+  background: var(--pill);
+  box-shadow: 0 6px 20px -10px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  font-size: var(--t-margin);
+  line-height: 1;
+  color: var(--ink);
+  overflow: hidden;
+}
+.hook-orientation:has(.hook-orientation__still) {
+  padding-left: 6px;
+}
+.hook-orientation__still {
+  width: 30px;
+  height: 20px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+.hook-orientation__n {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.hook-orientation__label {
+  font-weight: 600;
+}
+/* The beat's progress, as the line the homepage captions use. */
+.hook-orientation__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+}
+
+/* ── The film door (FilmDoor.jsx) ────────────────────────────────────── */
+
+.film-door {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 18px;
+  padding: calc(var(--nav-h, 60px) + 24px) 5vw 32px;
+  background: rgba(4, 10, 14, 0.82);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  animation: film-door-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.film-door__frame {
+  width: min(1100px, 100%, calc((100vh - 220px) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8);
+}
+.film-door__frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.film-door__close {
+  all: unset;
+  cursor: pointer;
+  font: 600 14px/1 Inter, sans-serif;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.film-door__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+@keyframes film-door-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

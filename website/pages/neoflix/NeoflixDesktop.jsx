@@ -1,111 +1,206 @@
 /**
- * /neoflix on a laptop: the homepage story told at length, then handed
- * over to the toolbox. Three acts:
+ * /neoflix on a laptop — the argument, as a scroll page on the board.
  *
- *   I   In the moment — the problem (urgency, coordination, cost)
- *   II  Reflection    — the answer (skills, team, perspectives)
- *   III In practice   — Record, Reflect, Refine: the film, the toolbox as
- *                       a route, the units already doing it, and the
- *                       invitation to join them
+ * Six beats, one per clip, each with the same skeleton in the same order
+ * (content blueprint, "/neoflix"):
  *
- * Acts I and II are the six homepage captions, so their openers and each
- * chapter's opening statement come from the homepage's own data
- * (story.data.js) rather than being retyped: change a caption there and
- * the chapter that opens with it changes too. Act III is read from the
- * toolbox's compiled manifest (practice/toolbox.js). The chapters' prose
- * stays in content.js, shared with the phone page, which this file
- * doesn't touch.
+ *   orientation · claim · witness · proof · instrument · exits
+ *
+ * and nothing more. What varies is only what the content brings — the
+ * size of the proof, whether an instrument hangs — and that variation is
+ * the asymmetry. All words come from shared/argument.js; this file only
+ * composes. After the beats, two still sections: the four units, and the
+ * sign-off (which /contact lands on).
  */
-import React from 'react';
-import BlogPage from '../../shared/BlogPage';
-import { STORIES } from '../home/story/story.data';
-import { TAGLINE } from '../home/content';
-import { sections as chapters } from './content';
-import { successStories, networkPage } from './practice/toolbox';
-import {
-  TimeSensitive,
-  LikeADance,
-  TheCost,
-  Sharpening,
-  TeamDynamics,
-  Perspectives,
-} from './modules/Chapters';
-import { FilmModule, ToolboxModule, StoriesModule, SignOffModule } from './modules/InPractice';
+import React, { useRef } from 'react';
+import BoardPage from '../../shared/board/BoardPage';
+import { Block, Claim, Proof, Witness, Exit, Exits, Orientation } from '../../shared/board/hooks';
+import { INSTRUMENTS } from '../../shared/board/instruments';
+import { useScrollProgress } from '../../shared/board/motion';
+import { useFilm } from '../../shared/board/FilmDoor';
+import { toolboxDoor, paperCite, paperDoor } from '../../shared/board/doors';
+import WorldMapEmbed from '../toolbox/blocks/WorldMapEmbed';
+import { BEATS } from '../../shared/argument';
+import './neoflix-board.css';
 
-// Every chapter is its own composition (modules/), chosen for what it
-// says — not one card template repeated. Keyed by content.js section id.
-const MODULES = {
-  'time-sensitive': TimeSensitive,
-  'like-a-dance': LikeADance,
-  cost: TheCost,
-  sharpening: Sharpening,
-  'team-dynamics': TeamDynamics,
-  perspectives: Perspectives,
-  contact: SignOffModule,
-};
-
-const essay = chapters.filter((s) => s.id !== 'contact');
-const contact = chapters.find((s) => s.id === 'contact');
-const stories = successStories();
-const network = networkPage();
-
-const PRACTICE = [
-  { id: 'film', title: 'The film', Module: FilmModule },
-  { id: 'the-toolbox', title: 'The toolbox', Module: ToolboxModule },
-  { id: 'success-stories', title: 'Success stories', Module: StoriesModule },
+const UNITS = [
+  {
+    city: 'Leiden',
+    place: 'the Netherlands',
+    slug: 'level-1-fundamentals/4.-learning-from-success-stories/nicu-in-leiden-the-netherlands',
+    line: 'Two fixed cameras at birth since 2009; a wearable camera for intubations, surfactant and sterile procedures.',
+  },
+  {
+    city: 'Vienna',
+    place: 'Austria',
+    slug: 'level-1-fundamentals/4.-learning-from-success-stories/nicu-in-vienna-austria',
+    line: 'Fixed cameras and wearable devices, in the delivery room and on the unit.',
+  },
+  {
+    city: 'Philadelphia',
+    place: 'USA',
+    slug: 'level-1-fundamentals/4.-learning-from-success-stories/nicu-in-philadelphia-pennsylvania-usa',
+    line: 'Dedicated resuscitation rooms: a bird’s-eye view of the bed, a wide angle and the monitor feed.',
+  },
+  {
+    city: 'Melbourne',
+    place: 'Australia',
+    slug: 'level-1-fundamentals/4.-learning-from-success-stories/nicu-in-melbourne-australia',
+    line: 'Fixed cameras at birth: the infant and the hands, voices audible.',
+  },
 ];
 
-// A section without a module (a chapter added to content.js later) falls
-// back to BlogPage's standard rendering until it gets one.
-const withModule = (section) => (MODULES[section.id] ? { ...section, Module: MODULES[section.id] } : section);
+const SECTION_IDS = [...BEATS.map((b) => b.id), 'units', 'contact'];
 
-const SECTIONS = [...essay, ...PRACTICE, contact].filter(Boolean).map((s) => (s.Module ? s : withModule(s)));
+function Beat({ beat }) {
+  const ref = useRef(null);
+  useScrollProgress(ref, { rest: 0 });
+  const openFilm = useFilm();
+  const Instrument = beat.instrument && INSTRUMENTS[beat.instrument];
+  // The narrowing frame *is* beat 3's witness (blueprint grid).
+  const witnessIsInstrument = beat.instrument === 'narrowing-frame';
+  const lines = beat.proofs.filter((p) => p.size === 'line');
+  const big = beat.proofs.filter((p) => p.size !== 'line');
+  const doors = [
+    ...beat.exits.map((e) => toolboxDoor(e.slug)).filter(Boolean),
+    ...beat.papers.map(paperDoor).filter(Boolean),
+  ];
 
-const ACTS = [
-  { id: 'in-the-moment', numeral: 'I', label: 'In the moment', story: 'pressure' },
-  { id: 'reflection', numeral: 'II', label: 'Reflection', story: 'reflection' },
-]
-  .map((act) => ({
-    ...act,
-    header: STORIES[act.story].header,
-    sectionIds: STORIES[act.story].sectionTargets,
-  }))
-  .concat({
-    id: 'in-practice',
-    numeral: 'III',
-    label: 'In practice',
-    // The site's own three words (the homepage intro's Record, Reflect,
-    // Refine — and the three phases of the toolbox's Level 2), with the
-    // accent on the one this whole page argues for.
-    header: { line1: 'Record,', line1suffix: ' ', line2highlight: 'Reflect,', line2suffix: '', line3: 'Refine.' },
-    sectionIds: PRACTICE.map((s) => s.id),
-  });
+  return (
+    <section id={beat.id} ref={ref} className="board-beat nf-beat" data-act={beat.act}>
+      <Orientation number={beat.n} still={beat.clip.still}>{beat.name}</Orientation>
 
-const LEDES = {
-  ...Object.fromEntries(
-    Object.values(STORIES).flatMap((story) =>
-      story.headlines.map((h) => [h.sectionTarget, `${h.firstLine} ${h.secondLine}`])
-    )
-  ),
-  // The site's tagline (its one home is pages/home/content.js).
-  film: TAGLINE,
-  // The toolbox welcome page's own heading.
-  'the-toolbox': 'Elevate your medical practice.',
-  // Level 1, chapter 4's title, without its number.
-  'success-stories': `${(stories.chapter?.title || 'Learning from success stories').replace(/^\d+\.\s*/, '')}.`,
-  // The opening line of the toolbox's closing page, the network invitation.
-  contact: network?.excerpt || undefined,
-};
+      <Block>
+        <Claim universal={beat.claim} inPractice={beat.inPractice} />
+      </Block>
+
+      {!witnessIsInstrument && (
+        <Block
+          gap="panel"
+          margin={lines.length > 0 && (
+            <div className="nf-beat__margin-proofs">
+              {lines.map((p) => (
+                <Proof key={p.text} size="line" figure={p.figure} text={p.text} cite={paperCite(p.paper)} />
+              ))}
+            </div>
+          )}
+        >
+          <Witness clip={beat.clip} caption={beat.witness?.caption} film={beat.witness?.film} />
+        </Block>
+      )}
+
+      {witnessIsInstrument && Instrument && (
+        <Block wide gap="panel">
+          <Instrument clip={beat.clip} />
+        </Block>
+      )}
+
+      {(big.length > 0 || (witnessIsInstrument && lines.length > 0)) && (
+        <Block
+          gap="panel"
+          margin={witnessIsInstrument && lines.length > 0 && lines.map((p) => (
+            <Proof key={p.text} size="line" figure={p.figure} text={p.text} cite={paperCite(p.paper)} />
+          ))}
+        >
+          <div className="nf-beat__proofs">
+            {big.map((p) => (
+              <Proof
+                key={p.text}
+                size={p.size}
+                figure={p.figure}
+                text={p.text}
+                breakdown={p.breakdown}
+                cite={paperCite(p.paper)}
+                clip={p.size === 'screen' ? beat.clip : undefined}
+              />
+            ))}
+          </div>
+        </Block>
+      )}
+
+      {Instrument && !witnessIsInstrument && (
+        <Block wide gap="panel">
+          <Instrument clip={beat.clip} />
+        </Block>
+      )}
+
+      <Block gap="panel">
+        <Exits>
+          {beat.film && openFilm && (
+            <Exit label="Watch the session · 6:44" onOpen={() => openFilm(beat.witness?.film || 0)} />
+          )}
+          {doors.map((d) => (
+            <Exit key={d.href} href={d.href} label={d.label} direction={d.direction} />
+          ))}
+        </Exits>
+      </Block>
+    </section>
+  );
+}
+
+function Units() {
+  const doors = UNITS.map((u) => ({ ...u, door: toolboxDoor(u.slug) }));
+  return (
+    <section id="units" className="board-section nf-units">
+      <Orientation>Four units that record</Orientation>
+      <Block>
+        <h2 className="nf-section-title">Four units that record.</h2>
+      </Block>
+      <Block wide gap="panel">
+        <div className="nf-units__map">
+          <WorldMapEmbed city="leiden" />
+        </div>
+      </Block>
+      <Block wide>
+        <ul className="nf-units__list">
+          {doors.map((u) => (
+            <li key={u.city}>
+              <span className="nf-units__city">{u.city}<span>, {u.place}</span></span>
+              <span className="nf-units__line">{u.line}</span>
+              {u.door && <Exit href={u.door.href} label="The unit’s page" />}
+            </li>
+          ))}
+        </ul>
+      </Block>
+    </section>
+  );
+}
+
+function SignOff() {
+  const quickStart = toolboxDoor('welcome/quick-start');
+  return (
+    <section id="contact" className="board-section nf-signoff">
+      <Orientation>Contact</Orientation>
+      <Block
+        margin={
+          <p>
+            Neoflix was developed at the Department of Neonatology, Leiden University Medical Center,
+            by Veerle Heesters with Arjan te Pas and Ruben Witlox. Supported by the KNAW Van Walree Fund.
+          </p>
+        }
+      >
+        <h2 className="nf-section-title">Questions about starting video review on your unit?</h2>
+        <a className="nf-signoff__mail" href="mailto:info@neoflix.care">info@neoflix.care</a>
+      </Block>
+      {quickStart && (
+        <Block gap="panel">
+          <Exits>
+            <Exit href={quickStart.href} label="Run your first session · Toolbox quick start" />
+          </Exits>
+        </Block>
+      )}
+    </section>
+  );
+}
 
 export default function NeoflixDesktop({ scrollTo }) {
   return (
-    <BlogPage
-      sections={SECTIONS}
-      scrollTo={scrollTo}
-      pageTitle="Neoflix"
-      page="neoflix"
-      acts={ACTS}
-      ledes={LEDES}
-    />
+    <BoardPage tone="dark" sectionIds={SECTION_IDS} scrollTo={scrollTo} title="How Leiden learned to watch itself work">
+      {BEATS.map((beat) => (
+        <Beat key={beat.id} beat={beat} />
+      ))}
+      <Units />
+      <SignOff />
+    </BoardPage>
   );
 }

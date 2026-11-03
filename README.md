@@ -140,11 +140,9 @@ Home, `/neoflix` and `/publications` each render **either a desktop tree or a
 phone tree**, forked at `600px`, as separate lazy chunks. They are different
 components, not one responsive layout.
 
-The practical consequence: **a copy change on the homepage has to be made
-twice** — desktop headlines live in `pages/home/story/story.data.js`, the same
-sentences in phone shape live in `MOBILE_PANELS` in `pages/home/HomePhone.jsx`.
-Both files carry warning comments. `CONTENT.md` lists which pages share their section data and
-which don't.
+The six beats of the argument — the homepage captions on both surfaces and
+everything on the laptop `/neoflix` — come from one file,
+`website/shared/argument.js`. `CONTENT.md` lists what lives where.
 
 ### How routing and deploys work
 

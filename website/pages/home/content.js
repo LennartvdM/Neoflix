@@ -16,4 +16,4 @@
  *
  * SEO title/description for the homepage → data/routeMeta.js ('/').
  */
-export const TAGLINE = 'Improve patient care through video reflection.';
+export const TAGLINE = 'Video review for neonatal teams, from the NICU in Leiden.';

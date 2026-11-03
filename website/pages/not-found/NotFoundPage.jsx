@@ -26,18 +26,28 @@ export default function NotFoundPage() {
         fontFamily: 'Inter, system-ui, sans-serif',
       }}
     >
-      <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 600 }}>Page not found</h1>
+      <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 600 }}>This page is not here. The toolbox is.</h1>
       <p style={{ margin: 0, maxWidth: '46ch', color: '#55706f' }}>
         There&rsquo;s nothing at &ldquo;{location.pathname}&rdquo;. It may have moved, or the
         link may be out of date.
       </p>
+      <a
+        href="/toolbox"
+        onClick={(e) => {
+          e.preventDefault();
+          transitionNavigate('/toolbox');
+        }}
+        style={{ color: '#14797d', fontWeight: 600 }}
+      >
+        Open the toolbox →
+      </a>
       <a
         href="/"
         onClick={(e) => {
           e.preventDefault();
           transitionNavigate('/');
         }}
-        style={{ color: '#14797d', fontWeight: 500 }}
+        style={{ color: '#55706f', fontWeight: 500 }}
       >
         Back to the homepage
       </a>

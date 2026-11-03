@@ -5,10 +5,9 @@
  *
  * Desktop navbar:
  *   0  Home
- *   1  Neoflix
+ *   1  Neoflix (and /contact, the same page landed on its sign-off)
  *   2  Publications
- *   3  Contact
- *   4  Toolbox
+ *   3  Toolbox
  *
  * Mobile dock:
  *   0  Neoflix
@@ -22,8 +21,8 @@ export const DESKTOP_NAV_ORDER = [
   { index: 0, path: '/' },
   { index: 1, path: '/neoflix' },
   { index: 2, path: '/publications' },
-  { index: 3, path: '/contact' },
-  { index: 4, path: '/toolbox' },
+  { index: 1, path: '/contact' },
+  { index: 3, path: '/toolbox' },
 ];
 
 export const MOBILE_DOCK_ORDER = [
@@ -43,7 +42,7 @@ export function getNavIndexForPath(pathname, surface = 'desktop') {
     return match ? match.index : 2;
   }
 
-  if (pathname === '/toolbox' || pathname.startsWith('/toolbox/')) return 4;
+  if (pathname === '/toolbox' || pathname.startsWith('/toolbox/')) return 3;
   if (pathname.startsWith('/neoflix/')) return 1;
   const match = DESKTOP_NAV_ORDER.find((n) => n.path === pathname);
   return match ? match.index : 0;

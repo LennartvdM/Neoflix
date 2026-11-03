@@ -5,7 +5,9 @@ paper.
 
 | | |
 |---|---|
-| `PublicationsPage.jsx` | Picks the surface; the laptop version renders through `../../shared/BlogPage.jsx` |
+| `PublicationsPage.jsx` | Picks the surface: laptop (`PublicationsDesktop.jsx`) or phone |
+| `PublicationsDesktop.jsx` | The laptop page: the six papers as one arc, on the board (`../../shared/board/`) |
+| `arc.js` | What the arc says about each paper: short name, Asked / Found / Changed, the lifted figure, and the intro |
 | `PublicationsPhone.jsx` | The phone version |
 | `PaperPage.jsx` | One paper's own page |
 | `content.js` | The prose on the list page, the PDF links, the download bundle |

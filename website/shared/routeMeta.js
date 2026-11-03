@@ -39,24 +39,24 @@ const SUBSTANTIAL_DESCRIPTION = 80;
  */
 export const ROUTE_META = {
   '/': {
-    title: 'Neoflix: Hospital Video Recording and Medical Training',
+    title: 'Neoflix — video review for neonatal teams',
     description:
-      'Video Recording in Healthcare: Improve Training, Reduce Errors, Enhance Patient Safety.',
+      'Record procedures, watch them back with the team, change what you do next. How the NICU in Leiden has learned from its hardest minutes since 2009, and how your unit can.',
   },
   '/neoflix': {
-    title: `How video review works | ${SITE_NAME}`,
+    title: `How Leiden learned to watch itself work — ${SITE_NAME}`,
     description:
-      'Acute care moves too fast to recall accurately. See how recording and reviewing real procedures sharpens skills and reveals what debriefing misses.',
+      'In nine months of video review a neonatal unit found 120 things to change. What the camera saw, what a session looks like, and what it changed.',
   },
   '/publications': {
-    title: `Publications | ${SITE_NAME}`,
+    title: `Six papers, 2022 to 2026 — ${SITE_NAME}`,
     description:
-      'Six peer-reviewed studies on video recording and review in neonatal intensive care, from narrative review to international multicentre collaboration.',
+      'Six peer-reviewed studies on recording and reviewing neonatal procedures: what we asked, what we found, what it changed.',
   },
   '/contact': {
-    title: `Contact | ${SITE_NAME}`,
+    title: `Contact — ${SITE_NAME}`,
     description:
-      'Questions about starting video review in your department? Reach the Neoflix team at the Department of Neonatology, Leiden University Medical Center.',
+      'Questions about starting video review in your unit? Write to the Neoflix team at the Department of Neonatology, Leiden University Medical Center.',
     // /contact renders the same page as /neoflix (scrolled to its last
     // section). Two URLs with identical content each claiming to be
     // canonical read as duplicate content, so this one points at the
@@ -64,9 +64,9 @@ export const ROUTE_META = {
     canonicalPath: '/neoflix',
   },
   '/toolbox': {
-    title: `Toolbox | ${SITE_NAME}`,
+    title: `Toolbox — ${SITE_NAME}`,
     description:
-      'A practical guide to setting up video review in your unit: consent and privacy, equipment, running sessions, and turning what you see into better care.',
+      'How to set up video review on your unit: consent, cameras, running a session, turning what you see into change. Start with a phone.',
   },
 };
 

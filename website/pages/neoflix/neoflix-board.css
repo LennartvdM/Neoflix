@@ -1,0 +1,75 @@
+/* /neoflix on the board (NeoflixDesktop.jsx). Only what the composition
+   needs — hook shapes live in shared/board. */
+
+.nf-beat__margin-proofs {
+  display: grid;
+  gap: var(--s-line);
+  padding-top: 6px;
+}
+.nf-beat__proofs {
+  display: grid;
+  gap: var(--s-panel);
+}
+/* The answer beats carry the weight: the act a beat belongs to only
+   changes how much room its proof gets, never its order or its hooks. */
+.nf-beat[data-act='problem'] .hook-proof--panel {
+  max-width: 34em;
+}
+
+.nf-section-title {
+  max-width: 17em;
+  font-size: var(--t-headline);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-shadow: var(--shadow-text);
+}
+
+.nf-units__map .docs-worldmap-embed {
+  margin: 0 !important;
+  border-radius: 14px !important;
+}
+.nf-units__list {
+  list-style: none;
+  margin: var(--s-line) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gutter);
+}
+.nf-units__list li {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 2px solid var(--accent);
+}
+.nf-units__city {
+  font-weight: 700;
+  font-size: calc(var(--t-body) + 2px);
+}
+.nf-units__city span {
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.nf-units__line {
+  font-size: var(--t-margin);
+  color: var(--ink-soft);
+}
+
+.nf-signoff__mail {
+  display: inline-block;
+  margin-top: var(--s-line);
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+
+@media (max-width: 1100px) {
+  .nf-units__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

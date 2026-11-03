@@ -49,13 +49,15 @@ working in; they're short, and GitHub renders them when browsing too.
 2. **`generated/` and `public/docs-assets/` are build output.** Never
    hand-edit; never commit files into them. Hand-placed images belong in
    `public/previews/` or another tracked directory.
-3. **Copy changes on the homepage must hit BOTH surfaces.** Desktop
-   headlines: `pages/home/story/story.data.js`.
-   Phone panels (same sentences, different shape):
-   `pages/home/HomePhone.jsx` (`MOBILE_PANELS`). The files
-   carry warning comments. `/neoflix` and `/publications` share section
-   data between surfaces, but their phone files have their own hero
-   strings near the top.
+3. **The argument has one home: `shared/argument.js`.** The six beats —
+   each one's claim, in-practice line, proofs, witness, instrument and
+   exits — live there, and the homepage captions (desktop and phone),
+   the answer-slide proof lines and every hook on `/neoflix` read from
+   it. Figures are written exactly as the papers report them and cite
+   the paper (P1–P6). The two act headlines are still written twice:
+   `pages/home/story/story.data.js` (`header`) and `HomePhone.jsx`
+   (`chapterHeader`) — keep those in step. The phone `/neoflix` and
+   `/publications` pages still read the older `content.js` prose.
 4. **The tagline has one home**: `TAGLINE` in `pages/home/content.js`.
    Never retype the sentence elsewhere.
 5. **Naming history trap**: the `/neoflix` page's prose (now

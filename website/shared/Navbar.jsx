@@ -8,7 +8,6 @@ import { assetUrl } from '../lib/utils/assetUrl';
 const NAV_LINKS = [
   { label: 'Neoflix', to: '/neoflix' },
   { label: 'Publications', to: '/publications' },
-  { label: 'Contact', to: '/contact' },
   { label: 'Toolbox', to: '/toolbox' },
 ];
 
@@ -91,11 +90,10 @@ export default function Navbar() {
   const navCellHeight = isMobile ? 26 : NAV_CELL_HEIGHT;
 
   const isActive = (to) => {
+    // /contact is the same page as /neoflix, landed on its sign-off, so
+    // Neoflix stays lit there (Contact left the bar; it's in the footer).
     if (to === '/neoflix') {
-      return location.pathname === '/neoflix' && location.hash !== '#collab';
-    }
-    if (to === '/contact') {
-      return location.pathname === '/contact';
+      return (location.pathname === '/neoflix' && location.hash !== '#collab') || location.pathname === '/contact';
     }
     return location.pathname === to;
   };

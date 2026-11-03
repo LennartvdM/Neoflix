@@ -93,6 +93,13 @@ export default function Footer() {
               © 2024–2026 Neoflix
             </a>
             <a
+              href="/contact"
+              onClick={handleNav('/contact')}
+              className="hover:text-white underline-offset-2 hover:underline transition-colors font-semibold"
+            >
+              Contact
+            </a>
+            <a
               href="mailto:info@neoflix.care"
               className="hover:text-white underline-offset-2 hover:underline transition-colors"
             >
