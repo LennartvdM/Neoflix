@@ -5,7 +5,9 @@ same page, scrolled to the contact section.
 
 | | |
 |---|---|
-| `NeoflixPage.jsx` | Picks the surface; the laptop version renders through `../../shared/BlogPage.jsx` |
+| `NeoflixPage.jsx` | Picks the surface: laptop or phone |
+| `NeoflixDesktop.jsx` | The laptop page: the essay in three acts, on `../../shared/BlogPage.jsx` |
+| `practice/` | Act III — the film, the toolbox as a route, the success-story map, the sign-off — and the "In the toolbox" row under each chapter |
 | `NeoflixPhone.jsx` | The phone version, including its own hero text |
 | `content.js` | All the section prose and titles — shared by both surfaces |
 | `backdrop.js` | Which backdrop video plays behind each section |
@@ -19,3 +21,9 @@ openers ("In the moment, only the patient matters", "Yet, reflection
 strengthens the next") and each chapter's opening statement are read from
 `../home/story/story.data.js` — the homepage captions — not from
 `content.js`. Change them there; both pages follow.
+
+Act III and the chapter rows are read from the toolbox itself
+(`practice/toolbox.js`, over the compiled docs manifest): page titles as the
+toolbox sidebar shows them, and each page's opening sentence. Rename or
+reorder something in GitBook and this page follows on the next build — there
+is nothing to update here.

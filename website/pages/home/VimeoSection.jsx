@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useDropPhysics from './intro/useDropPhysics.js';
 import { useTabletLayout } from '../../lib/hooks/useTabletLayout';
+import { SHOWCASE_FILM_SRC } from '../../shared/showcaseFilm';
 
-// Vimeo embed for the showcase slide. dnt=1 tells the player not to set
-// tracking cookies or report the session to Vimeo's analytics — without
-// it, this iframe is the only thing on the site that drops cookies.
-const VIMEO_SRC = 'https://player.vimeo.com/video/1031329353?h=055dbf5101&dnt=1';
+// Vimeo embed for the showcase slide (dnt=1 — see showcaseFilm.js).
+const VIMEO_SRC = SHOWCASE_FILM_SRC;
 
 // Same fill as the intro slide so the canvas around the player matches it.
 const INTRO_FILL = 'linear-gradient(to top, #ffffff, var(--cool-page))';

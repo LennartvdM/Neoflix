@@ -32,6 +32,7 @@ the phone version, that page's words and that page's styles, side by side.
 | The two big act headlines and each chapter's opening statement (desktop) | `pages/home/story/story.data.js` — they are the homepage story's headlines and captions, shown again here |
 | Phone-only hero ("Record. Reflect. Refine." + subtitle, intro band) | `pages/neoflix/NeoflixPhone.jsx` — search the file for the sentence you want to change |
 | Section backdrop videos / accent colours | `pages/neoflix/backdrop.js` (desktop); map at the top of `NeoflixPhone.jsx` (phone) |
+| Act III on a laptop ("Record, Reflect, Refine": the film, the toolbox route, the map, "Join the Network") and the "In the toolbox" rows | `pages/neoflix/NeoflixDesktop.jsx` + `pages/neoflix/practice/`. Their titles and sentences come from the toolbox (GitBook) — change them there. |
 
 ## /publications — `pages/publications/`
 

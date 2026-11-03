@@ -566,41 +566,52 @@ export default function BlogPage({ sections, scrollTo, bundle, pageTitle, page, 
                 <div className="blog-section__content">
                   <div aria-hidden="true" className="blog-section__content-wash" />
 
-                {parsed.bodyHtmlBefore && (
-                  <div
-                    className="blog-body"
-                    style={{
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 500,
-                      fontSize: 16,
-                      lineHeight: 1.8,
-                      color: '#383437',
-                      maxWidth: 620,
-                      marginTop: hasPublicationLead ? 4 : 0,
-                    }}
-                    dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlBefore }}
-                    onClick={handleBodyClick}
-                  />
+                {/* A section may bring its own body (`Component`, e.g. the
+                    film or the toolbox route on /neoflix) and something to
+                    follow its prose (`After`, e.g. a chapter's toolbox
+                    links). Both receive the section. */}
+                {section.Component ? (
+                  <section.Component section={section} />
+                ) : (
+                  <>
+                  {parsed.bodyHtmlBefore && (
+                    <div
+                      className="blog-body"
+                      style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: 500,
+                        fontSize: 16,
+                        lineHeight: 1.8,
+                        color: '#383437',
+                        maxWidth: 620,
+                        marginTop: hasPublicationLead ? 4 : 0,
+                      }}
+                      dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlBefore }}
+                      onClick={handleBodyClick}
+                    />
+                  )}
+                  {section.video && (
+                    <InlineVideo src={section.video} />
+                  )}
+                  {parsed.bodyHtmlAfter && (
+                    <div
+                      className="blog-body"
+                      style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: 500,
+                        fontSize: 16,
+                        lineHeight: 1.8,
+                        color: '#383437',
+                        maxWidth: 620,
+                        marginTop: section.video ? 24 : (hasPublicationLead ? 12 : 0),
+                      }}
+                      dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlAfter }}
+                      onClick={handleBodyClick}
+                    />
+                  )}
+                  </>
                 )}
-                {section.video && (
-                  <InlineVideo src={section.video} />
-                )}
-                {parsed.bodyHtmlAfter && (
-                  <div
-                    className="blog-body"
-                    style={{
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 500,
-                      fontSize: 16,
-                      lineHeight: 1.8,
-                      color: '#383437',
-                      maxWidth: 620,
-                      marginTop: section.video ? 24 : (hasPublicationLead ? 12 : 0),
-                    }}
-                    dangerouslySetInnerHTML={{ __html: parsed.bodyHtmlAfter }}
-                    onClick={handleBodyClick}
-                  />
-                )}
+                {section.After && <section.After section={section} />}
                 </div>
               </section>
               </React.Fragment>

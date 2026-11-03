@@ -1,0 +1,323 @@
+/* /neoflix third act + chapter bridges (Practice.jsx). These render inside
+   BlogPage's pale reading card, so ink is the page's dark text and the
+   accent is the site teal. */
+
+.toolbox-bridge,
+.toolbox-path,
+.success-stories,
+.signoff,
+.neoflix-film {
+  --ink: #1d2b36;
+  --ink-soft: rgba(29, 43, 54, 0.62);
+  --teal: #2d6a6a;
+  --teal-bright: #48c1c4;
+  --line: rgba(29, 43, 54, 0.12);
+  font-family: Inter, sans-serif;
+}
+
+/* ── Chapter bridge ────────────────────────────────────────────────────── */
+
+.toolbox-bridge {
+  position: relative;
+  z-index: 1;
+  margin-top: 44px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  align-items: baseline;
+  column-gap: 20px;
+}
+.toolbox-bridge__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.toolbox-bridge__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toolbox-bridge__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 14px;
+  border-radius: 999px;
+  background: rgba(72, 193, 196, 0.12);
+  border: 1px solid rgba(72, 193, 196, 0.28);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.toolbox-bridge__link:hover {
+  background: rgba(72, 193, 196, 0.22);
+  border-color: rgba(72, 193, 196, 0.55);
+}
+.toolbox-bridge__arrow {
+  color: var(--teal);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.toolbox-bridge__link:hover .toolbox-bridge__arrow,
+.success-stories__story:hover .toolbox-bridge__arrow {
+  transform: translateX(3px);
+}
+
+/* ── Film ──────────────────────────────────────────────────────────────── */
+
+.neoflix-film {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0e1c31;
+  box-shadow: 0 24px 60px -24px rgba(14, 28, 49, 0.45);
+}
+.neoflix-film iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* ── The toolbox, as a route ───────────────────────────────────────────── */
+
+/* A vertical route: a teal line with a node per level, the levels
+   hanging off it — the progress lines elsewhere on the site, turned into
+   a path you can walk. */
+.toolbox-path {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 40px;
+}
+.toolbox-path::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, var(--teal-bright), rgba(72, 193, 196, 0.25));
+}
+.toolbox-path__level {
+  position: relative;
+  padding-bottom: 40px;
+}
+.toolbox-path__level:last-child {
+  padding-bottom: 0;
+}
+.toolbox-path__node {
+  position: absolute;
+  left: -40px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f5f9fc;
+  border: 2px solid var(--teal-bright);
+  box-sizing: border-box;
+}
+.toolbox-path__head {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.toolbox-path__number {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.toolbox-path__name {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.toolbox-path__head:hover .toolbox-path__name {
+  color: var(--teal);
+}
+.toolbox-path__excerpt,
+.toolbox-path__phase-excerpt,
+.success-stories__excerpt {
+  margin: 8px 0 0;
+  max-width: 36em;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.toolbox-path__groups {
+  margin-top: 16px;
+}
+.toolbox-path__groups--phased {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.toolbox-path__groups--phased .toolbox-path__group {
+  padding: 16px 16px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
+}
+.toolbox-path__phase {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--teal);
+  text-decoration: none;
+}
+.toolbox-path__phase:hover {
+  color: var(--ink);
+}
+.toolbox-path__phase-excerpt {
+  margin-top: 6px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.toolbox-path__chapters {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.toolbox-path__groups:not(.toolbox-path__groups--phased) .toolbox-path__chapters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+}
+.toolbox-path__chapter {
+  display: block;
+  padding: 6px 0;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.2s ease;
+}
+.toolbox-path__chapter:hover {
+  color: var(--teal);
+}
+
+/* ── Success stories ───────────────────────────────────────────────────── */
+
+.success-stories {
+  position: relative;
+  z-index: 1;
+}
+.success-stories__excerpt {
+  margin: 0 0 4px;
+}
+.success-stories__map .docs-worldmap-embed {
+  margin: 20px 0 18px !important;
+  border-radius: 10px !important;
+}
+.success-stories__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.success-stories__story {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.success-stories__story:hover {
+  background: #fff;
+  border-color: rgba(72, 193, 196, 0.55);
+}
+
+/* ── Sign-off ──────────────────────────────────────────────────────────── */
+
+.signoff {
+  position: relative;
+  z-index: 1;
+}
+.signoff__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.signoff__primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: #0e1c31;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 14px 30px -14px rgba(14, 28, 49, 0.6);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.signoff__primary:hover {
+  background: #2d6a6a;
+}
+.signoff__primary span {
+  color: var(--teal-bright);
+}
+.signoff__secondary {
+  color: var(--teal);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: rgba(72, 193, 196, 0.6);
+  text-underline-offset: 3px;
+}
+.signoff__people {
+  max-width: 620px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.8;
+  color: #383437;
+}
+
+.toolbox-bridge__link:focus-visible,
+.toolbox-path a:focus-visible,
+.success-stories__story:focus-visible,
+.signoff a:focus-visible {
+  outline: 2px solid var(--teal-bright);
+  outline-offset: 2px;
+}

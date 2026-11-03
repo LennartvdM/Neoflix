@@ -18,6 +18,10 @@ export const sectionToVideo = {
   'sharpening': assetUrl('/videos/blurskills.mp4'),
   'team-dynamics': assetUrl('/videos/blurteam.mp4'),
   'perspectives': assetUrl('/videos/blurperspectives.mp4'),
+  // Act III (desktop): the film, the toolbox route, the success stories.
+  'film': assetUrl('/videos/blurperspectives.mp4'),
+  'the-toolbox': assetUrl('/videos/blurskills.mp4'),
+  'success-stories': assetUrl('/videos/blurteam.mp4'),
   'contact': assetUrl('/videos/blurcoordination.mp4'),
 };
 
