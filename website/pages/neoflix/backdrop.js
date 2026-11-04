@@ -18,8 +18,6 @@ export const sectionToVideo = {
   'sharpening': assetUrl('/videos/blurskills.mp4'),
   'team-dynamics': assetUrl('/videos/blurteam.mp4'),
   'perspectives': assetUrl('/videos/blurperspectives.mp4'),
-  // The two closing sections of the desktop page.
-  'units': assetUrl('/videos/blurperspectives.mp4'),
   'contact': assetUrl('/videos/blurcoordination.mp4'),
 };
 

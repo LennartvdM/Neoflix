@@ -1,28 +1,18 @@
-/**
- * The navbar is the site's index, not a list of pages.
- *
- * Each page holds one of the site's three sets of things (shared/index):
- * Neoflix the six beats, Publications the six papers, the Toolbox the
- * five parts of the loop. So each link carries its set as tokens — the
- * same tokens the pages are built from. Wherever the reader is, the bar
- * lights the thing in front of them and what it relates to: on a paper,
- * the beats it proves; on a toolbox page, its part of the loop and the
- * beats that lead there; on the homepage, the beat that is playing.
- *
- * A token is also a way in: it carries itself to its place on its page.
- * Hovering one marks its mentions on the current page.
- */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import useTransitionNavigate from '../lib/hooks/useTransitionNavigate';
-import { SLIDE_DURATION, SLIDE_EASE } from './motion/RouteSlider';
 import { assetUrl } from '../lib/utils/assetUrl';
-import Token from './index/Token';
-import useCarry from './index/useCarry';
-import { useIndexApi, useIndexState } from './index/IndexContext';
-import { SETS, hrefFor, nameOf, relatedTo } from './index/relations';
 
+const NAV_LINKS = [
+  { label: 'Neoflix', to: '/neoflix' },
+  { label: 'Publications', to: '/publications' },
+  { label: 'Contact', to: '/contact' },
+  { label: 'Toolbox', to: '/toolbox' },
+];
+
+const BLOB_HEIGHT_FULL = 32;
+const BLOB_HEIGHT_FLAT = 8;
 const NAV_CELL_HEIGHT = 28;
 
 function FaviconLogo({ onClick }) {
@@ -60,33 +50,90 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
-  const go = useCarry();
-  const { lit, hover } = useIndexState();
-  const indexApi = useIndexApi();
-  const navRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false));
-  const [isCompactMobile, setIsCompactMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 600 : false));
-  const navCellHeight = isMobile ? 26 : NAV_CELL_HEIGHT;
 
-  const handleNavClick = (e, to) => {
+  const handleNavClick = (e, to, section) => {
     e.preventDefault();
     const targetPath = to.split('#')[0] || '/';
-    if (targetPath === location.pathname) navigate(to);
-    else transitionNavigate(to);
+    // For links that deep-link into a ScrollSnap section on Home, hand the
+    // section id to ScrollSnap's restore key before navigating — ScrollSnap
+    // reads this on mount to jump to the right slide.
+    if (section) {
+      try { sessionStorage.setItem('scrollsnap:return-section', section); } catch {}
+    }
+    if (targetPath === location.pathname) {
+      navigate(to);
+    } else {
+      // Direction-aware slide. useTransitionNavigate publishes the
+      // navbar-index delta into TransitionContext and RouteSlider
+      // turns that into a horizontal Framer Motion slide on the
+      // content subtree only — the navbar itself keeps rendering live.
+      transitionNavigate(to);
+    }
   };
 
-  // /contact is the same page as /neoflix, landed on its sign-off.
+  const navRef = useRef(null);
+  const blobContainerRef = useRef(null);
+  const linkRefs = useRef([]);
+  const [blob, setBlob] = useState(null);
+  const [blobOpacity, setBlobOpacity] = useState(0.5);
+  const [hoverTimer, setHoverTimer] = useState(null);
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+  const [traveling, setTraveling] = useState(false);
+  const [blobHeight, setBlobHeight] = useState(0);
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false));
+  const [isCompactMobile, setIsCompactMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 600 : false));
+  const [menuOpen, setMenuOpen] = useState(false);
+  const settleTimeout = useRef(null);
+  const prevIdx = useRef(null);
+  const height = useMotionValue(0);
+  const prevBlob = useRef({ left: null, width: null });
+  const navCellHeight = isMobile ? 26 : NAV_CELL_HEIGHT;
+
   const isActive = (to) => {
-    if (to === '/neoflix') return location.pathname === '/neoflix' || location.pathname === '/contact';
-    if (to === '/publications') return location.pathname.startsWith('/publications');
-    if (to === '/toolbox') return location.pathname.startsWith('/toolbox');
+    if (to === '/neoflix') {
+      return location.pathname === '/neoflix' && location.hash !== '#collab';
+    }
+    if (to === '/contact') {
+      return location.pathname === '/contact';
+    }
     return location.pathname === to;
   };
 
+  const handleMouseEnter = (idx) => {
+    const el = linkRefs.current[idx];
+    if (el && blobContainerRef.current) {
+      const containerRect = blobContainerRef.current.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
+      setBlob({
+        left: rect.left - containerRect.left,
+        width: rect.width,
+        height: rect.height,
+      });
+      setHoveredIdx(idx);
+      setBlobOpacity(1.0);
+      if (settleTimeout.current) clearTimeout(settleTimeout.current);
+      settleTimeout.current = setTimeout(() => {}, 80);
+      if (hoverTimer) clearInterval(hoverTimer);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setBlob(null);
+    setBlobOpacity(0.5);
+    setHoveredIdx(null);
+    if (hoverTimer) clearInterval(hoverTimer);
+    if (settleTimeout.current) clearTimeout(settleTimeout.current);
+  };
+
+  useEffect(() => () => { if (hoverTimer) clearInterval(hoverTimer); if (settleTimeout.current) clearTimeout(settleTimeout.current); }, [hoverTimer]);
+
   useEffect(() => {
     const onResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setIsCompactMobile(window.innerWidth < 600);
+      const width = window.innerWidth;
+      const mobile = width < 768;
+      setIsMobile(mobile);
+      setIsCompactMobile(width < 600);
+      if (!mobile) setMenuOpen(false);
     };
     window.addEventListener('resize', onResize);
     onResize();
@@ -94,9 +141,44 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
+    if (hoveredIdx !== null && prevIdx.current !== null && hoveredIdx !== prevIdx.current) {
+      setTraveling(true);
+      setBlobHeight(blob?.height || 0);
+      setTimeout(() => {
+        setBlobHeight(blob?.height ? blob.height * 0.50 : 0);
+        setTimeout(() => {
+          setBlobHeight(blob?.height || 0);
+          setTraveling(false);
+        }, 90);
+      }, 1);
+    } else if (blob?.height) {
+      setBlobHeight(blob.height);
+    }
+    prevIdx.current = hoveredIdx;
+  }, [hoveredIdx, blob?.height]);
+
+  useEffect(() => {
+    if (!blob) return;
+    if (
+      prevBlob.current.left !== null &&
+      (prevBlob.current.left !== blob.left || prevBlob.current.width !== blob.width)
+    ) {
+      animate(height, [blob.height, 0, blob.height], {
+        times: [0, 0.5, 1],
+        duration: 0.18,
+        ease: [0.42, 0, 0.58, 1],
+      });
+    } else {
+      height.set(blob.height);
+    }
+    prevBlob.current = { left: blob.left, width: blob.width };
+  }, [blob?.left, blob?.width, blob?.height]);
+
+  useEffect(() => {
     const updateVar = () => {
       try {
-        const h = isCompactMobile ? 0 : (navRef.current?.getBoundingClientRect()?.height || 60);
+        const navEl = navRef.current;
+        const h = isCompactMobile ? 0 : (navEl?.getBoundingClientRect()?.height || 60);
         document.documentElement.style.setProperty('--nav-h', `${Math.round(h)}px`);
       } catch {}
     };
@@ -105,20 +187,40 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', updateVar);
   }, [isCompactMobile]);
 
-  if (isCompactMobile) return null;
+  useEffect(() => {
+    if (isMobile) return;
+    const activeIdx = NAV_LINKS.findIndex(link => isActive(link.to));
+    if (activeIdx === -1) {
+      setBlob(null);
+      return;
+    }
+    const el = linkRefs.current[activeIdx];
+    const container = blobContainerRef.current;
+    if (el && container) {
+      const containerRect = container.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
+      setBlob({
+        left: rect.left - containerRect.left,
+        width: rect.width,
+        height: rect.height,
+      });
+      setBlobOpacity(0.5);
+      setHoveredIdx(null);
+    }
+  }, [location.pathname, location.hash, isMobile]);
 
-  // What the bar lights: the thing being pointed at in the bar itself,
-  // else the thing in front of the reader on the page.
-  const focus = hover || lit;
-  const related = focus ? relatedTo(focus) : null;
-  const stateOf = (t) => (t === focus ? 'lit' : related?.has(t) ? 'related' : 'idle');
+  if (isCompactMobile) return null;
 
   return (
     <nav ref={navRef} data-app-navbar className="fixed inset-x-0 top-0 z-40 bg-white flex items-center justify-between" style={{ height: 60, borderBottom: '1px solid rgba(28, 54, 100, 0.08)', boxShadow: '0 1px 2px rgba(28, 54, 100, 0.05), 0 2px 8px -2px rgba(28, 54, 100, 0.06)' }}>
+      {/* Logo */}
       <div className="flex items-center h-full pl-6 pr-4">
         <FaviconLogo onClick={() => {
           if (location.pathname === '/') {
-            // ScrollSnap owns the Home scroll container; it listens for this.
+            // ScrollSnap owns the Home scroll container (window never
+            // scrolls with the fixed RouteSlider layout). Dispatch
+            // the event ScrollSnap already listens for instead of
+            // addressing window.
             window.dispatchEvent(new Event('scrollsnap:go-to-top'));
           } else {
             transitionNavigate('/');
@@ -126,83 +228,108 @@ export default function Navbar() {
         }} />
       </div>
 
-      <div className="ix-bar" style={{ paddingRight: isMobile ? 12 : 40 }} onMouseLeave={() => indexApi?.setHover(null)}>
-        {SETS.map((set) => {
-          const active = isActive(set.to);
-          const isToolbox = set.kind === 'loop';
-          return (
-            <div key={set.to} className="ix-set" data-kind={set.kind} data-here={active ? '' : undefined}>
-              <div className="relative flex items-center justify-center" style={{ height: navCellHeight }}>
+      {/* Nav links */}
+      <div className="flex flex-1 justify-end items-center h-full" style={{ paddingRight: isMobile ? 12 : 64 }}>
+        <div
+          ref={blobContainerRef}
+          className="relative flex items-center"
+          onMouseLeave={handleMouseLeave}
+          style={{ alignItems: 'center', height: '60px', position: 'relative', gap: isMobile ? '1.5rem' : '3.75rem' }}
+        >
+          {/* Animated blob */}
+          <AnimatePresence>
+            {!isMobile && blob && (
+              <motion.div
+                key="blob"
+                initial={{ opacity: 0, x: blob.left, width: blob.width, height: NAV_CELL_HEIGHT }}
+                animate={{
+                  opacity: blobOpacity,
+                  x: blob.left,
+                  width: blob.width,
+                  height: traveling ? navCellHeight * 0.75 : navCellHeight,
+                  transition: {
+                    opacity: { duration: 0.18 },
+                    x: { type: 'spring', stiffness: 360, damping: 50, mass: 1.2, velocity: 6 },
+                    width: { type: 'spring', stiffness: 360, damping: 50, mass: 1.2, velocity: 6 },
+                    height: { duration: 0.18, ease: [0.42, 0, 0.58, 1] },
+                  },
+                }}
+                exit={{ opacity: 0, transition: { duration: 0.18 } }}
+                className="absolute flex items-center"
+                style={{
+                  left: 0,
+                  borderRadius: '9999px',
+                  background: '#d1d5db',
+                  boxShadow: '0 0 0 1px var(--edge-3)',
+                  zIndex: 1,
+                  pointerEvents: 'none',
+                  margin: 'auto 0',
+                  willChange: 'transform, width, opacity',
+                }}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Nav link items */}
+          {NAV_LINKS.map((link, idx) => {
+            const active = isActive(link.to);
+            const isToolbox = link.label === 'Toolbox';
+            return (
+              <div
+                key={link.to}
+                ref={el => linkRefs.current[idx] = el}
+                className="relative flex items-center justify-center"
+                onMouseEnter={!isMobile ? () => handleMouseEnter(idx) : undefined}
+                onFocus={!isMobile ? () => handleMouseEnter(idx) : undefined}
+                tabIndex={-1}
+                style={{ minHeight: navCellHeight, height: navCellHeight, zIndex: 2 }}
+              >
                 <AnimatePresence>
                   {active && (
-                    // One pill, shared across the links by layoutId: it
-                    // travels to the new link in step with the page slide.
                     <motion.span
                       key="active-pill"
-                      layoutId="navbar-active-pill"
                       className="absolute inset-0 z-20 rounded-full bg-[#529c9c]"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{
-                        layout: { duration: SLIDE_DURATION, ease: SLIDE_EASE },
-                        opacity: { duration: 0.18, ease: 'easeOut' },
-                      }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
                       style={{
                         boxShadow: '0 0 0 1px rgba(31, 95, 88, 0.5), 0 2px 8px 0 rgba(82,156,156,0.10)',
                         pointerEvents: 'none',
                         height: navCellHeight,
+                        minHeight: navCellHeight,
+                        maxHeight: navCellHeight,
                       }}
                     />
                   )}
                 </AnimatePresence>
                 <a
-                  href={set.to}
+                  href={link.to}
                   aria-current={active ? 'page' : undefined}
-                  onClick={(e) => handleNavClick(e, set.to)}
-                  className={`relative z-30 flex items-center justify-center rounded-full transform-gpu transition duration-200 ease-out hover:scale-105 focus:scale-105
-                    ${active || isToolbox ? 'text-white' : 'text-[#232324]'}
-                    ${isToolbox && !active ? 'bg-[#232324] ring-1 ring-white/20' : ''}`}
+                  onClick={(e) => handleNavClick(e, link.to, link.section)}
+                  className={`relative z-30 flex items-center justify-center rounded-full transform-gpu transition duration-200 ease-out
+                    hover:scale-105 focus:scale-105
+                    ${active ? 'text-white' : isToolbox ? 'text-white' : 'text-[#232324]'}
+                    ${isToolbox && !active ? 'bg-[#232324] ring-1 ring-white/20' : ''}
+                  `}
                   style={{
+                    pointerEvents: 'auto',
                     fontFamily: 'Montserrat, sans-serif',
                     fontWeight: 500,
-                    fontSize: isMobile ? 16 : 17,
-                    padding: isMobile ? '6px 10px' : '8px 18px',
+                    fontSize: isMobile ? 16 : 18,
+                    padding: isMobile ? '6px 10px' : '8px 24px',
                     height: navCellHeight,
                     lineHeight: navCellHeight + 'px',
                     userSelect: 'none',
+                    WebkitUserSelect: 'none',
                   }}
                 >
-                  {set.label}
+                  {link.label}
                 </a>
               </div>
-              {!isMobile && (
-                <div className="ix-set__tokens">
-                  {set.tokens.map((t) => (
-                    <a
-                      key={t}
-                      className="ix-item"
-                      href={hrefFor(t)}
-                      data-name={nameOf(t)}
-                      data-state={stateOf(t)}
-                      aria-label={nameOf(t)}
-                      onMouseEnter={() => indexApi?.setHover(t)}
-                      onFocus={() => indexApi?.setHover(t)}
-                      onBlur={() => indexApi?.setHover(null)}
-                      onClick={(e) => {
-                        indexApi?.setHover(null);
-                        go(e, t);
-                      }}
-                      tabIndex={0}
-                    >
-                      <Token t={t} size={set.kind === 'loop' ? 'seg' : 's'} />
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

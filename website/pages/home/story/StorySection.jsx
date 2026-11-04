@@ -7,7 +7,6 @@ import StoryLandscapeTabletLayout from './StoryLandscapeTabletLayout';
 import { useBackdropTarget } from '../../../shared/backdrop/useBackdrop';
 import { MEDICAL_PRESSURE_DECK, MEDICAL_REFLECTION_DECK } from '../../../shared/backdrop/decks';
 import useTransitionNavigate from '../../../lib/hooks/useTransitionNavigate';
-import { useLit } from '../../../shared/index/IndexContext';
 
 const DECK_BY_STORY = {
   pressure: MEDICAL_PRESSURE_DECK,
@@ -40,10 +39,6 @@ const MedicalSection = ({ inView, sectionRef, story = 'pressure' }) => {
     deck: DECK_BY_STORY[story],
     topIdx,
   });
-
-  // The navbar index follows the film: the beat on screen is lit, with
-  // the papers that prove it and the parts of the loop it leads to.
-  useLit(inView && sectionTargets?.[topIdx] ? `beat:${sectionTargets[topIdx]}` : null);
 
   if (state.isMobile) {
     return <MedicalMobileLayout {...state} sectionRef={sectionRef} navigateToSection={navigateToSection} />;

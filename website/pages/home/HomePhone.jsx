@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { assetUrl } from '../../lib/utils/assetUrl';
-import { beatById, captionLines } from '../../shared/argument';
 import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
 import { decorativeVideoProps } from '../../lib/utils/decorativeVideoProps';
 import { prefersReducedMedia } from '../../lib/utils/reducedMedia';
@@ -12,11 +11,13 @@ const INTRO_SEQUENCE_COUNT = 2;
 const INTRO_BLUR_VIDEO = assetUrl('/videos/mobile/neoflix_intro_blur_montage.mp4');
 const INTRO_BLUR_POSTER = assetUrl('/videos/mobile/neoflix_intro_blur_montage_poster.png');
 
-// The six clip panels read their sentences from shared/argument.js, the
-// same source as the desktop captions — change a claim there and both
-// surfaces follow. The two act headers below are still written here and
-// in pages/home/story/story.data.js: keep those two in step.
-const PANELS = [
+// CONTENT WARNING — duplicated copy, edit BOTH surfaces.
+// These panels restate the desktop homepage copy from
+// components/sections/medical/MedicalSection.data.js in a different
+// shape (per-line accents and delays). When wording changes on either
+// surface, make the same change in the other file, or phone and
+// desktop will say different things. See data/homePage.js.
+const MOBILE_PANELS = [
   {
     id: 'intro',
     video: INTRO_BLUR_VIDEO,
@@ -54,18 +55,33 @@ const PANELS = [
     video: assetUrl('/videos/mobile/urgency.mp4'),
     poster: assetUrl('/videos/mobile/urgency_poster.jpg'),
     target: 'time-sensitive',
+    label: 'Medical interventions demand precision and urgency.',
+    lines: [
+      [{ text: 'Medical interventions demand', delay: 0 }],
+      [{ text: 'precision and urgency', accent: true, delay: 260 }, { text: '.', delay: 260 }],
+    ],
   },
   {
     id: 'coordination',
     video: assetUrl('/videos/mobile/coordination.mp4'),
     poster: assetUrl('/videos/mobile/coordination_poster.jpg'),
     target: 'like-a-dance',
+    label: 'Which makes coordination within teams vital for success.',
+    lines: [
+      [{ text: 'Which makes ', delay: 0 }, { text: 'coordination', accent: true, delay: 180 }],
+      [{ text: 'within teams vital for success.', delay: 360 }],
+    ],
   },
   {
     id: 'tunnelvision',
     video: assetUrl('/videos/mobile/tunnelvision.mp4'),
     poster: assetUrl('/videos/mobile/tunnelvision_poster.jpg'),
     target: 'cost',
+    label: 'Task-driven focus can lead to tunnel vision and misalignment.',
+    lines: [
+      [{ text: 'Task-driven focus', delay: 0 }, { text: ' can lead to', delay: 180 }],
+      [{ text: 'tunnel vision', accent: true, delay: 360 }, { text: ' and misalignment.', delay: 360 }],
+    ],
   },
   {
     id: 'next',
@@ -93,33 +109,35 @@ const PANELS = [
     video: assetUrl('/videos/mobile/reflection.mp4'),
     poster: assetUrl('/videos/mobile/reflection_poster.jpg'),
     target: 'sharpening',
+    label: 'Quiet reflection allows for sharpening skills.',
+    lines: [
+      [{ text: 'Quiet ', delay: 0 }, { text: 'reflection', accent: true, delay: 180 }, { text: ' allows for', delay: 180 }],
+      [{ text: 'sharpening skills.', delay: 360 }],
+    ],
   },
   {
     id: 'cohesion',
     video: assetUrl('/videos/mobile/cohesion.mp4'),
     poster: assetUrl('/videos/mobile/cohesion_poster.jpg'),
     target: 'team-dynamics',
+    label: 'Further video debriefs foster cohesion amongst peers.',
+    lines: [
+      [{ text: 'Further video debriefs', delay: 0 }, { text: ' foster', delay: 180 }],
+      [{ text: 'cohesion', accent: true, delay: 360 }, { text: ' amongst peers.', delay: 360 }],
+    ],
   },
   {
     id: 'alignment',
     video: assetUrl('/videos/mobile/alignment.mp4'),
     poster: assetUrl('/videos/mobile/alignment_poster.jpg'),
     target: 'perspectives',
+    label: 'Shared understanding enhances decisiveness.',
+    lines: [
+      [{ text: 'Shared ', delay: 0 }, { text: 'understanding', accent: true, delay: 180 }],
+      [{ text: 'enhances ', delay: 360 }, { text: 'decisiveness.', delay: 520 }],
+    ],
   },
 ];
-
-// The six clip panels say what the homepage captions say: each beat's
-// claim (shared/argument.js), split into two lines the same way.
-const MOBILE_PANELS = PANELS.map((panel) => {
-  const beat = panel.target && beatById(panel.target);
-  if (!beat) return panel;
-  const [first, second] = captionLines(beat.claim);
-  return {
-    ...panel,
-    label: beat.claim,
-    lines: [[{ text: first, delay: 0 }], [{ text: second, delay: 260 }]],
-  };
-});
 
 function MobileLine({ lines }) {
   return (

@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useIsPresent } from 'framer-motion';
 import BackdropCell from './BackdropCell';
 import { BackdropContext } from './context';
-import { blogBandsId } from './useBackdrop';
 import './backdrop.css';
 
 /**
@@ -73,7 +72,7 @@ const HOME_CELLS = [
   // blends instead of flashing the dark default.
   { kind: 'video', targetKey: 'medical-pressure', camo: '#739780' },
   { kind: 'video', targetKey: 'medical-reflection' },
-  // The exit slide paints its own pale fill.
+  { kind: 'camo' },
   { kind: 'camo' },
 ];
 
@@ -192,7 +191,7 @@ function BackdropRenderer({ state }) {
           exit={{ opacity: 0, transition: BACKDROP_FADE }}
         >
           {page === PAGE_HOME && <HomeBackdrop state={state} />}
-          {page === PAGE_BLOG && <BlogBackdrop state={state} pathname={location.pathname} />}
+          {page === PAGE_BLOG && <BlogBackdrop state={state} />}
           {page === PAGE_TOOLBOX && <ToolboxBackdrop state={state} />}
           {page === PAGE_CAMO && (
             <BackdropCell kind="camo" decodeState="idle" />
@@ -330,13 +329,9 @@ function ToolboxBackdrop({ state }) {
  * When nothing is published the cell fades out and the engine's
  * #1c3424 fill shows through.
  */
-function BlogBackdrop({ state, pathname }) {
+function BlogBackdrop({ state }) {
   const target = state.targets.blog;
   const hasTarget = Boolean(target);
-  // Same as HomeBackdrop: the bands belong to the page's layout, so they
-  // go quickly when the page leaves rather than riding the 2s crossfade.
-  const isPresent = useIsPresent();
-  const bands = state.bands[blogBandsId(pathname.startsWith('/publications') ? 'publications' : 'neoflix')];
   return (
     <div
       className="absolute inset-0"
@@ -351,7 +346,6 @@ function BlogBackdrop({ state, pathname }) {
         topIdx={target?.topIdx ?? 0}
         decodeState={hasTarget ? 'active' : 'idle'}
       />
-      <BackdropBands bands={bands} present={isPresent} />
     </div>
   );
 }

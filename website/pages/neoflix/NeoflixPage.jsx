@@ -1,6 +1,6 @@
 /**
- * /neoflix — picks the surface. Laptops get NeoflixDesktop (the essay in
- * three acts, on the shared BlogPage layout); phones get NeoflixPhone.
+ * /neoflix — native React. Uses the shared BlogPage layout; content
+ * lives in data/neoflixPage.js and is unchanged.
  *
  * Also serves /contact via App.jsx — that route passes `scrollTo="contact"`
  * so the same page lands on the contact section. The video backdrop is
@@ -13,9 +13,8 @@
 import React, { Suspense, lazy } from 'react';
 import useTabletLayout from '../../lib/hooks/useTabletLayout';
 import { sections } from './backdrop';
-// The laptop page (three acts, the toolbox route, the film and the map)
-// lives in NeoflixDesktop.jsx; phones get their own page.
-const NeoflixDesktop = lazy(() => import('./NeoflixDesktop'));
+
+const BlogPage = lazy(() => import('../../shared/BlogPage'));
 const MobileNeoflixPage = lazy(() => import('./NeoflixPhone'));
 
 export default function NeoflixPage({ scrollTo }) {
@@ -27,7 +26,7 @@ export default function NeoflixPage({ scrollTo }) {
       {mobile ? (
         <MobileNeoflixPage sections={sections} scrollTo={scrollTo} />
       ) : (
-        <NeoflixDesktop scrollTo={scrollTo} />
+        <BlogPage sections={sections} scrollTo={scrollTo} pageTitle="Neoflix" />
       )}
     </Suspense>
   );

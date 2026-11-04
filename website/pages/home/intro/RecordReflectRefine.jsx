@@ -17,7 +17,6 @@
  */
 import { TAGLINE } from "../content.js";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useLit } from "../../../shared/index/IndexContext";
 
 const CYCLE_DELAY_MS = 1260;
 
@@ -119,12 +118,6 @@ export default function RecordReflectRefine({
       return next;
     });
   }, [introComplete, onVariantChange]);
-
-  // The three words are three parts of the loop: the navbar index lights
-  // whichever one is teal, so the toolbox's loop pulses with the headline.
-  const tealIndex = introComplete ? activeIndex : introStep - 1;
-  const LOOP_PARTS = ["record", "reflect", "refine"];
-  useLit(started && !paused && tealIndex >= 0 ? `loop:${LOOP_PARTS[tealIndex]}` : null);
 
   const isMobile = variant === "mobile";
 

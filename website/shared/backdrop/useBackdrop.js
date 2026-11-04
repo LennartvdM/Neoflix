@@ -79,22 +79,6 @@ export function useBackdropBands(id, bands) {
   useEffect(() => {
     setBands(id, key ? JSON.parse(key) : null);
   }, [id, key, setBands]);
-  // Unlike targets (see the note above), bands clear on unmount: each
-  // publisher owns its id outright (blogBandsId gives every blog page its
-  // own), so there is no successor to wipe out — and a left-over set of
-  // visible bands would flash on the next visit before the new page
-  // publishes its own.
-  useEffect(() => () => setBands(id, null), [id, setBands]);
-}
-
-/**
- * The bands id for one blog-style page ('neoflix' | 'publications').
- * Each page publishes under its own id: both pages are mounted while one
- * slides out and the other in, and a shared id would let the departing
- * page's last publish overwrite the arriving one's.
- */
-export function blogBandsId(page) {
-  return `blog-${page}`;
 }
 
 export function useBackdropPublisher() {

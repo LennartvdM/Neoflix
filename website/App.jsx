@@ -5,7 +5,6 @@ import MobileDock from './shared/MobileDock';
 import RouteSlider from './shared/motion/RouteSlider';
 import BackdropProvider from './shared/backdrop/BackdropProvider';
 import { TransitionProvider } from './shared/motion/TransitionContext';
-import { IndexProvider } from './shared/index/IndexContext';
 import useTabletLayout from './lib/hooks/useTabletLayout';
 import useDocumentMeta from './lib/hooks/useDocumentMeta';
 import ErrorBoundary from './shared/ErrorBoundary';
@@ -119,9 +118,7 @@ export default function App() {
   return (
     <Router basename={import.meta.env.BASE_URL?.replace(/\/$/, '') || ''}>
       <TransitionProvider>
-        <IndexProvider>
-          <AppShell />
-        </IndexProvider>
+        <AppShell />
       </TransitionProvider>
     </Router>
   );

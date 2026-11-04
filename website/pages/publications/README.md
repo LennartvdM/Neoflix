@@ -5,9 +5,7 @@ paper.
 
 | | |
 |---|---|
-| `PublicationsPage.jsx` | Picks the surface: laptop (`PublicationsDesktop.jsx`) or phone |
-| `PublicationsDesktop.jsx` | The laptop page: the six papers on their time axis — a column per year, each paper in its year, empty years left as holes, Veerle's letter first. Cards open in place. Adding a paper from a new year means adding a column in `publications-board.css`. |
-| `arc.js` | What the arc says about each paper: short name, Asked / Found / Changed, the lifted figure, and the intro |
+| `PublicationsPage.jsx` | Picks the surface; the laptop version renders through `../../shared/BlogPage.jsx` |
 | `PublicationsPhone.jsx` | The phone version |
 | `PaperPage.jsx` | One paper's own page |
 | `content.js` | The prose on the list page, the PDF links, the download bundle |

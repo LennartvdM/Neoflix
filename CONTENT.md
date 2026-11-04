@@ -13,23 +13,22 @@ the phone version, that page's words and that page's styles, side by side.
 
 | What you see | Where it lives |
 |---|---|
-| Tagline under the logo ("Video review for neonatal teams…") | `TAGLINE` in `pages/home/content.js` (one string, used everywhere) |
+| Tagline under the logo ("Improve patient care…") | `TAGLINE` in `pages/home/content.js` (one string, used everywhere) |
 | The animated "Record / Reflect / Refine" words | `pages/home/intro/RecordReflectRefine.jsx` (`WORDS`) |
-| The six captions | `shared/argument.js` — each beat's `claim`. Desktop and phone both read it. |
-| The two story headlines ("In the moment…", "Yet, reflection…") | `header` in `pages/home/story/story.data.js` **and** `chapterHeader` in `pages/home/HomePhone.jsx` — keep in step |
+| The two story sections' headlines, captions, carousel copy | `pages/home/story/story.data.js` — keyed `pressure` (the problem) and `reflection` (the answer). **Also update the phone version, next row.** |
+| The same sentences on a phone | `MOBILE_PANELS` in `pages/home/HomePhone.jsx` — **keep in step with `story.data.js`** |
 | Story section videos | `public/videos/*.mp4`, mapped in `story.data.js`. Replacing a clip? Read CLAUDE.md rule 7 first, and regenerate its still in `public/videos/stills/`. |
 | Phone hero lines + label | top of `pages/home/HomePhone.jsx` |
 | Phone panel videos/posters | `public/videos/mobile/` |
-| The last slide ("Read how Leiden did it", the six clip doors, "Run your first session") | `pages/home/HomeExit.jsx` |
+| The showcase video slide | `pages/home/VimeoSection.jsx` |
+| The world map slide | `shared/worldmap/` (shared with the Toolbox) |
 | Footer names, credits, KNAW funding line | `shared/Footer.jsx` |
 
 ## /neoflix (and /contact, which is the same page) — `pages/neoflix/`
 
 | What you see | Where it lives |
 |---|---|
-| Everything on the laptop page: each beat's claim, in-practice line, proofs and figures, clip caption, film timecode, which toolbox pages and papers it leads to | `shared/argument.js` (one entry per beat) |
-| The four units' one-liners and the sign-off text (laptop) | top and bottom of `pages/neoflix/NeoflixDesktop.jsx` |
-| The phone page's prose | `pages/neoflix/content.js` (the laptop page no longer uses it) |
+| All section prose + titles (both desktop and phone) | `pages/neoflix/content.js` |
 | Phone-only hero ("Record. Reflect. Refine." + subtitle, intro band) | `pages/neoflix/NeoflixPhone.jsx` — search the file for the sentence you want to change |
 | Section backdrop videos / accent colours | `pages/neoflix/backdrop.js` (desktop); map at the top of `NeoflixPhone.jsx` (phone) |
 
