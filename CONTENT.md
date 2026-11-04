@@ -50,9 +50,19 @@ repository root — **but that directory is mirrored from GitBook** (repo
 first (AUDIT.md §7.1). Only images and files actually linked from a page are
 published.
 
-`pages/toolbox/` is the *reader* — the sidebar, the page layout, and the
-blocks that render GitBook's callouts, tabs, cards and file links. Change
-things here to alter how Toolbox pages look, not what they say.
+`pages/toolbox/` renders that text (GitBook's callouts, tabs, cards and
+file links). Each page is a record in the library — see the next section.
+
+## The library — `website/system/`
+
+| What you see | Where it lives |
+|---|---|
+| A film's claim, caption, "in the NICU" line, the findings it shows, the toolbox pages it leads to | `system/content/films.js` |
+| What the library says about each paper (short name, asked / found / changed) | `system/content/papers.js` |
+| The paths ("Why record at all", "Your first session", "The evidence") | `system/content/paths.js` |
+| Which modules a record shows, in what order, and why | `system/modules/plans.js` |
+| The front's heading and intro | `system/pages/RecordPage.jsx` (`Header`, the `front` branch) |
+| Module headings ("The evidence", "How to do it"…) | `MODULE_NAMES` in `system/modules/index.jsx` |
 
 ## Browser tab titles, search snippets, link previews
 

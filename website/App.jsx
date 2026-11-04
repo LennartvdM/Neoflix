@@ -18,8 +18,13 @@ import ErrorBoundary from './shared/ErrorBoundary';
 const Home = lazy(() => import('./pages/home/Home'));
 const NeoflixPage = lazy(() => import('./pages/neoflix/NeoflixPage'));
 const PublicationsPage = lazy(() => import('./pages/publications/PublicationsPage'));
-const DocsPage = lazy(() => import('./pages/toolbox/ToolboxPage'));
-const PaperPage = lazy(() => import('./pages/publications/PaperPage'));
+// The library (website/system): every toolbox page, paper and film is a
+// record assembled from modules; paths, search and the session pack sit
+// alongside. One chunk per page kind.
+const RecordPage = lazy(() => import('./system/pages/RecordPage'));
+const PathPage = lazy(() => import('./system/pages/PathPage'));
+const SearchPage = lazy(() => import('./system/pages/SearchPage'));
+const PackPage = lazy(() => import('./system/pages/PackPage'));
 const NotFoundPage = lazy(() => import('./pages/not-found/NotFoundPage'));
 
 function AppShell() {
@@ -28,7 +33,7 @@ function AppShell() {
   const isNeoflix = location.pathname === '/neoflix' || location.pathname.startsWith('/neoflix/');
   const isPublications = location.pathname.startsWith('/publications');
   const isContact = location.pathname === '/contact';
-  const isToolbox = location.pathname.startsWith('/toolbox');
+  const isToolbox = /^\/(toolbox|films|paths|search|pack)(\/|$)/.test(location.pathname);
   const showMobileDock = width > 0 && width < 600;
 
   // Client-side navigation doesn't reload the document, so the head has
@@ -97,10 +102,15 @@ function AppShell() {
                   <Route path="/" element={<Home />} />
                   <Route path="/neoflix" element={<NeoflixPage />} />
                   <Route path="/publications" element={<PublicationsPage />} />
-                  <Route path="/publications/:slug" element={<PaperPage />} />
+                  <Route path="/publications/:slug" element={<RecordPage />} />
                   <Route path="/contact" element={<NeoflixPage scrollTo="contact" />} />
-                  <Route path="/toolbox" element={<DocsPage />} />
-                  <Route path="/toolbox/*" element={<DocsPage />} />
+                  <Route path="/toolbox" element={<RecordPage />} />
+                  <Route path="/toolbox/*" element={<RecordPage />} />
+                  <Route path="/films/:id" element={<RecordPage />} />
+                  <Route path="/paths" element={<PathPage />} />
+                  <Route path="/paths/:id" element={<PathPage />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/pack" element={<PackPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </Suspense>

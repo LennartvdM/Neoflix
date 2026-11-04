@@ -37,6 +37,7 @@ import {
   resolveRouteMeta,
   canonicalUrl,
   staticRoutePaths,
+  libraryRoutePaths,
 } from '../shared/routeMeta.js';
 import {
   publicationRecords,
@@ -400,6 +401,7 @@ async function main() {
 
   const routePaths = [
     ...staticRoutePaths(),
+    ...libraryRoutePaths(),
     ...paperPaths,
     ...Object.keys(pages)
       .filter((slug) => slug !== '')

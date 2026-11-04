@@ -1,16 +1,17 @@
 # website/pages/toolbox/
 
-The reader for `/toolbox`. **The text of those pages isn't here** — it's
-markdown in `docs-content/` at the repository root, mirrored automatically
-from GitBook. Edit the words in GitBook; edit how they look here.
+How toolbox text is loaded and drawn. **The pages themselves are records in
+the library** (`website/system/`), which assembles each one; the text
+module there renders the page body with `DocsNode`. **The words aren't
+here either**: they're markdown in `docs-content/` at the repository root,
+mirrored automatically from GitBook. Edit the words in GitBook; edit how
+they look here.
 
 | | |
 |---|---|
-| `ToolboxPage.jsx` | The page: sidebar, article, contents rail |
-| `DocsSidebar.jsx` | The navigation tree, including the tab that marks the current page |
-| `DocsNode.jsx` | Turns the compiled markdown into React |
+| `DocsNode.jsx` | Turns the compiled markdown into React (task-list items carry `data-task`; the library makes them a working checklist) |
 | `blocks/` | GitBook's own block types: callouts, tabs, cards, file downloads, the world map embed |
-| `docsIndex.js` | The navigation tree and the page loader |
+| `docsIndex.js` | The manifest and the page loader |
 | `docs.css` | Everything the reader looks like |
 | `legacySlugMap.js`, `legacyGitbookUrls.js` | Redirects from two earlier generations of Toolbox URLs, so old links still work. Not content — don't add rows. |
 

@@ -16,6 +16,9 @@ cd website
 npm ci --prefer-offline
 # Transform docs-content/ (GitBook mirror) → compiled AST JSON + assets
 node scripts/build-docs.mjs
+# The library's integrity: links, paths, addresses, layouts (fails fast,
+# naming what broke — e.g. a toolbox page renamed in GitBook)
+node scripts/system-check.mjs
 # Bundle public/papers/*.pdf → one archive + its manifest
 node scripts/build-publications-zip.mjs
 npx vite build --outDir "../$OUT"

@@ -96,6 +96,10 @@ export default function Navbar() {
     if (to === '/contact') {
       return location.pathname === '/contact';
     }
+    // The whole library (films, paths, search, the pack) lives under
+    // Toolbox; a paper's own page under Publications.
+    if (to === '/toolbox') return /^\/(toolbox|films|paths|search|pack)(\/|$)/.test(location.pathname);
+    if (to === '/publications') return location.pathname.startsWith('/publications');
     return location.pathname === to;
   };
 

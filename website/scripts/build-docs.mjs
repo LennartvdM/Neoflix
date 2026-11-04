@@ -70,6 +70,45 @@ async function walk(dir, base = dir) {
   return out;
 }
 
+// The page's opening sentence: the first sentence of its first real
+// paragraph (top level, long enough to be prose — not a figure, a lone
+// link or a card table), as plain text. The library (website/system)
+// shows it wherever a guidance record is pointed at — search, browse, the
+// map, the modules of other records — so a link says what it leads to in
+// the page's own words. Null when there is none.
+function countTasks(node) {
+  if (!node || typeof node !== "object") return 0;
+  const self = node.type === "listItem" && typeof node.checked === "boolean" ? 1 : 0;
+  return self + (node.children || []).reduce((n, c) => n + countTasks(c), 0);
+}
+
+function openingSentence(tree) {
+  for (const node of tree.children || []) {
+    if (node.type !== "paragraph") continue;
+    // A paragraph that is only bold text ("**Goal Setting**") is a
+    // heading in GitBook's hands, not the page's opening sentence.
+    const kids = (node.children || []).filter((c) => !(c.type === "text" && !c.value.trim()));
+    if (kids.length === 1 && kids[0].type === "strong") continue;
+    const text = mdastToString(node)
+      .replace(/<[^>]+>/g, "")
+      .replace(/&#x20;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text.length < 24) continue;
+    // First sentence end that leaves a real clause, so an abbreviation
+    // ("Dr.", "e.g.") doesn't end it.
+    const ends = [...text.matchAll(/[.!?](?=\s|$)/g)].map((m) => m.index + 1);
+    const ABBREV = /\b(?:Dr|Mr|Mrs|Ms|Prof|St|vs|etc|e\.g|i\.e)\.$/i;
+    const cut = ends.find((i) => i >= 24 && !ABBREV.test(text.slice(0, i))) ?? text.length;
+    const sentence = text.slice(0, cut).trim();
+    // A lead-in to a list ("consider the following:") or a contact line
+    // says nothing on its own.
+    if (/:$/.test(sentence) || sentence.includes("@")) continue;
+    return sentence.length > 220 ? `${sentence.slice(0, 217).trimEnd()}…` : sentence;
+  }
+  return null;
+}
+
 function stripFrontmatter(src) {
   if (!src.startsWith("---")) return { body: src, frontmatter: {} };
   const end = src.indexOf("\n---", 3);
@@ -695,6 +734,10 @@ async function main() {
     pageMeta[slug] = {
       title,
       description: frontmatter.description || null,
+      excerpt: openingSentence(tree),
+      // Task-list items ("* [ ] Obtain consent"): a page with these is a
+      // checklist, and the library renders it as one you can work through.
+      tasks: countTasks(tree),
       file: outFile,
       source: relPath,
     };

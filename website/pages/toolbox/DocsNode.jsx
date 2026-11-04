@@ -60,7 +60,9 @@ export default function DocsNode({ node }) {
         <ul>{kids()}</ul>
       );
     case 'listItem':
-      return <li>{kids()}</li>;
+      // A task-list item ("* [ ] …") — the library's text module turns
+      // these into a checklist the reader can work through.
+      return node.checked == null ? <li>{kids()}</li> : <li className="docs-task" data-task="">{kids()}</li>;
 
     case 'blockquote':
       return <blockquote>{kids()}</blockquote>;

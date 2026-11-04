@@ -14,7 +14,8 @@
  *   0  Neoflix
  *   1  Publications
  *   2  Home
- *   3  Toolbox
+ *   3  Toolbox — and the rest of the library (films, paths, search,
+ *      the session pack), so moving between records never slides
  */
 import { useLocation } from 'react-router-dom';
 
@@ -33,8 +34,11 @@ export const MOBILE_DOCK_ORDER = [
   { index: 3, path: '/toolbox' },
 ];
 
+const LIBRARY = /^\/(toolbox|films|paths|search|pack)(\/|$)/;
+
 export function getNavIndexForPath(pathname, surface = 'desktop') {
   if (!pathname) return surface === 'mobile' ? 2 : 0;
+  if (LIBRARY.test(pathname)) return 3;
 
   if (surface === 'mobile') {
     if (pathname === '/toolbox' || pathname.startsWith('/toolbox/')) return 3;

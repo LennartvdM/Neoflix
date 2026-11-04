@@ -53,6 +53,16 @@ await check('every ROUTE_META route emitted an HTML file', async () => {
   }
 });
 
+await check('every film and path of the library emitted an HTML file', async () => {
+  const { libraryRoutePaths } = await import('../shared/routeMeta.js');
+  for (const route of libraryRoutePaths()) await mustExist(`${route.slice(1)}/index.html`, 500);
+});
+
+await check('every paper has its own page', async () => {
+  const { papersWithPages, paperPath } = await import('../pages/publications/records.js');
+  for (const id of papersWithPages()) await mustExist(`${paperPath(id).slice(1)}/index.html`, 500);
+});
+
 await check('sitemap.xml exists and lists this site', async () => {
   const p = await mustExist('sitemap.xml', 200);
   const xml = await fs.readFile(p, 'utf8');

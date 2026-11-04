@@ -229,25 +229,28 @@ export const publicationRecords = {
 /**
  * Section id → URL slug for its own page at /publications/<slug>.
  *
- * Only papers with an abstract get a page. The other two are under a
- * publisher's exclusive licence, so until their author confirms what may
- * be reproduced there is nothing to put on the page but a title and a
- * link — and a page that thin is worse than no page, both for a reader
- * arriving from search and for the site's standing with search itself.
- * They keep their anchor on /publications until that is settled.
+ * Every paper has one. Two are under a publisher's exclusive licence, so
+ * their abstract is not reproduced (the page links to the publisher's);
+ * the page still carries the library's own summary and connections.
  */
 export const publicationSlugs = {
   narrative: 'narrative-review',
+  providers: 'providers-perspective',
+  recordreflectrefine: 'record-reflect-refine',
   practicalguidance: 'practical-guidance',
   drivingresearch: 'driving-research',
   internationalcollab: 'international-collaboration',
 };
 
-/** Ids that have their own page, in page order. */
+/**
+ * Ids that have their own page, in page order. Since the library
+ * (website/system) every paper is a record with its own address: one
+ * without an open-licence abstract still carries what the library says
+ * about it — what it asked, found and changed — and where it connects,
+ * which is no longer a thin page.
+ */
 export function papersWithPages() {
-  return publicationOrder.filter(
-    (id) => publicationSlugs[id] && publicationRecords[id]?.abstract
-  );
+  return publicationOrder.filter((id) => publicationSlugs[id]);
 }
 
 export function recordForSlug(slug) {
@@ -276,10 +279,14 @@ export function doiUrl(record) {
 /** "Heesters V, Witlox R, van Zanten HA, et al." — display form. */
 export function shortAuthors(record, max = 3) {
   const names = record?.authors || [];
+  // "Henriette A. van Zanten" → "van Zanten HA": particles (van, te,
+  // de, den…) belong to the surname, not the initials.
+  const PARTICLE = /^(van|von|der|den|de|te|ten|ter|la|le|du)$/i;
   const initials = names.slice(0, max).map((name) => {
     const parts = name.split(' ').filter(Boolean);
-    const surname = parts.pop();
-    return `${surname} ${parts.map((p) => p[0]).join('')}`;
+    const surname = [parts.pop()];
+    while (parts.length > 1 && PARTICLE.test(parts[parts.length - 1])) surname.unshift(parts.pop());
+    return `${surname.join(' ')} ${parts.map((p) => p[0]).join('')}`;
   });
   return names.length > max ? `${initials.join(', ')}, et al.` : initials.join(', ');
 }

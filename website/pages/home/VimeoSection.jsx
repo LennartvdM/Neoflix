@@ -5,7 +5,9 @@ import { useTabletLayout } from '../../lib/hooks/useTabletLayout';
 // Vimeo embed for the showcase slide. dnt=1 tells the player not to set
 // tracking cookies or report the session to Vimeo's analytics — without
 // it, this iframe is the only thing on the site that drops cookies.
-const VIMEO_SRC = 'https://player.vimeo.com/video/1031329353?h=055dbf5101&dnt=1';
+// One home for the session film's address: the library's film records
+// open the same film at the moment each clip comes from.
+import { SESSION_FILM_SRC as VIMEO_SRC } from '../../system/content/films.js';
 
 // Same fill as the intro slide so the canvas around the player matches it.
 const INTRO_FILL = 'linear-gradient(to top, #ffffff, var(--cool-page))';

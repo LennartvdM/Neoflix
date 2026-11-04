@@ -17,6 +17,11 @@
  * argument instead.
  */
 
+import { FILMS } from '../system/content/films.js';
+import { PATHS } from '../system/content/paths.js';
+import { PAPER_NOTES } from '../system/content/papers.js';
+import { publicationSlugs } from '../pages/publications/records.js';
+
 // Canonical origin, no trailing slash. This must match the host Netlify
 // actually serves as primary — if the apex redirects to www this is
 // right; if www redirects to the apex, drop the "www." here.
@@ -62,6 +67,23 @@ export const ROUTE_META = {
     // canonical read as duplicate content, so this one points at the
     // page that owns the content — and the sitemap skips it.
     canonicalPath: '/neoflix',
+  },
+  '/search': {
+    title: `Search the library | ${SITE_NAME}`,
+    description:
+      'Search and browse the Neoflix library: guidance for running video review, the six papers it rests on, and the films it came from.',
+  },
+  '/paths': {
+    title: `Paths through the library | ${SITE_NAME}`,
+    description:
+      'Guided ways through the Neoflix library: why record at all, your first review session, and the evidence, one step at a time.',
+  },
+  '/pack': {
+    title: `Session pack | ${SITE_NAME}`,
+    description: 'Records put together for a review session: checklists, the evidence and the film moments, in order.',
+    // A reader's own selection (or one shared by link): never a page to
+    // index, so it points at the library and stays out of the sitemap.
+    canonicalPath: '/toolbox',
   },
   '/toolbox': {
     title: `Toolbox | ${SITE_NAME}`,
@@ -133,17 +155,31 @@ export function resolveRouteMeta(pathname, { docsPages, leadTextFor, resolveSlug
   // sits under: its real title, and its abstract's opening as the
   // description, so a search result shows the study rather than the site.
   if (path.startsWith('/publications/') && paperFor) {
-    const paper = paperFor(path.slice('/publications/'.length));
+    const slug = path.slice('/publications/'.length);
+    const paper = paperFor(slug);
     if (paper) {
+      // Papers without an open-licence abstract are described by what
+      // the library says they found.
+      const id = Object.keys(publicationSlugs).find((k) => publicationSlugs[k] === slug);
       return withDefaults(
         {
           title: `${paper.title} | ${SITE_NAME}`,
-          description: paper.abstract || ROUTE_META['/publications'].description,
+          description: paper.abstract || PAPER_NOTES[id]?.found || ROUTE_META['/publications'].description,
         },
         path
       );
     }
     return withDefaults(ROUTE_META['/publications'], path);
+  }
+
+  // The library's films and paths (website/system/content).
+  if (path.startsWith('/films/')) {
+    const film = FILMS.find((f) => f.id === path.slice('/films/'.length));
+    if (film) return withDefaults({ title: `${film.name}: ${film.claim} | ${SITE_NAME}`, description: `${film.inPractice} ${film.caption}` }, path);
+  }
+  if (path.startsWith('/paths/')) {
+    const p = PATHS.find((x) => x.id === path.slice('/paths/'.length));
+    if (p) return withDefaults({ title: `${p.name} | ${SITE_NAME}`, description: p.blurb }, path);
   }
 
   if (path.startsWith('/toolbox')) {
@@ -179,4 +215,9 @@ function withDefaults(meta, path) {
 /** Every path the build should emit a real HTML file and sitemap entry for. */
 export function staticRoutePaths() {
   return Object.keys(ROUTE_META);
+}
+
+/** The library's own record routes beyond the toolbox and papers. */
+export function libraryRoutePaths() {
+  return [...FILMS.map((f) => `/films/${f.id}`), ...PATHS.map((p) => `/paths/${p.id}`)];
 }

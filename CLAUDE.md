@@ -29,6 +29,13 @@ working in; they're short, and GitHub renders them when browsing too.
   `shared/` holds what every page shares (navbar, footer, the backdrop,
   the motion system); `lib/` holds hooks and helpers. See `CONTENT.md`
   for the per-page table. Toolbox content → `docs-content/` markdown (but see the mirror rule).
+- **The library** → `website/system/` (read its README). Every toolbox
+  page, paper and film is a record, assembled from modules by rules in
+  `system/modules/plans.js`; films, papers and guidance are linked once,
+  in `system/content/films.js`; paths in `system/content/paths.js`. It
+  serves `/toolbox/*`, `/publications/<slug>`, `/films/*`, `/paths/*`,
+  `/search` and `/pack`. `scripts/system-check.mjs` (in `build.sh`) fails
+  the build when a link, path, address or layout breaks.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
   desktop tree or a mobile tree (`< 600px`) — separate lazy chunks.
 - **Motion system** → `RouteSlider` (page slide), `BackdropProvider`
@@ -159,9 +166,10 @@ working in; they're short, and GitHub renders them when browsing too.
     `getPage` is synchronous. Splitting it per page puts a network round
     trip in front of every click and the whole toolbox visibly reloads;
     eager-importing it puts all 74 pages in the main chunk for every
-    visitor on every route. `ToolboxPage` must also never unmount while that
-    bundle loads — the nav, titles and neighbours come from the eager
-    manifest, so only the article body waits.
+    visitor on every route. A toolbox record must also never wait for that
+    bundle to render — its header, local graph and modules come from the
+    eager manifest, so only the text module's body waits
+    (`system/modules/index.jsx`, Text).
 
 ## Verifying changes
 
