@@ -4,7 +4,7 @@
 
 .space {
   /* Bright: the library's paper. The films sit in one dark band. */
-  --ground: #f3f5f4;
+  --ground: #e9edf0; /* cold pale grey: the hospital, not the library */
   --ink: #14222a;
   --ink-2: #44555d;
   --muted: #6f8088;
@@ -135,15 +135,15 @@ a.colhead:hover strong { color: var(--teal); }
 .card--paper {
   padding: 56px 52px;
   border-radius: 6px;
-  background: #fbf7ee;
-  color: #2b241b;
-  box-shadow: 0 0 0 calc(1px / var(--k)) rgba(120, 90, 40, 0.16), 0 30px 70px -34px rgba(70, 50, 20, 0.4);
+  background: #f7f9fa;
+  color: #17232c;
+  box-shadow: 0 0 0 calc(1px / var(--k)) rgba(30, 48, 62, 0.14), 0 30px 70px -34px rgba(20, 34, 52, 0.35);
 }
-.card--paper .card__kick { color: #8c7a5d; font-size: 18px; margin-top: 30px; }
+.card--paper .card__kick { color: #6b7a86; font-size: 18px; margin-top: 30px; }
 .card__n { display: inline-grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: var(--k-paper); color: #fff; font-size: 42px; font-weight: 700; }
 .card__title { display: block; margin-top: 16px; font: 600 32px/1.22 Georgia, 'Times New Roman', serif; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
 .card__short { display: block; margin-top: 22px; font-size: 22px; font-weight: 700; color: #b06c06; }
-.card__found { display: -webkit-box; margin-top: 12px; font-size: 21px; line-height: 1.45; color: #4a4033; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+.card__found { display: -webkit-box; margin-top: 12px; font-size: 21px; line-height: 1.45; color: #4a5864; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* toolbox */
 .card--chapter, .card--sub { background: #fff; color: #15232b; overflow: hidden; box-shadow: 0 0 0 calc(1px / var(--k)) #dbe2e4; }
@@ -422,7 +422,7 @@ kbd { display: inline-block; padding: 1px 6px; border-radius: 5px; border: 1px s
 .welcome .welcome__x { color: var(--muted); }
 
 @media (max-width: 899px) {
-  .narr { top: auto; width: auto; right: 0; align-items: flex-end; padding: 24px 18px 92px; background: linear-gradient(0deg, rgba(243, 245, 244, 0.97) 70%, rgba(243, 245, 244, 0)); }
+  .narr { top: auto; width: auto; right: 0; align-items: flex-end; padding: 24px 18px 92px; background: linear-gradient(0deg, rgba(233, 237, 240, 0.97) 70%, rgba(233, 237, 240, 0)); }
   .narr h2 { font-size: 26px; }
   .narr__text { font-size: 15px; }
   .tourbar__ch span, .tourbar__leave { display: none; }
