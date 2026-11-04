@@ -33,17 +33,61 @@ import { loopName, parseKey } from '../system/catalog';
 import { urlFor, keyForPath } from '../system/urls';
 import { searchLibrary } from '../system/search';
 import { useTrail, visit } from '../system/state';
-import { useRipeness, noteIntroDone, noteSeen, noteLibrary } from '../system/ripeness';
+import { useRipeness, noteIntroDone, noteSeen, noteLibrary, noteHurry, noteIntent } from '../system/ripeness';
 import { resolveSlug } from '../pages/toolbox/docsIndex';
 import { sections as ARGUMENT } from '../pages/neoflix/content';
 import { prefersReducedMedia } from '../lib/utils/reducedMedia';
 import { layoutSpace, placeAt, FILM } from './layout';
 import { createCamera, cameraFor, toScreen, toWorld } from './camera';
+import { TOUR, CHAPTERS, DOORS } from './tour';
+import { createTour, Narration, TourBar, useTourStop } from './Tour';
 import Sheet from './Sheet';
 import './space.css';
 
 const SPACE = layoutSpace(catalog, graph);
 const FILMS = catalog.list('film');
+const PAGES = catalog.list('guidance').filter((g) => !g.divider && !/^level\s+\d/i.test(g.title)).length;
+const fillText = (t) => t.replace('{pages}', PAGES);
+
+/* ── how far into the tour this browser got (localStorage only) ────────── */
+const TOUR_KEY = 'neoflix:tour';
+const loadTour = () => { try { return { stop: 0, done: false, ...(JSON.parse(localStorage.getItem(TOUR_KEY)) || {}) }; } catch { return { stop: 0, done: false }; } };
+const saveTour = (patch) => { try { localStorage.setItem(TOUR_KEY, JSON.stringify({ ...loadTour(), ...patch })); } catch { /* in memory only */ } };
+
+/** The part of the screen the tour frames things in: right of its words. */
+const tourFrame = () => {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  return W < 900 ? { x0: 0, y0: 64, x1: W, y1: H * 0.5 } : { x0: 480, y0: 76, x1: W - 36, y1: H - 104 };
+};
+const bbox = (ns) => {
+  const x0 = Math.min(...ns.map((n) => n.x));
+  const y0 = Math.min(...ns.map((n) => n.y));
+  return { x: x0, y: y0, w: Math.max(...ns.map((n) => n.x + n.w)) - x0, h: Math.max(...ns.map((n) => n.y + n.h)) - y0 };
+};
+/** Where the camera stands for a stop of the tour. */
+function tourCam(stop) {
+  const f = tourFrame();
+  const at = stop.at;
+  if (at === 'everything') return cameraFor(SPACE.bounds, f, { fill: 0.96, maxK: 1 });
+  if (Array.isArray(at)) return cameraFor(bbox(at.map((k) => SPACE.nodes.get(k))), f, { fill: 0.9, maxK: 0.7 });
+  if (at === 'region:practice') {
+    const c0 = SPACE.columns[0];
+    const h = Math.min(2400, Math.max(...SPACE.columns.map((c) => c.h)) + 260);
+    return cameraFor({ x: c0.x, y: c0.y - 260, w: SPACE.totalW, h }, f, { fill: 0.94, maxK: 0.5 });
+  }
+  const col = /^column:(.+)$/.exec(at);
+  if (col) {
+    const c = SPACE.columns.find((x) => x.id === col[1]);
+    return cameraFor({ x: c.x, y: c.y - 260, w: c.w, h: Math.min(c.h + 260, 2000) }, f, { fill: 0.9, maxK: 0.6 });
+  }
+  const n = SPACE.nodes.get(at);
+  if (n.role === 'film') return cameraFor({ ...n, h: FILM.h }, f, { fill: 0.88, maxK: 1.1 });
+  if (n.role === 'paper') return cameraFor(n, f, { fill: 0.8, maxK: 0.9 });
+  // A toolbox page is shown among its neighbours: where it sits matters.
+  return cameraFor({ x: n.x - 260, y: n.y - 200, w: n.w + 520, h: n.h + 400 }, f, { fill: 0.9, maxK: 0.55 });
+}
+const stopKey = (s) => (s && typeof s.at === 'string' && catalog.has(s.at) ? s.at : null);
 const BEAT = Object.fromEntries(ARGUMENT.map((s) => [s.id, s.title]));
 const EASE = [0.32, 0.72, 0, 1];
 const K_MAX = 1.6;
@@ -455,16 +499,39 @@ export default function Space() {
     vp.style.backgroundPosition = `${tx % s}px ${ty % s}px`;
   }), []);
 
-  // What the reader is looking at without a sheet: the introduction.
-  const [intro, setIntro] = useState(() => (pathname === '/' && ripe.level < 2 ? 0 : null));
+  // Story mode. A newcomer arriving at the front is taken on the tour; so
+  // is anyone who left it half way (they pick it up where they were).
+  // Everyone else lands on the map, with a way back to where they were.
+  const [saved] = useState(loadTour);
+  const [touring, setTouring] = useState(() => pathname === '/' && !saved.done && (ripe.level < 2 || saved.stop > 0));
+  const [welcome, setWelcome] = useState(() => {
+    if (pathname !== '/') return null;
+    if (touring && saved.stop > 0) return 'resumed';
+    return !touring && trail.length ? 'back' : null;
+  });
+  const [hurried, setHurried] = useState(false);
+  const onStopRef = useRef(null);
+  const onEndRef = useRef(null);
+  const tour = useMemo(() => createTour({
+    camera,
+    stops: TOUR,
+    camFor: tourCam,
+    onStop: (i) => onStopRef.current?.(i),
+    onEnd: () => onEndRef.current?.(),
+  }), [camera]);
+  const { cur: tourStop } = useTourStop(tour);
+  const tourDoneRef = useRef(saved.done);
+  const touringRef = useRef(touring);
+  touringRef.current = touring;
+
   const [query, setQuery] = useState(() => (pathname.startsWith('/search') ? params.get('q') || '' : ''));
   const [searching, setSearching] = useState(() => pathname.startsWith('/search'));
   const [rail, setRail] = useState(null);
   const [probe, setProbe] = useState(null);
   const sheetOpen = !!focus;
   const frame = useCallback(() => frameOf(sheetOpen), [sheetOpen]);
-  const anchor = focus || (intro != null ? FILMS[intro].key : null);
-  const neighbours = useNeighbours(anchor, walking || (intro != null ? catalog.path('why') : null));
+  const anchor = focus || (touring ? stopKey(TOUR[tourStop]) : null);
+  const neighbours = useNeighbours(touring ? null : anchor, walking);
   const lit = useMemo(() => (anchor ? new Set([anchor, ...graph.neighbours(anchor)]) : null), [anchor]);
 
   const result = useMemo(() => (searching && query.trim() ? searchLibrary(query, lib) : null), [searching, query]);
@@ -482,16 +549,64 @@ export default function Space() {
   useLayoutEffect(() => {
     if (!first.current) return;
     first.current = false;
-    noteLibrary();
+    tour.layout();
     if (focus) camera.set(fitFor(SPACE.nodes.get(focus), frameOf(true)));
-    else if (intro != null) {
-      const n = SPACE.nodes.get(FILMS[0].key);
-      const target = cameraFor(n, frameOf(false), { fill: 0.7, maxK: 1 });
-      camera.set({ ...target, k: target.k * 0.55 });
-      camera.fly(target, { duration: 1600 });
+    else if (touring) {
+      tour.seek(saved.stop);
+      // The first sight is the whole map, settling into place.
+      const target = camera.get();
+      camera.set({ ...target, k: target.k * 1.7 });
+      camera.fly(target, { duration: 1700 });
     } else if (ripe.level >= 3) camera.set(everything(frameOf(false)));
     else camera.set(theArgument(frameOf(false)));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── the tour's bookkeeping ──────────────────────────────────────────────
+  const stopTimes = useRef([]);
+  onStopRef.current = (i) => {
+    if (!touring) return;
+    saveTour({ stop: i });
+    // Three stops in under three seconds: they want to be somewhere else.
+    const now = performance.now();
+    const ts = [...stopTimes.current, now].slice(-3);
+    stopTimes.current = ts;
+    if (ts.length === 3 && now - ts[0] < 3000 && !hurried) { setHurried(true); noteHurry(); }
+  };
+  onEndRef.current = () => endTour();
+  // A film watched on the tour counts as seen, and goes on the trail.
+  useEffect(() => {
+    if (!touring) return undefined;
+    const key = stopKey(TOUR[tourStop]);
+    if (!key || parseKey(key).kind !== 'film') return undefined;
+    const t = setTimeout(() => noteSeen(parseKey(key).id), 1500);
+    return () => clearTimeout(t);
+  }, [touring, tourStop]);
+
+  const finishTour = useCallback(() => {
+    tour.halt();
+    setTouring(false);
+    setHurried(false);
+    if (!tourDoneRef.current) { tourDoneRef.current = true; saveTour({ done: true }); }
+    noteIntroDone();
+  }, [tour]);
+  const endTour = useCallback(() => {
+    finishTour();
+    camera.fly(everything(frameOf(false)), { duration: 1400 });
+  }, [finishTour, camera]);
+  /** Step out of the tour without finishing it (drag, zoom, search, open). */
+  const pauseTour = useCallback(() => {
+    if (!touring) return;
+    tour.halt();
+    setTouring(false);
+  }, [touring, tour]);
+  const resumeTour = useCallback((from) => {
+    setWelcome(null);
+    setSearching(false);
+    if (focus) navigate('/');
+    setTouring(true);
+    if (from === 0) { saveTour({ stop: 0, done: false }); tourDoneRef.current = false; tour.goTo(0); }
+    else tour.resume();
+  }, [focus, navigate, tour]);
 
   // A record opened (by a click, a link, the address bar, back/forward).
   const lastFocus = useRef(focus);
@@ -500,7 +615,8 @@ export default function Space() {
     lastFocus.current = focus;
     if (focus === prev) return;
     if (focus) {
-      setIntro(null);
+      pauseTour();
+      setWelcome(null);
       camera.fly(fitFor(SPACE.nodes.get(focus), frameOf(true)));
     } else if (prev) {
       // Closing a record steps back from it, keeping it in the middle.
@@ -508,41 +624,25 @@ export default function Space() {
       const cam = camera.get();
       camera.fly({ x: n.cx, y: n.cy, k: Math.max(0.2, cam.k * 0.6) }, { duration: 900 });
     }
-  }, [focus, camera]);
-  useEffect(() => { if (focus) visit(focus); setProbe(null); }, [focus]);
-
-  // The introduction: one film at a time, close up.
-  useEffect(() => {
-    if (intro == null) return undefined;
-    const film = FILMS[intro];
-    const n = SPACE.nodes.get(film.key);
-    if (camera.get().k > 0.3) camera.fly(cameraFor(n, frameOf(false), { fill: 0.7, maxK: 1 }), { duration: 1200 });
-    const t = setTimeout(() => noteSeen(film.id), 1800);
-    return () => clearTimeout(t);
-  }, [intro, camera]);
+  }, [focus, camera]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (focus) { visit(focus); noteLibrary(); } setProbe(null); }, [focus]);
 
   const go = useCallback((key, opts = {}) => {
     navigate(urlFor(key, { from: opts.from === undefined ? focus : opts.from, path: opts.path }));
   }, [navigate, focus]);
 
-  const endIntro = useCallback(() => {
-    setIntro(null);
-    noteIntroDone();
-    camera.fly(everything(frameOf(false)), { duration: 1800 });
-  }, [camera]);
-
-  const stepIntro = useCallback((d) => {
-    setIntro((i) => {
-      if (i == null) return i;
-      const j = i + d;
-      if (j < 0) return 0;
-      if (j >= FILMS.length) { setTimeout(endIntro, 0); return i; }
-      return j;
-    });
-  }, [endIntro]);
+  /** A door out of the tour: straight to where this reader needs to be. */
+  const takeDoor = useCallback((door) => {
+    noteIntent();
+    finishTour();
+    if (door.path) {
+      const p = catalog.path(door.path);
+      go(p.steps[0], { path: p.id, from: null });
+    } else camera.fly(everything(frameOf(false)), { duration: 1400 });
+  }, [finishTour, go, camera]);
 
   const toStop = useCallback((id) => {
-    setIntro(null);
+    pauseTour();
     const f = frameOf(sheetOpen);
     if (id === 'everything') camera.fly(everything(f));
     else if (id === 'argument') camera.fly(theArgument(f));
@@ -551,7 +651,7 @@ export default function Space() {
       const target = focus ? fitFor(SPACE.nodes.get(focus), f) : nearestClose(c, f);
       camera.fly(target);
     }
-  }, [camera, focus, sheetOpen]);
+  }, [camera, focus, sheetOpen, pauseTour]);
 
   // ── pointer: drag to move, click to open ────────────────────────────────
   const drag = useRef(null);
@@ -567,7 +667,7 @@ export default function Space() {
     const dx = e.clientX - d.x;
     const dy = e.clientY - d.y;
     if (!d.moved && Math.hypot(dx, dy) < 5) return;
-    if (!d.moved) { d.moved = true; viewport.current.setPointerCapture?.(e.pointerId); viewport.current.dataset.dragging = ''; setIntro(null); }
+    if (!d.moved) { d.moved = true; viewport.current.setPointerCapture?.(e.pointerId); viewport.current.dataset.dragging = ''; pauseTour(); setWelcome(null); }
     camera.nudge({ ...d.cam, x: d.cam.x - dx / d.cam.k, y: d.cam.y - dy / d.cam.k });
   };
   const onPointerUp = (e) => {
@@ -602,21 +702,21 @@ export default function Space() {
     plane.querySelectorAll(`.wire[data-a="${CSS.escape(key)}"], .wire[data-b="${CSS.escape(key)}"]`).forEach((el) => el.setAttribute('data-hover', ''));
   }, []);
 
-  // ── wheel: scroll steps through the intro; otherwise zoom (mouse) or move (trackpad)
+  // ── wheel: on the tour, scrolling (either axis) moves along the story;
+  // otherwise it zooms (mouse) or moves (trackpad). Pinch always zooms,
+  // and steps out of the tour.
   const wheelAcc = useRef({ v: 0, lock: 0 });
   useEffect(() => {
     const el = viewport.current;
     const onWheel = (e) => {
       if (e.target.closest('.sheet, .hud__search, .gauge')) return;
       e.preventDefault();
-      if (intro != null && !e.ctrlKey) {
-        const w = wheelAcc.current;
-        const now = performance.now();
-        if (now < w.lock) return;
-        w.v += e.deltaY;
-        if (Math.abs(w.v) > 50) { stepIntro(Math.sign(w.v)); w.v = 0; w.lock = now + 900; }
+      if (touring && !e.ctrlKey) {
+        const unit = e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? window.innerHeight : 1;
+        tour.scroll((Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX) * unit);
         return;
       }
+      if (touring) pauseTour();
       const cam = camera.get();
       const W = window.innerWidth;
       const H = window.innerHeight;
@@ -636,7 +736,7 @@ export default function Space() {
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [camera, intro, stepIntro]);
+  }, [camera, touring, tour, pauseTour]);
 
   // ── keys ────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -647,14 +747,15 @@ export default function Space() {
       const inSheet = t instanceof HTMLElement && t.closest('.sheet');
       if (e.key === 'Escape') {
         if (searching) { setSearching(false); setQuery(''); return; }
+        if (touring) { pauseTour(); return; }
         if (focus) { navigate('/'); return; }
         const c = camera.get();
         toStop(c.k > theArgument(frameOf(false)).k * 1.3 ? 'argument' : 'everything');
         return;
       }
       if (typing) return;
-      if (intro != null && ['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); stepIntro(1); return; }
-      if (intro != null && ['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); stepIntro(-1); return; }
+      if (touring && ['ArrowDown', 'ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); tour.next(); return; }
+      if (touring && ['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); tour.prev(); return; }
       if (inSheet) return;
       if (walking && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
         const i = walking.steps.indexOf(focus) + (e.key === 'ArrowRight' ? 1 : -1);
@@ -668,14 +769,14 @@ export default function Space() {
       if (e.key === '-' || e.key === '_') { camera.fly({ ...cam, k: Math.max(0.02, cam.k / 1.6) }, { duration: 420 }); return; }
       if (e.key.length === 1 && /\S/.test(e.key)) {
         e.preventDefault();
-        setIntro(null);
+        pauseTour();
         setSearching(true);
         setQuery((q) => (searching ? q : '') + (e.key === '/' ? '' : e.key));
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [camera, focus, intro, walking, searching, navigate, go, stepIntro, toStop]);
+  }, [camera, focus, touring, tour, walking, searching, navigate, go, toStop, pauseTour]);
 
   // Search is a lens: the space dims, the matches light, the camera frames them.
   useEffect(() => {
@@ -691,17 +792,28 @@ export default function Space() {
     return () => clearTimeout(t);
   }, [result, camera, sheetOpen]);
 
+  // "Welcome back" says its piece and goes.
   useEffect(() => {
-    const onResize = () => camera.set(camera.get());
+    if (!welcome) return undefined;
+    const t = setTimeout(() => setWelcome(null), 14000);
+    return () => clearTimeout(t);
+  }, [welcome]);
+
+  useEffect(() => {
+    const onResize = () => {
+      tour.layout();
+      if (touringRef.current) tour.seek(tour.get().cur);
+      else camera.set(camera.get());
+    };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [camera]);
+  }, [camera, tour]);
 
   const closeSheet = useCallback(() => navigate('/'), [navigate]);
   const playing = anchor && parseKey(anchor).kind === 'film' ? anchor : null;
 
   return (
-    <div className="space" data-intro={intro != null ? '' : undefined} data-sheet={sheetOpen ? '' : undefined} style={{ '--sheet-w': `${sheetWidth()}px` }}>
+    <div className="space" data-tour={touring ? '' : undefined} data-sheet={sheetOpen ? '' : undefined} style={{ '--sheet-w': `${sheetWidth()}px` }}>
       <div
         className="space__view"
         ref={viewport}
@@ -713,7 +825,7 @@ export default function Space() {
         <Plane planeRef={planeRef} focus={anchor} lit={lit} hits={hits} trail={trail} rail={walking?.id || rail} playing={playing} onOpen={onOpen} onHover={onHover} />
       </div>
 
-      <Indicators camera={camera} items={neighbours} frame={frame} onGo={(e, key) => { e.preventDefault(); setIntro(null); go(key, { from: anchor, path: walking?.steps.includes(key) ? walking.id : intro != null && parseKey(key).kind === 'film' ? 'why' : undefined }); }} />
+      <Indicators camera={camera} items={neighbours} frame={frame} onGo={(e, key) => { e.preventDefault(); go(key, { from: anchor, path: walking?.steps.includes(key) ? walking.id : undefined }); }} />
       <Probe camera={camera} probe={probe} frame={frame} />
 
       {/* ── HUD ── */}
@@ -723,7 +835,7 @@ export default function Space() {
           <Place camera={camera} focus={focus} />
         </a>
         <nav className="hud__links">
-          <button type="button" className="hud__find" onClick={() => { setIntro(null); setSearching(true); }}>
+          <button type="button" className="hud__find" onClick={() => { pauseTour(); setSearching(true); }}>
             <span>Search</span><kbd>type anywhere</kbd>
           </button>
           <a href="/neoflix" onClick={(e) => { e.preventDefault(); navigate('/neoflix'); }}>The long read</a>
@@ -733,18 +845,41 @@ export default function Space() {
 
       <Gauge camera={camera} onStop={toStop} />
 
+      {touring && (
+        <>
+          <Narration
+            tour={tour}
+            chapters={CHAPTERS}
+            fill={fillText}
+            hurried={hurried}
+            doors={DOORS}
+            labelOf={(k) => (k === 'guidance:' ? 'the toolbox' : labelOf(k))}
+            hrefOf={urlFor}
+            onOpen={(k) => go(k, { from: null })}
+            onDoor={takeDoor}
+          />
+          <TourBar tour={tour} chapters={CHAPTERS} onLeave={pauseTour} />
+        </>
+      )}
+
       <AnimatePresence>
-        {intro != null && (
-          <motion.div className="hud intro" key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <div className="intro__steps">
-              {FILMS.map((f, i) => (
-                <button key={f.id} type="button" data-on={i === intro ? '' : undefined} data-past={i < intro ? '' : undefined} onClick={() => setIntro(i)} aria-label={f.name} />
-              ))}
-            </div>
-            <p className="intro__hint">
-              {intro < FILMS.length - 1 ? 'Scroll for the next film' : 'Scroll to see everything'}
-              <button type="button" onClick={endIntro}>Skip to everything</button>
-            </p>
+        {welcome && (
+          <motion.div className="hud welcome" key="welcome" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.5, ease: EASE, delay: 0.6 }}>
+            {welcome === 'resumed' ? (
+              <>
+                <p><strong>Welcome back.</strong> You’re where you left the tour.</p>
+                <button type="button" onClick={() => resumeTour(0)}>Start over</button>
+                <button type="button" onClick={() => { setWelcome(null); takeDoor(DOORS.find((d) => d.id === 'look')); }}>Skip the tour</button>
+              </>
+            ) : (
+              <>
+                <p><strong>Welcome back.</strong> Your route so far is drawn in gold.</p>
+                {trail.length > 0 && catalog.has(trail[trail.length - 1]) && (
+                  <button type="button" onClick={() => go(trail[trail.length - 1], { from: null })}>Back to {labelOf(trail[trail.length - 1])}</button>
+                )}
+              </>
+            )}
+            <button type="button" className="welcome__x" onClick={() => setWelcome(null)} aria-label="Dismiss">✕</button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -800,6 +935,9 @@ export default function Space() {
           </div>
         ) : (
           <div className="pathpills">
+            <button type="button" className="pathpills__tour" onClick={() => resumeTour(tourDoneRef.current ? 0 : undefined)}>
+              <span className="ico-play" />{tourDoneRef.current ? 'Replay the tour' : tourStop > 0 ? `Resume the tour · ${tourStop + 1}/${TOUR.length}` : 'Take the tour'}
+            </button>
             <small>Walk a path</small>
             {catalog.paths.map((p) => (
               <a

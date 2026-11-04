@@ -13,7 +13,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildCatalog, parseKey } from '../system/catalog.js';
+import { buildCatalog, parseKey, LOOP } from '../system/catalog.js';
+import { TOUR, CHAPTERS, DOORS, tourKeys } from '../space/tour.js';
 import { buildGraph } from '../system/graph.js';
 import { urlFor, keyForPath } from '../system/urls.js';
 import { planRecord } from '../system/modules/plans.js';
@@ -41,6 +42,16 @@ check('films point at papers and toolbox pages that exist', () => {
 
 check('every path step is a record', () => {
   for (const p of catalog.paths) p.steps.forEach((k) => catalog.has(k) || fail(`path ${p.id}: unknown step "${k}"`));
+});
+
+check('every tour stop points at a record that exists', () => {
+  for (const k of tourKeys()) catalog.has(k) || fail(`tour: unknown record "${k}"`);
+  for (const s of TOUR) {
+    if (s.chapter && !CHAPTERS.some((c) => c.id === s.chapter)) fail(`tour stop ${s.id}: unknown chapter "${s.chapter}"`);
+    const m = /^column:(.+)$/.exec(Array.isArray(s.at) ? '' : s.at);
+    if (m && !LOOP.some((l) => l.id === m[1])) fail(`tour stop ${s.id}: no column "${m[1]}"`);
+  }
+  for (const d of DOORS) if (d.path && !catalog.path(d.path)) fail(`tour door ${d.id}: unknown path "${d.path}"`);
 });
 
 check('every record has one address that maps back to it', () => {

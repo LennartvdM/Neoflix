@@ -18,7 +18,9 @@ from the library's content files (next sections); these are its own.
 | What you see | Where it lives |
 |---|---|
 | Where everything sits; the region names ("The evidence"…), the two film groups ("What goes wrong in the moment"…) | `space/layout.js` |
-| The kicker over each film in the intro ("Medical procedures are time-sensitive") | section titles in `pages/neoflix/content.js`, matched by the film's `anchor` |
+| The tour's words, stop by stop ("Some babies are born before they can breathe on their own."…), its chapters and the "go straight to" doors | `space/tour.js` |
+| "Welcome back", "Resume the tour", "Leave the tour" | `space/Space.jsx`, `space/Tour.jsx` |
+| The kicker over each film card ("Film 1 of 6 · Medical procedures are time-sensitive") | section titles in `pages/neoflix/content.js`, matched by the film's `anchor` |
 | The film's sentence on its card | `claim` in `system/content/films.js` |
 | The top bar, the distance control ("Close up / The argument / Everything"), the paths row, search | `space/Space.jsx` (HUD, near the end) |
 | The reading sheet's header (and the toolbox front's heading) | `space/Sheet.jsx` (`Head`) |

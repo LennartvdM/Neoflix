@@ -36,7 +36,9 @@ working in; they're short, and GitHub renders them when browsing too.
   across the middle, the toolbox south in columns of the loop), moving is
   a camera flight (`space/camera.js`), and a record opens as a reading
   sheet beside its place (`space/Sheet.jsx`, which draws the library's
-  modules). It renders outside the navbar and `RouteSlider` (`App.jsx`,
+  modules). Newcomers are taken through it by a scroll-driven
+  tour (`space/tour.js` is its script, `space/Tour.jsx` plays it);
+  returning and impatient readers skip to where they need to be. It renders outside the navbar and `RouteSlider` (`App.jsx`,
   `SPACE_ROUTES`). The old homepage (`pages/home/`) is no longer routed;
   it is kept in the tree, and its rules below apply only if it returns.
   This is a playground: early rules in this file that protect the old

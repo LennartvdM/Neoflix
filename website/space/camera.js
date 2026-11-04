@@ -12,7 +12,7 @@
  */
 const RHO = Math.SQRT2;
 
-function zoomPath(a, b) {
+export function zoomPath(a, b) {
   // views as [cx, cy, width-in-world]
   const [ux0, uy0, w0] = a;
   const [ux1, uy1, w1] = b;
