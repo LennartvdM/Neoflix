@@ -1,8 +1,15 @@
-# website/space/ — the site as one place
+# website/space/ — the site as one place (not routed)
+
+**Not routed since 2026-11.** The composition (`website/composition/`)
+replaced it: the owner found the space had drifted back into the generic
+look (outlined cards, small tracked capitals, glass) and wanted
+self-assembling layouts instead of a fixed map. It is kept in the tree
+because it works and parts of it may come back (the camera, the
+probe lines). Its tour script moved to `composition/tour.js`.
 
 The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
-`/publications/<slug>`, `/paths/*`, `/search`) render one continuous
-space instead of pages. It is an experiment, and it is meant to move.
+`/publications/<slug>`, `/paths/*`, `/search`) rendered one continuous
+space instead of pages.
 
 ## The idea
 

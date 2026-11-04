@@ -17,10 +17,12 @@ import ErrorBoundary from './shared/ErrorBoundary';
 // better than a spinner flashing inside the slide.
 const NeoflixPage = lazy(() => import('./pages/neoflix/NeoflixPage'));
 const PublicationsPage = lazy(() => import('./pages/publications/PublicationsPage'));
-// The space (website/space): the whole library as one plane you move
-// through. It owns the homepage and every record's address, and has its
-// own chrome, so it renders outside the navbar and the page slide.
-const Space = lazy(() => import('./space/Space'));
+// The composition (website/composition): the whole library on one screen
+// that arranges itself around what the reader is doing. It owns the
+// homepage and every record's address, and has its own chrome, so it
+// renders outside the navbar and the page slide. (website/space, the
+// zoomable plane it replaced, is kept in the tree, unrouted.)
+const Composition = lazy(() => import('./composition/Composition'));
 const PackPage = lazy(() => import('./system/pages/PackPage'));
 // The library's interface over the intro and the elaboration, growing as
 // the reader ripens (system/ripeness.js). Outside the page slide, like the
@@ -28,7 +30,7 @@ const PackPage = lazy(() => import('./system/pages/PackPage'));
 const LibraryLayer = lazy(() => import('./system/ui/LibraryLayer'));
 const NotFoundPage = lazy(() => import('./pages/not-found/NotFoundPage'));
 
-// The addresses the space answers: the homepage, every record, paths and search.
+// The addresses the composition answers: the homepage, every record, paths and search.
 const SPACE_ROUTES = /^\/(?:$|toolbox(?:\/|$)|films\/|publications\/[^/]|paths(?:\/|$)|search\/?$)/;
 
 function AppShell() {
@@ -63,8 +65,8 @@ function AppShell() {
     return (
       <main id="main-content" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
         <ErrorBoundary>
-          <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#dde4ea' }} />}>
-            <Space />
+          <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#cdd6de' }} />}>
+            <Composition />
           </Suspense>
         </ErrorBoundary>
       </main>

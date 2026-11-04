@@ -1,13 +1,14 @@
 /**
  * The tour: the story a newcomer is taken through, written for the space.
  *
- * It is a script for a camera. Each stop says where to look (`at`) and
- * what to say there. Scrolling moves along it continuously: the camera
- * holds on a stop while its words are read, then travels to the next, so
- * the reader scrubs the flight itself, forward or back, in any direction
- * the map happens to run.
+ * Each stop says what to show (`at`) and what to say there; the
+ * composition (composition/scene.js) turns `at` into weights, so every
+ * stop is an arrangement of the whole screen. Scrolling moves along it
+ * continuously: the screen holds on a stop while its words are read,
+ * then re-assembles into the next, and the reader scrubs that, forward
+ * or back.
  *
- * Two depths. A `core` stop is the argument: the camera dwells, the words
+ * Two depths. A `core` stop is the argument: the screen dwells, the words
  * get room. A `skim` stop is something a newcomer only needs to know is
  * there (the papers, the toolbox's five columns): one line, a short hold,
  * on to the next. That is how the tour gets through 90 records in a few
@@ -37,7 +38,7 @@ export const TOUR = [
     at: 'everything',
     depth: 'core',
     title: 'Recording care, and watching it back together.',
-    text: 'This is all of Neoflix on one map: six short films, the six papers behind them, and a toolbox for doing it in your own unit. Scroll, and you’ll be taken through it in a few minutes.',
+    text: 'This is all of Neoflix, on one screen: six short films, the six papers behind them, and a toolbox for doing it in your own unit. Scroll, and the screen rearranges itself around each part of the story.',
     doors: true,
   },
   {
@@ -174,7 +175,7 @@ export const TOUR = [
     at: 'everything',
     depth: 'core',
     title: 'That’s the whole of it.',
-    text: 'Films in the middle, the evidence above, the practice below, and your own route through it marked in gold. Everything stays where it is, so you can come back to any of it.',
+    text: 'Films in the middle, the evidence above, the practice below. Nothing is ever off screen: open anything, and the rest makes room for it. What you have opened is marked in gold.',
     doors: true,
   },
 ];
@@ -182,12 +183,12 @@ export const TOUR = [
 /**
  * Where the impatient and the returning go instead. `path` walks one of
  * the library's paths (system/content/paths.js); 'look' leaves the
- * reader on the open map.
+ * reader with everything on screen.
  */
 export const DOORS = [
   { id: 'first-session', path: 'first-session', label: 'Start in your own unit', note: 'Your first session, step by step' },
   { id: 'evidence', path: 'evidence', label: 'Read the evidence', note: 'Six papers, in the order we asked' },
-  { id: 'look', label: 'Look around on your own', note: 'Drag to move, scroll to zoom' },
+  { id: 'look', label: 'Look around on your own', note: 'Everything is on this screen; open what you like' },
 ];
 
 /** Every record key a stop points at, for the build check. */

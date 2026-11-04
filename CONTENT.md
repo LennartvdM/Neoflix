@@ -9,21 +9,24 @@ one thing, remember that: the Publications page is `pages/publications/`, the
 homepage is `pages/home/`, and so on. Each folder holds the desktop version,
 the phone version, that page's words and that page's styles, side by side.
 
-## The space (the homepage, and every record) — `website/space/`
+## The composition (the homepage, and every record) — `website/composition/`
 
-The homepage is one continuous space: every film, paper and toolbox page
-in a fixed place, the reader flying between them. Its words mostly come
-from the library's content files (next sections); these are its own.
+The homepage is one screen that arranges itself: every film, paper and
+toolbox page is a shape on it, and what the reader is doing decides which
+shapes are big. Its words mostly come from the library's content files
+(next sections); these are its own.
 
 | What you see | Where it lives |
 |---|---|
-| Where everything sits; the region names ("The evidence"…), the two film groups ("What goes wrong in the moment"…) | `space/layout.js` |
-| The tour's words, stop by stop ("Some babies are born before they can breathe on their own."…), its chapters and the "go straight to" doors | `space/tour.js` |
-| "Welcome back", "Resume the tour", "Leave the tour" | `space/Space.jsx`, `space/Tour.jsx` |
-| The kicker over each film card ("Film 1 of 6 · Medical procedures are time-sensitive") | section titles in `pages/neoflix/content.js`, matched by the film's `anchor` |
-| The film's sentence on its card | `claim` in `system/content/films.js` |
-| The top bar, the distance control ("Close up / The argument / Everything"), the paths row, search | `space/Space.jsx` (HUD, near the end) |
-| The reading sheet's header (and the toolbox front's heading) | `space/Sheet.jsx` (`Head`) |
+| The tour's words, stop by stop ("Some babies are born before they can breathe on their own."…), its chapters and the "go straight to" doors | `composition/tour.js` |
+| The left column at rest: the big line (it is `TAGLINE`, below), the paragraph under it, "Take the tour", the path buttons, "Welcome back" | `composition/Composition.jsx` (`Rest`) |
+| The left column on the tour: "A tour, in a few minutes", Play, "Leave the tour" | `composition/Composition.jsx` (`Narration`) |
+| The left column with a record open (title, meta, Pack, Close, walking a path) | `composition/Composition.jsx` (`RecordVoice`) |
+| A film shape's name and sentence | `name` and `claim` in `system/content/films.js` |
+| A paper shape's short name and finding | `short` and `found` in `system/content/papers.js` |
+| A loop step's name ("Before you record"…) | `LOOP` in `system/catalog.js` |
+| The modules of an open record (their names, what's in them) | `system/modules/` (`MODULE_NAMES`, `plans.js`) |
+| Search, The long read, Contact (top of the left column) | `composition/Composition.jsx` (near the end) |
 
 ## The old homepage — `pages/home/` (not routed at the moment)
 

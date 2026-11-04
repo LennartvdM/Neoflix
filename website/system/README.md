@@ -6,9 +6,11 @@ by the record's own content and by how the reader arrived. **Paths** are
 guided sequences through the records. A **trail** and **session pack** keep
 the reader's own route.
 
-**The space (`website/space/`) draws these records now.** Each route below
-renders the space, which flies to the record and opens it as a reading
-sheet built from this library's modules. Only `/pack` is still a page here.
+**The composition (`website/composition/`) draws these records now.** Each
+route below renders it: the record's modules (planned here, in
+`modules/plans.js`) are composed in the middle of the screen as shapes,
+with the rest of the library as a live map beside them. Only `/pack` is
+still a page here.
 
 Routes:
 

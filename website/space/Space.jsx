@@ -39,7 +39,7 @@ import { sections as ARGUMENT } from '../pages/neoflix/content';
 import { prefersReducedMedia } from '../lib/utils/reducedMedia';
 import { layoutSpace, placeAt, FILM } from './layout';
 import { createCamera, cameraFor, toScreen, toWorld } from './camera';
-import { TOUR, CHAPTERS, DOORS } from './tour';
+import { TOUR, CHAPTERS, DOORS } from '../composition/tour';
 import { createTour, Narration, TourBar, useTourStop } from './Tour';
 import Sheet from './Sheet';
 import './space.css';

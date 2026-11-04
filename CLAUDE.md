@@ -29,20 +29,27 @@ working in; they're short, and GitHub renders them when browsing too.
   `shared/` holds what every page shares (navbar, footer, the backdrop,
   the motion system); `lib/` holds hooks and helpers. See `CONTENT.md`
   for the per-page table. Toolbox content → `docs-content/` markdown (but see the mirror rule).
-- **The space** → `website/space/` (read its README). **The homepage and
-  every record's address are one continuous space now** (2026-11, an
-  experiment the owner asked for): every film, paper and toolbox page has
-  a fixed place on one plane (`space/layout.js`: papers north, films
-  across the middle, the toolbox south in columns of the loop), moving is
-  a camera flight (`space/camera.js`), and a record opens as a reading
-  sheet beside its place (`space/Sheet.jsx`, which draws the library's
-  modules). Newcomers are taken through it by a scroll-driven
-  tour (`space/tour.js` is its script, `space/Tour.jsx` plays it);
-  returning and impatient readers skip to where they need to be. It renders outside the navbar and `RouteSlider` (`App.jsx`,
-  `SPACE_ROUTES`). The old homepage (`pages/home/`) is no longer routed;
-  it is kept in the tree, and its rules below apply only if it returns.
-  This is a playground: early rules in this file that protect the old
-  pages are not reasons to hold the space back.
+- **The composition** → `website/composition/` (read its README). **The
+  homepage and every record's address are one screen that arranges
+  itself** (2026-11, the owner's direction: self-assembling layouts, bento
+  as a reference for the size balance between shapes, not a fixed grid).
+  Every film, paper and toolbox page is always on screen as a shape; the
+  reader's situation sets weights (`composition/scene.js`), a composer
+  cuts the screen into shapes that fit edge to edge
+  (`composition/compose.js`), and an engine re-assembles it smoothly when
+  the weights change (`composition/engine.js`). An open record's modules
+  are composed the same way in the middle, with the rest as a live map
+  beside it. The tour (`composition/tour.js`, played by `story.js`) is a
+  sequence of weightings; scrolling re-assembles the screen from stop to
+  stop. Its look is deliberately not the generic one: no outlines, no
+  shadows, no small tracked capitals, no pills or glass; shapes are told
+  apart by fill and gutter, hierarchy is size, the type is Archivo with
+  its width axis. It renders outside the navbar and `RouteSlider`
+  (`App.jsx`, `SPACE_ROUTES`). `website/space/` (the zoomable plane it
+  replaced) and the old homepage (`pages/home/`) are kept in the tree,
+  unrouted; their rules below apply only if they return. This is a
+  playground: early rules in this file that protect the old pages are not
+  reasons to hold it back.
 - **The library** → `website/system/` (read its README). Every toolbox
   page, paper and film is a record, assembled from modules by rules in
   `system/modules/plans.js`; films, papers and guidance are linked once,
