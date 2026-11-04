@@ -30,26 +30,27 @@ working in; they're short, and GitHub renders them when browsing too.
   the motion system); `lib/` holds hooks and helpers. See `CONTENT.md`
   for the per-page table. Toolbox content → `docs-content/` markdown (but see the mirror rule).
 - **The composition** → `website/composition/` (read its README). **The
-  homepage and every record's address are one screen that arranges
-  itself** (2026-11, the owner's direction: self-assembling layouts, bento
-  as a reference for the size balance between shapes, not a fixed grid).
-  Every film, paper and toolbox page is always on screen as a shape; the
-  reader's situation sets weights (`composition/scene.js`), a composer
-  cuts the screen into shapes that fit edge to edge
-  (`composition/compose.js`), and an engine re-assembles it smoothly when
-  the weights change (`composition/engine.js`). An open record's modules
-  are composed the same way in the middle, with the rest as a live map
-  beside it. The tour (`composition/tour.js`, played by `story.js`) is a
-  sequence of weightings; scrolling re-assembles the screen from stop to
-  stop. Its look is deliberately not the generic one: no outlines, no
-  shadows, no small tracked capitals, no pills or glass; shapes are told
-  apart by fill and gutter, hierarchy is size, the type is Archivo with
-  its width axis. It renders outside the navbar and `RouteSlider`
-  (`App.jsx`, `SPACE_ROUTES`). `website/space/` (the zoomable plane it
-  replaced) and the old homepage (`pages/home/`) are kept in the tree,
-  unrouted; their rules below apply only if they return. This is a
-  playground: early rules in this file that protect the old pages are not
-  reasons to hold it back.
+  homepage and every record's address are one surface of elements that
+  clamp to each other** (2026-11, the owner's direction: "all their own
+  elements that magnetically clamp to each other depending on the
+  context"; bento is a reference for the balance of sizes and
+  orientations, not a grid). Every film, paper and toolbox page is its own
+  element with its own size; the context (`composition/contexts.js`) says
+  what is out and what clamps to what; the magnet (`composition/magnet.js`)
+  docks each element flush onto an edge of what it belongs to; springs
+  (`composition/engine.js`) move them there, with a small overshoot. An
+  open record's modules clamp round its main one, with the records it
+  links to clamped to the module that mentions them; elements can be
+  picked up and dropped, and clamp where they land. The tour
+  (`composition/tour.js`, `story.js`) is a sequence of contexts. Its look
+  is deliberately not the generic one: no outlines, no shadows (except
+  under an element being held), no small tracked capitals, no pills or
+  glass; hierarchy is size, the type is Archivo with its width axis. It
+  renders outside the navbar and `RouteSlider` (`App.jsx`,
+  `SPACE_ROUTES`). `website/space/` (the zoomable plane before it) and the
+  old homepage (`pages/home/`) are kept in the tree, unrouted; their rules
+  below apply only if they return. This is a playground: early rules in
+  this file that protect the old pages are not reasons to hold it back.
 - **The library** → `website/system/` (read its README). Every toolbox
   page, paper and film is a record, assembled from modules by rules in
   `system/modules/plans.js`; films, papers and guidance are linked once,

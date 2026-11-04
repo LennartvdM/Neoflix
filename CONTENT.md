@@ -11,22 +11,22 @@ the phone version, that page's words and that page's styles, side by side.
 
 ## The composition (the homepage, and every record) — `website/composition/`
 
-The homepage is one screen that arranges itself: every film, paper and
-toolbox page is a shape on it, and what the reader is doing decides which
-shapes are big. Its words mostly come from the library's content files
+The homepage is one surface of elements that clamp to each other: every
+film, paper and toolbox page is its own element, and what the reader is
+doing decides which are out, how big, and what they clamp to. Its words mostly come from the library's content files
 (next sections); these are its own.
 
 | What you see | Where it lives |
 |---|---|
 | The tour's words, stop by stop ("Some babies are born before they can breathe on their own."…), its chapters and the "go straight to" doors | `composition/tour.js` |
-| The left column at rest: the big line (it is `TAGLINE`, below), the paragraph under it, "Take the tour", the path buttons, "Welcome back" | `composition/Composition.jsx` (`Rest`) |
-| The left column on the tour: "A tour, in a few minutes", Play, "Leave the tour" | `composition/Composition.jsx` (`Narration`) |
-| The left column with a record open (title, meta, Pack, Close, walking a path) | `composition/Composition.jsx` (`RecordVoice`) |
-| A film shape's name and sentence | `name` and `claim` in `system/content/films.js` |
-| A paper shape's short name and finding | `short` and `found` in `system/content/papers.js` |
+| The words at rest: the big line (it is `TAGLINE`, below), the paragraph under it, "Take the tour", the path buttons, "Welcome back" | `composition/Composition.jsx` (`Rest`) |
+| On the tour: "A tour, in a few minutes", Play, "Leave the tour" | `composition/Composition.jsx` (`NarrationBody`, `Controls`) |
+| The title block of an open record (title, meta, Pack, Close, walking a path) | `composition/Composition.jsx` (`RecordVoice`) |
+| A film element's name and sentence | `name` and `claim` in `system/content/films.js` |
+| A paper element's short name and finding | `short` and `found` in `system/content/papers.js` |
 | A loop step's name ("Before you record"…) | `LOOP` in `system/catalog.js` |
 | The modules of an open record (their names, what's in them) | `system/modules/` (`MODULE_NAMES`, `plans.js`) |
-| Search, The long read, Contact (top of the left column) | `composition/Composition.jsx` (near the end) |
+| Neoflix, Search, The long read, Contact (top left, the one thing that doesn't move) | `composition/Composition.jsx` (near the end) |
 
 ## The old homepage — `pages/home/` (not routed at the moment)
 

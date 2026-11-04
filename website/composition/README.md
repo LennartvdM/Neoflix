@@ -1,75 +1,77 @@
-# website/composition/ — the site as one screen that arranges itself
+# website/composition/ — the site as elements that clamp to each other
 
 The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
-`/publications/<slug>`, `/paths/*`, `/search`) render one screen. Every
-film, paper and toolbox page is always on it, as a shape. What changes is
-how much room each shape gets, and nobody lays that out by hand: the
-reader's situation sets **weights**, and a composer cuts the screen into
-shapes that fit together edge to edge, with nothing left over. When the
-situation changes, the shapes re-assemble, continuously.
+`/publications/<slug>`, `/paths/*`, `/search`) render one surface. On it,
+every film, paper and toolbox page is **its own element**, with its own
+size and shape (films wide, papers tall, a page squarish, a block of text
+as tall as its text). Nothing divides the screen. Depending on the
+context, elements come out, and **clamp to each other**: whatever is in
+focus is put down first, and everything that belongs with it docks onto
+its edges, flush, one gutter away, the way a magnet clacks onto a plate.
+When the context changes, they let go and re-clamp somewhere else.
 
-The reference is a bento box, for the balance between sizes: a few big
-compartments, more small ones, all fitting. Not a fixed grid: the
-divisions move.
+The owner's words (2026-11): "In a modern site these are all their own
+elements that magnetically clamp to each other depending on the context,
+that's a self-assembling interface." Bento is a reference for the balance
+of sizes and orientations (a few big, more small; wide next to tall), not
+for a grid. (A first version cut the whole screen into a treemap; that
+is still a grid, and was replaced.)
 
-## What the weights say
+## What clamps to what
 
-| Situation | What gets big |
+| Context | What is out |
 |---|---|
-| Resting | The films take turns at being the big shape (every 9 s; never while the pointer is over the shapes, never with reduced motion) |
-| A record open | Its modules are composed in the middle (the library's own modules, `system/modules`, by the same composer); everything else becomes a live map on the right, where the record is dark and what it links to is grown |
-| Hovering a link in an open record | The shape it lands on pulses in the map: links aren't blind, and nothing is ever off screen |
-| A search | The matches grow and light up; everything else shrinks and fades |
-| A loop step's head clicked | That step's pages take the practice band |
-| The tour | Each stop is a weighting (`tour.js` `at`); scrolling re-assembles the screen from one stop's to the next |
+| At rest | The words (the way in); the films in two runs (the moment, watching it back), the one with the floor big; each paper clamped over the film it supports; the five steps of the loop clamped under the films. The films take turns at having the floor (every 9 s; never while a hand is over the elements; never with reduced motion) |
+| A record open | Its modules (the library's own, `system/modules`) clamped round its main one, its title block beside them; a film opens as itself, big, playing. The records it links to clamp to the module that mentions them (papers to the evidence, films to the film module, guidance to "how to do it") |
+| A step of the loop | Its head, big; its chapters in a run; each chapter's pages clamped under it; the other steps in reach |
+| A search | The matches, clamped to the search, best first and biggest |
+| The tour | Each stop is a context (`tour.js` `at`): the subject big, the narration beside it, the controls under the narration, what it connects to clamped round. Scrolling moves everything from one stop's places to the next |
+
+Any element can be **picked up** and dropped; it clamps to the nearest
+free edge where it lands, and stays until the context changes.
 
 ## The pieces
 
 | | |
 |---|---|
-| `compose.js` | The composer. A list in reading order is cut in two (across or along), each half gets the share of the rectangle its weights add up to, and so on down. Every cut gives exact areas, so the only choice is where and which way: the cut that leaves each piece nearest the proportions it wants (films wide, papers tall) and nothing thin wins. A piece holding most of a group's weight takes a side to itself and its small neighbours gather on the other; in a group that may fold, neighbours with too little room fold into it ("+4"). It remembers its cuts and keeps them until another is clearly better, so recomposing every frame doesn't flicker. Node-safe. |
-| `scene.js` | What is composed (the tree: three bands north to south as the site always had them: the evidence, the argument, the practice in the five steps of the loop, chapters with their pages) and the weights for a situation (`weigh`). Node-safe. |
-| `engine.js` | Keeps every shape where the composer says. Weight changes are eased (the screen is composed at every frame in between, so it is always a whole composition, never shapes sliding over each other); jumps (a cut flipping, a region resizing) are chased, ~70 ms. Writes styles directly, no React render per frame. |
-| `story.js` | The tour's clock: scroll position along the stops, holds and travels, snapping, play. Knows nothing about the screen. |
-| `tour.js` | The tour's script: stops, chapters, depths, words, doors. Node-safe. |
-| `Composition.jsx` | The shapes, the left column (the voice: the tour's words, an open record's title, the way in), reading, search, keys, URLs. |
+| `magnet.js` | The assembler. Puts elements down in order; each docks onto an edge of something already down, choosing among every flush spot by attraction: near what it belongs to, on the side it prefers, edges lined up with the edges around it, touching as much as it can, the whole kept to the screen's proportions. Tries a few sizes and keeps the best (an element on the wrong side, or left out, costs more than being smaller). `dockNear` finds where a dropped element clamps. Node-safe. |
+| `contexts.js` | What is out in each context, how big (a few sizes per kind), and what clamps to what with which preferred sides. The site's old geography survives as preference: papers above, guidance below, the next film to the right. Node-safe. |
+| `engine.js` | Springs: every element moves to its place a little under critical damping, so it overshoots by a hair and settles (the clack). A newcomer comes out of what it clamps to. Writes styles directly, no React render per frame. Holds elements the reader dropped. |
+| `story.js` | The tour's clock (scroll position along the stops, holds, snapping, play). |
+| `tour.js` | The tour's script. Node-safe. |
+| `Composition.jsx` | The elements, the voice (the words for what you're looking at), the modules, measuring, search, keys, dragging, URLs. |
 | `composition.css` | The look. |
 
-## The look (and why)
+## The look
 
-The owner's note (2026-11): the previous version had slid into the look
-every generated site has: Inter, small tracked capitals over everything,
-hairline-outlined cards with soft shadows, pills and frosted glass. So:
-
-- **No outlines, no shadows.** A shape is told apart from its neighbour
-  by its fill and the gutter between them, like compartments.
-- **Hierarchy is size.** The big shape is the important one because the
-  composer made it big; there is no badge or border saying so.
-- **The words follow the shape.** Every shape is a size container
-  (`container-type: size`); what it shows and how large is set from the
-  room it was given (cq units, `@container`), and a title narrows in a
-  tall shape and widens in a wide one (Archivo's width axis, 62–125%).
-- **Numbers carry the structure**: light, wide numerals (paper 3,
-  chapter 11.2, loop step 4) instead of labels.
-- **Colour is cold**: the pale blue-grey of a hospital, no cream, no
-  warm paper, no pure white. The films are the dark; the loop's steps are
-  deep blue blocks; teal marks where you are.
+- **Objects, not boxes.** Every element has its own fill; nothing has an
+  outline. The only shadow is under an element you are holding.
+- **Hierarchy is size**; numbers carry the structure (light, wide
+  numerals: paper 3, chapter 11.2, step 4) instead of labels in tracked
+  capitals.
+- **The words follow the shape**: records are size containers (cq units,
+  `@container`); titles narrow in tall elements and widen in wide ones
+  (Archivo, self-hosted, width axis 62–125%).
+- **Cold**: the pale blue-grey of a hospital, no cream, no pure white.
+  The films are the dark; the loop's steps deep blue; teal is where you are.
 
 ## Traps
 
-- **cq units in a container's own padding measure its parent**, not
-  itself. That is why every shape's content sits in `.t__in`: padding
-  set on `.t` in cq units silently became viewport-sized and hid every
-  small shape's title.
-- **The engine writes the shapes' transforms and sizes directly**, every
-  frame. Shapes only re-render when what they *say* changes. Keep it so.
-- **Order is meaning.** The composer never reorders a list, except that
-  a dominant piece takes a side and its neighbours gather (in their
-  order) on the other. If you add pieces, add them in reading order.
-- **`scripts/system-check.mjs` composes every tour stop, every record
-  open and every resting state** at desktop size and fails the build on
-  overlaps, shapes leaving the screen, or slivers under 20px. If it
-  fails after a weight change, the composition really does look broken
-  there.
-- **Phones** stack the voice over the shapes; they are kept from
+- **Measured elements are measured at their target width**, not their
+  animated one (`.e__content` has its width set explicitly). Measure the
+  animated width and the height changes mid-spring, which re-assembles,
+  which changes the width again.
+- **cq units in a container's own padding measure its parent.** Record
+  content sits in `.t__in` for that reason.
+- **The tour's narration is measured for every stop, hidden**
+  (`.cmp__measure`), so each stop's assembly is known before it is shown.
+- **Assembly cost** is a few to ~70 ms per context (the resting screen is
+  the heaviest). It runs on context changes, not per frame; the tour's
+  stops are assembled once and cached. Don't call it in a frame loop.
+- **`scripts/system-check.mjs` assembles every context** (every tour
+  stop, every record open, every resting state, every step) at desktop
+  size and fails on overlaps, elements off screen, or anything a context
+  can't do without (`must`) having nowhere to clamp.
+- **Phones** get a tall plate that scrolls (the assembly runs from the
+  top in a narrow, very tall room), so nothing is left out. Kept from
   breaking, not designed for (CLAUDE.md).

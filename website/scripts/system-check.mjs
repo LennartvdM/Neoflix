@@ -20,8 +20,8 @@ import { urlFor, keyForPath } from '../system/urls.js';
 import { planRecord } from '../system/modules/plans.js';
 import { assemble, rowsOf, COLUMNS } from '../system/assemble.js';
 import { searchLibrary } from '../system/search.js';
-import { buildScene, weigh } from '../composition/scene.js';
-import { compose } from '../composition/compose.js';
+import { buildWorld, itemsFor } from '../composition/contexts.js';
+import { assemble as magnetAssemble } from '../composition/magnet.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(await fs.readFile(path.join(__dirname, '../generated/docs-manifest.json'), 'utf8'));
@@ -100,31 +100,40 @@ check('search finds what it should', () => {
   }
 });
 
-// The composition lays itself out from weights; nobody looks at most of
-// the arrangements it can make. Compose every tour stop, every record
-// open and every resting state at desktop size, and fail if shapes
-// overlap, leave their region, or come out as unusable slivers.
-check('the composition tiles the screen, with no slivers', () => {
-  const scene = buildScene(catalog);
-  const at = (s) => (s.at === 'everything' ? {} : Array.isArray(s.at) || /^(column|region):/.test(s.at) ? { lens: s.at } : { anchor: s.at });
+// The composition assembles itself: elements clamp to each other by
+// context, and nobody looks at most of what it makes. Assemble every
+// tour stop, every record open (with rough module sizes), the resting
+// screen with each film in front and every step of the loop, at desktop
+// size, and fail if elements overlap, leave the screen, or something a
+// context can't do without has nowhere to go.
+check('the composition assembles every context', () => {
+  const world = buildWorld(catalog);
+  const bounds = { x: 20, y: 70, w: 1400, h: 812 };
+  const voice = { w: 400, h: 520 };
+  const at = (s) => (s.at === 'everything' ? { lens: 'everything' } : Array.isArray(s.at) || /^(column|region):/.test(s.at) ? { lens: s.at } : { anchor: s.at });
   const cases = [
-    ...TOUR.map((s) => [`tour stop ${s.id}`, at(s), { x: 432, y: 0, w: 1008, h: 900 }]),
-    ...catalog.list('film').map((f) => [`resting on ${f.key}`, { feature: f.key }, { x: 403, y: 0, w: 1037, h: 900 }]),
-    ...[...catalog.records.keys()].map((k) => [`reading ${k}`, { anchor: k }, { x: 1018, y: 0, w: 422, h: 900 }]),
+    ...TOUR.map((s) => [`tour stop ${s.id}`, { mode: 'tour', ...at(s), voice, controls: { w: 400, h: 100 } }]),
+    ...catalog.list('film').map((f) => [`resting on ${f.key}`, { mode: 'rest', feature: f.key, voice: { w: 400, h: 600 } }]),
+    ...LOOP.map((l) => [`step ${l.id}`, { mode: 'step', lens: `column:${l.id}`, voice: { w: 400, h: 300 } }]),
+    ...[...catalog.records.keys()].filter((k) => !catalog.get(k).divider).map((k) => {
+      const modules = planRecord(catalog.get(k), {}, lib).filter((p) => !['map', 'loop', 'loopbrowse', 'paperlist', 'player'].includes(p.id))
+        .map((p) => ({ id: `mod:${p.id}`, w: p.id === 'text' ? 560 : 360, h: p.id === 'text' ? 700 : 260, scalable: false }));
+      return [`reading ${k}`, { mode: 'read', anchor: k, modules, voice: { w: 380, h: 420 } }];
+    }),
   ];
-  for (const [name, state, rect] of cases) {
-    const out = compose(scene.world, rect, { weights: weigh(scene, state, graph), gap: 6, foldAt: 9000 });
-    if (out.size !== scene.leaves.size) fail(`${name}: ${scene.leaves.size - out.size} shapes not placed`);
-    const vis = [...out.entries()].filter(([, q]) => !q.gone);
+  for (const [name, ctx] of cases) {
+    const items = itemsFor(world, ctx, graph, 1);
+    const { rects, dropped } = magnetAssemble(items, { bounds, gap: 10 });
+    for (const id of dropped) if (items.find((i) => i.id === id)?.must) fail(`${name}: ${id} has nowhere to clamp`);
+    const vis = [...rects.entries()];
     for (const [id, q] of vis) {
-      if (q.x < rect.x - 0.5 || q.y < rect.y - 0.5 || q.x + q.w > rect.x + rect.w + 0.5 || q.y + q.h > rect.y + rect.h + 0.5) fail(`${name}: ${id} leaves its region`);
-      if (Math.min(q.w, q.h) < 20) fail(`${name}: ${id} is a sliver (${Math.round(q.w)}×${Math.round(q.h)})`);
+      if (q.x < bounds.x - 1 || q.y < bounds.y - 1 || q.x + q.w > bounds.x + bounds.w + 1 || q.y + q.h > bounds.y + bounds.h + 1) fail(`${name}: ${id} leaves the screen`);
     }
     for (let i = 0; i < vis.length; i += 1) {
       for (let j = i + 1; j < vis.length; j += 1) {
         const a = vis[i][1];
         const b = vis[j][1];
-        if (a.x < b.x + b.w - 0.5 && b.x < a.x + a.w - 0.5 && a.y < b.y + b.h - 0.5 && b.y < a.y + a.h - 0.5) fail(`${name}: ${vis[i][0]} overlaps ${vis[j][0]}`);
+        if (a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h) fail(`${name}: ${vis[i][0]} overlaps ${vis[j][0]}`);
       }
     }
   }

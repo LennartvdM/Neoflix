@@ -17,8 +17,8 @@ import ErrorBoundary from './shared/ErrorBoundary';
 // better than a spinner flashing inside the slide.
 const NeoflixPage = lazy(() => import('./pages/neoflix/NeoflixPage'));
 const PublicationsPage = lazy(() => import('./pages/publications/PublicationsPage'));
-// The composition (website/composition): the whole library on one screen
-// that arranges itself around what the reader is doing. It owns the
+// The composition (website/composition): every record its own element,
+// clamping to the others by context. It owns the
 // homepage and every record's address, and has its own chrome, so it
 // renders outside the navbar and the page slide. (website/space, the
 // zoomable plane it replaced, is kept in the tree, unrouted.)

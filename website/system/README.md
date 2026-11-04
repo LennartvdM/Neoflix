@@ -8,8 +8,8 @@ the reader's own route.
 
 **The composition (`website/composition/`) draws these records now.** Each
 route below renders it: the record's modules (planned here, in
-`modules/plans.js`) are composed in the middle of the screen as shapes,
-with the rest of the library as a live map beside them. Only `/pack` is
+`modules/plans.js`) come out as elements clamped round its main one, with
+the records it links to clamped to the module that mentions them. Only `/pack` is
 still a page here.
 
 Routes:
