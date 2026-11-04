@@ -41,6 +41,10 @@ working in; they're short, and GitHub renders them when browsing too.
   — mounted in `App.jsx` outside the page slide, like the navbar.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
   desktop tree or a mobile tree (`< 600px`) — separate lazy chunks.
+  **Mobile is out of scope for design work (owner's decision, 2026-11).**
+  The phone trees stay as they are; new work is designed for desktop only
+  and isn't adapted, checked or screenshotted for phones. Only keep phones
+  from breaking outright (no crash, nothing unreachable).
 - **Motion system** → `RouteSlider` (page slide), `BackdropProvider`
   (persistent video backdrop), `ScrollSnap` + `SectionManager` +
   `ScrollSection` (desktop home), `TransitionContext` (shared direction
@@ -178,6 +182,5 @@ working in; they're short, and GitHub renders them when browsing too.
 
 - `bash build.sh` must pass (includes smoke checks).
 - For visual changes, screenshot with Playwright against a static server on
-  `dist/` at 1440×900 and 390×844 — mobile and desktop are different trees;
-  check the one you touched (or both when the change is shared).
+  `dist/` at 1440×900. (Phones are out of scope — see "Two surfaces".)
 - CI (`.github/workflows/build.yml`) runs the same build on every PR.
