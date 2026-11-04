@@ -6,7 +6,11 @@ by the record's own content and by how the reader arrived. **Paths** are
 guided sequences through the records. A **trail** and **session pack** keep
 the reader's own route.
 
-Routes it serves:
+**The space (`website/space/`) draws these records now.** Each route below
+renders the space, which flies to the record and opens it as a reading
+sheet built from this library's modules. Only `/pack` is still a page here.
+
+Routes:
 
 | Route | What |
 |---|---|
@@ -49,8 +53,8 @@ anywhere. The layer's "?" button shows the reasons in words. The layer sits
 outside the page slide (like the navbar), so it carries across from `/` to
 `/neoflix`, and it hands over to the library's own chrome at `/toolbox`.
 
-The homepage, `/neoflix`, `/publications` and `/contact` are not rendered by
-the library; the layer is how it reaches into them.
+Since the space took over the homepage, the layer only appears on
+`/neoflix` and `/contact`.
 
 ## Layers
 
@@ -77,7 +81,7 @@ the library; the layer is how it reaches into them.
 | `ripeness.js` | How ripe the reader is (see above): the signals, the level and its reasons |
 | `modules/index.jsx` | The module components: what each module draws |
 | `ui/` | Shapes (one per kind), links that carry `from=`, the map, the local graph, the path bar, the trail dock, the library strip |
-| `pages/` | Record, path, search and pack pages, and the `Shell` they share |
+| `pages/` | The pack page and its `Shell` |
 | `system.css` | All of it, scoped under `.sys` |
 
 ## How to…

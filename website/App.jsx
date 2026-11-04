@@ -15,15 +15,12 @@ import ErrorBoundary from './shared/ErrorBoundary';
 // rendered. The Suspense fallback is null on purpose — the backdrop
 // keeps painting during the (one-time, small) chunk fetch, which reads
 // better than a spinner flashing inside the slide.
-const Home = lazy(() => import('./pages/home/Home'));
 const NeoflixPage = lazy(() => import('./pages/neoflix/NeoflixPage'));
 const PublicationsPage = lazy(() => import('./pages/publications/PublicationsPage'));
-// The library (website/system): every toolbox page, paper and film is a
-// record assembled from modules; paths, search and the session pack sit
-// alongside. One chunk per page kind.
-const RecordPage = lazy(() => import('./system/pages/RecordPage'));
-const PathPage = lazy(() => import('./system/pages/PathPage'));
-const SearchPage = lazy(() => import('./system/pages/SearchPage'));
+// The space (website/space): the whole library as one plane you move
+// through. It owns the homepage and every record's address, and has its
+// own chrome, so it renders outside the navbar and the page slide.
+const Space = lazy(() => import('./space/Space'));
 const PackPage = lazy(() => import('./system/pages/PackPage'));
 // The library's interface over the intro and the elaboration, growing as
 // the reader ripens (system/ripeness.js). Outside the page slide, like the
@@ -31,13 +28,17 @@ const PackPage = lazy(() => import('./system/pages/PackPage'));
 const LibraryLayer = lazy(() => import('./system/ui/LibraryLayer'));
 const NotFoundPage = lazy(() => import('./pages/not-found/NotFoundPage'));
 
+// The addresses the space answers: the homepage, every record, paths and search.
+const SPACE_ROUTES = /^\/(?:$|toolbox(?:\/|$)|films\/|publications\/[^/]|paths(?:\/|$)|search\/?$)/;
+
 function AppShell() {
   const location = useLocation();
+  const inSpace = SPACE_ROUTES.test(location.pathname);
   const { width } = useTabletLayout();
   const isNeoflix = location.pathname === '/neoflix' || location.pathname.startsWith('/neoflix/');
   const isPublications = location.pathname.startsWith('/publications');
   const isContact = location.pathname === '/contact';
-  const isToolbox = /^\/(toolbox|films|paths|search|pack)(\/|$)/.test(location.pathname);
+  const isToolbox = /^\/pack(\/|$)/.test(location.pathname);
   const showMobileDock = width > 0 && width < 600;
 
   // Client-side navigation doesn't reload the document, so the head has
@@ -57,6 +58,18 @@ function AppShell() {
     }
     mainRef.current?.focus({ preventScroll: true });
   }, [location.pathname]);
+
+  if (inSpace) {
+    return (
+      <main id="main-content" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
+        <ErrorBoundary>
+          <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#0a1b20' }} />}>
+            <Space />
+          </Suspense>
+        </ErrorBoundary>
+      </main>
+    );
+  }
 
   // The navbar, backdrop, and route slider each render independently.
   // They share a single source of truth — TransitionContext — for the
@@ -103,17 +116,9 @@ function AppShell() {
                 }
               >
                 <Routes location={captured}>
-                  <Route path="/" element={<Home />} />
                   <Route path="/neoflix" element={<NeoflixPage />} />
                   <Route path="/publications" element={<PublicationsPage />} />
-                  <Route path="/publications/:slug" element={<RecordPage />} />
                   <Route path="/contact" element={<NeoflixPage scrollTo="contact" />} />
-                  <Route path="/toolbox" element={<RecordPage />} />
-                  <Route path="/toolbox/*" element={<RecordPage />} />
-                  <Route path="/films/:id" element={<RecordPage />} />
-                  <Route path="/paths" element={<PathPage />} />
-                  <Route path="/paths/:id" element={<PathPage />} />
-                  <Route path="/search" element={<SearchPage />} />
                   <Route path="/pack" element={<PackPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>

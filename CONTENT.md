@@ -9,7 +9,21 @@ one thing, remember that: the Publications page is `pages/publications/`, the
 homepage is `pages/home/`, and so on. Each folder holds the desktop version,
 the phone version, that page's words and that page's styles, side by side.
 
-## Homepage — `pages/home/`
+## The space (the homepage, and every record) — `website/space/`
+
+The homepage is one continuous space: every film, paper and toolbox page
+in a fixed place, the reader flying between them. Its words mostly come
+from the library's content files (next sections); these are its own.
+
+| What you see | Where it lives |
+|---|---|
+| Where everything sits; the region names ("The evidence"…), the two film groups ("What goes wrong in the moment"…) | `space/layout.js` |
+| The kicker over each film in the intro ("Medical procedures are time-sensitive") | section titles in `pages/neoflix/content.js`, matched by the film's `anchor` |
+| The film's sentence on its card | `claim` in `system/content/films.js` |
+| The top bar, the distance control ("Close up / The argument / Everything"), the paths row, search | `space/Space.jsx` (HUD, near the end) |
+| The reading sheet's header (and the toolbox front's heading) | `space/Sheet.jsx` (`Head`) |
+
+## The old homepage — `pages/home/` (not routed at the moment)
 
 | What you see | Where it lives |
 |---|---|
@@ -61,7 +75,6 @@ file links). Each page is a record in the library — see the next section.
 | What the library says about each paper (short name, asked / found / changed) | `system/content/papers.js` |
 | The paths ("Why record at all", "Your first session", "The evidence") | `system/content/paths.js` |
 | Which modules a record shows, in what order, and why | `system/modules/plans.js` |
-| The front's heading and intro | `system/pages/RecordPage.jsx` (`Header`, the `front` branch) |
 | Module headings ("The evidence", "How to do it"…) | `MODULE_NAMES` in `system/modules/index.jsx` |
 
 ## Browser tab titles, search snippets, link previews

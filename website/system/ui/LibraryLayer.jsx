@@ -28,7 +28,9 @@ import MapGraph from './MapGraph';
 import '../system.css';
 import '../layer.css';
 
-const TIERS = { '/': 'intro', '/neoflix': 'argument', '/contact': 'argument' };
+// The homepage is the space itself now (website/space); the layer stays on
+// the long read.
+const TIERS = { '/neoflix': 'argument', '/contact': 'argument' };
 const EASE = [0.32, 0.72, 0, 1];
 const grow = { initial: { opacity: 0, width: 0 }, animate: { opacity: 1, width: 'auto' }, exit: { opacity: 0, width: 0 }, transition: { duration: 0.5, ease: EASE } };
 
@@ -128,7 +130,7 @@ export default function LibraryLayer() {
                   <div className="lyr__map">
                     <div className="lyr__maphead"><strong>The library</strong><span className="lyr__muted">Your route so far is drawn in black.</span></div>
                     <MapGraph mini trail={trail} />
-                    <button type="button" className="lyr__btn lyr__btn--solid" onClick={() => go('/toolbox')}>Open the library →</button>
+                    <button type="button" className="lyr__btn lyr__btn--solid" onClick={() => go('/')}>Open the library →</button>
                   </div>
                 )}
               </motion.div>
@@ -172,7 +174,7 @@ export default function LibraryLayer() {
               {tier === 'intro' && (level >= 1 || hover) && (
                 <button type="button" className="lyr__btn" onClick={() => go('/neoflix')}>The argument</button>
               )}
-              <button type="button" className="lyr__btn lyr__btn--solid" onClick={() => go('/toolbox')}>
+              <button type="button" className="lyr__btn lyr__btn--solid" onClick={() => go('/')}>
                 {level === 0 && !hover ? 'Skip ahead →' : level >= 3 ? 'The library →' : 'The toolbox →'}
               </button>
               {level >= 3 && (

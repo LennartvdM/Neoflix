@@ -29,14 +29,25 @@ working in; they're short, and GitHub renders them when browsing too.
   `shared/` holds what every page shares (navbar, footer, the backdrop,
   the motion system); `lib/` holds hooks and helpers. See `CONTENT.md`
   for the per-page table. Toolbox content → `docs-content/` markdown (but see the mirror rule).
+- **The space** → `website/space/` (read its README). **The homepage and
+  every record's address are one continuous space now** (2026-11, an
+  experiment the owner asked for): every film, paper and toolbox page has
+  a fixed place on one plane (`space/layout.js`: papers north, films
+  across the middle, the toolbox south in columns of the loop), moving is
+  a camera flight (`space/camera.js`), and a record opens as a reading
+  sheet beside its place (`space/Sheet.jsx`, which draws the library's
+  modules). It renders outside the navbar and `RouteSlider` (`App.jsx`,
+  `SPACE_ROUTES`). The old homepage (`pages/home/`) is no longer routed;
+  it is kept in the tree, and its rules below apply only if it returns.
+  This is a playground: early rules in this file that protect the old
+  pages are not reasons to hold the space back.
 - **The library** → `website/system/` (read its README). Every toolbox
   page, paper and film is a record, assembled from modules by rules in
   `system/modules/plans.js`; films, papers and guidance are linked once,
-  in `system/content/films.js`; paths in `system/content/paths.js`. It
-  serves `/toolbox/*`, `/publications/<slug>`, `/films/*`, `/paths/*`,
-  `/search` and `/pack`. `scripts/system-check.mjs` (in `build.sh`) fails
-  the build when a link, path, address or layout breaks. Over the homepage
-  and `/neoflix` the library is present as a layer that grows with the
+  in `system/content/films.js`; paths in `system/content/paths.js`. The
+  space draws its records; `/pack` is still its own page. `scripts/system-check.mjs` (in `build.sh`) fails
+  the build when a link, path, address or layout breaks. Over
+  `/neoflix` the library is present as a layer that grows with the
   reader's "ripeness" (`system/ripeness.js`, `system/ui/LibraryLayer.jsx`)
   — mounted in `App.jsx` outside the page slide, like the navbar.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
