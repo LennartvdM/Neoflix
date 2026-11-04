@@ -25,6 +25,10 @@ const RecordPage = lazy(() => import('./system/pages/RecordPage'));
 const PathPage = lazy(() => import('./system/pages/PathPage'));
 const SearchPage = lazy(() => import('./system/pages/SearchPage'));
 const PackPage = lazy(() => import('./system/pages/PackPage'));
+// The library's interface over the intro and the elaboration, growing as
+// the reader ripens (system/ripeness.js). Outside the page slide, like the
+// navbar, so it carries across from / to /neoflix.
+const LibraryLayer = lazy(() => import('./system/ui/LibraryLayer'));
 const NotFoundPage = lazy(() => import('./pages/not-found/NotFoundPage'));
 
 function AppShell() {
@@ -119,6 +123,9 @@ function AppShell() {
         </BackdropProvider>
       </ErrorBoundary>
       </main>
+      <Suspense fallback={null}>
+        <LibraryLayer />
+      </Suspense>
       {showMobileDock ? <MobileDock /> : null}
     </div>
   );

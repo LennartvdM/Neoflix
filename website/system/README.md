@@ -18,8 +18,39 @@ Routes it serves:
 | `/search` | Browse (no query) or results assembled around a query |
 | `/pack` | The session pack (`?items=` when shared) |
 
-The homepage, `/neoflix`, `/publications` and `/contact` are not part of
-the library (yet).
+## Three tiers, one interface
+
+The site keeps its three tiers: the **introduction** (the homepage film),
+the **elaboration** (`/neoflix`) and the **toolbox** (the library). The
+library's interface is already present during the first two, as a small
+layer over the page (`ui/LibraryLayer.jsx`). Nobody has to sit through the
+story, and the layer assembles itself as the reader **ripens**
+(`ripeness.js`):
+
+| Level | Shows | When |
+|---|---|---|
+| arrived | "Skip ahead" | on arrival |
+| curious | the six films as chips, filling in as each is seen; skip to the argument or the toolbox | a film seen, or reaching for the layer |
+| oriented | + the paths and a search field | a few films, a quick skip past a section, a quarter of the argument read |
+| ready | + the library map with your route, "Open the library" | the end of the intro, most of the argument, or ever having been in the library |
+
+The signals:
+- **Films seen.** A clip on screen for a couple of seconds on the homepage
+  (`pages/home/story/StorySection.jsx`), or a section of `/neoflix` read for
+  a moment. A seen film also lands on the reader's trail.
+- **Hurry.** Leaving a story section within a second of arriving, or
+  scrolling the argument fast.
+- **Reaching for the layer.** Hovering or opening it.
+- **Reading depth.** How far into `/neoflix` the reader has scrolled.
+- **The library.** Having been in it before.
+
+Ripeness only grows, lives in this browser's localStorage, and is never sent
+anywhere. The layer's "?" button shows the reasons in words. The layer sits
+outside the page slide (like the navbar), so it carries across from `/` to
+`/neoflix`, and it hands over to the library's own chrome at `/toolbox`.
+
+The homepage, `/neoflix`, `/publications` and `/contact` are not rendered by
+the library; the layer is how it reaches into them.
 
 ## Layers
 
@@ -43,6 +74,7 @@ the library (yet).
 |---|---|
 | `library.js` | The catalogue and graph, built once; media URLs |
 | `state.js` | Trail, session pack, checklist ticks, your saved path. Stored in localStorage only: no cookies, nothing sent anywhere. |
+| `ripeness.js` | How ripe the reader is (see above): the signals, the level and its reasons |
 | `modules/index.jsx` | The module components: what each module draws |
 | `ui/` | Shapes (one per kind), links that carry `from=`, the map, the local graph, the path bar, the trail dock, the library strip |
 | `pages/` | Record, path, search and pack pages, and the `Shell` they share |

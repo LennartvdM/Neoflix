@@ -4,13 +4,14 @@
  * path bar at the top and the trail at the bottom, and paints the calm
  * page colour instead of the footage backdrop.
  */
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useBackdropTarget } from '../../shared/backdrop/useBackdrop';
 import LibraryBar from '../ui/LibraryBar';
 import PathBar from '../ui/PathBar';
 import TrailDock from '../ui/TrailDock';
 import { Here } from '../ui/nav';
+import { noteLibrary } from '../ripeness';
 import '../system.css';
 
 export default function Shell({ current = null, path = null, crumbs, children }) {
@@ -18,6 +19,9 @@ export default function Shell({ current = null, path = null, crumbs, children })
   const scroller = useRef(null);
   useBackdropTarget('toolbox', null);
   useBackdropTarget('blog', null);
+  // Having been in the library makes the reader fully ripe: next time the
+  // intro and the elaboration show the whole library interface at once.
+  useEffect(() => { noteLibrary(); }, []);
   // A new record starts at its top. Typing in search doesn't jump.
   useLayoutEffect(() => {
     if (pathname !== '/search') scroller.current?.scrollTo({ top: 0, behavior: 'instant' });

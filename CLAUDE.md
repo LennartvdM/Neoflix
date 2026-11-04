@@ -35,7 +35,10 @@ working in; they're short, and GitHub renders them when browsing too.
   in `system/content/films.js`; paths in `system/content/paths.js`. It
   serves `/toolbox/*`, `/publications/<slug>`, `/films/*`, `/paths/*`,
   `/search` and `/pack`. `scripts/system-check.mjs` (in `build.sh`) fails
-  the build when a link, path, address or layout breaks.
+  the build when a link, path, address or layout breaks. Over the homepage
+  and `/neoflix` the library is present as a layer that grows with the
+  reader's "ripeness" (`system/ripeness.js`, `system/ui/LibraryLayer.jsx`)
+  — mounted in `App.jsx` outside the page slide, like the navbar.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
   desktop tree or a mobile tree (`< 600px`) — separate lazy chunks.
 - **Motion system** → `RouteSlider` (page slide), `BackdropProvider`

@@ -22,6 +22,7 @@ export const SESSION_FILM_SRC = 'https://player.vimeo.com/video/1031329353?h=055
 export const FILMS = [
   {
     id: 'urgency',
+    anchor: 'time-sensitive', // its section on /neoflix and the homepage caption's target
     name: 'Urgency',
     clip: 'urgency',
     claim: 'Some work has to be done right now, and right the first time.',
@@ -36,6 +37,7 @@ export const FILMS = [
   },
   {
     id: 'coordination',
+    anchor: 'like-a-dance', // its section on /neoflix and the homepage caption's target
     name: 'Coordination',
     clip: 'coordination',
     claim: 'It takes several people doing different things at the same time.',
@@ -49,6 +51,7 @@ export const FILMS = [
   },
   {
     id: 'focus',
+    anchor: 'cost', // its section on /neoflix and the homepage caption's target
     name: 'Focus',
     clip: 'focus',
     claim: 'Everyone is watching their own hands. Afterwards, nobody can say exactly what happened.',
@@ -62,6 +65,7 @@ export const FILMS = [
   },
   {
     id: 'skills',
+    anchor: 'sharpening', // its section on /neoflix and the homepage caption's target
     name: 'Skills',
     clip: 'skills',
     claim: 'If you record it, you can watch what happened instead of remembering it.',
@@ -76,6 +80,7 @@ export const FILMS = [
   },
   {
     id: 'team',
+    anchor: 'team-dynamics', // its section on /neoflix and the homepage caption's target
     name: 'Team',
     clip: 'team',
     claim: 'If you watch it with the people who were there, everyone sees the same thing for once.',
@@ -96,6 +101,7 @@ export const FILMS = [
   },
   {
     id: 'perspectives',
+    anchor: 'perspectives', // its section on /neoflix and the homepage caption's target
     name: 'Perspectives',
     clip: 'perspectives',
     claim: 'If you watch it with people who do it differently, you notice what you do.',
