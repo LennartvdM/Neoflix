@@ -14,8 +14,8 @@ thing everywhere:
 - **south** the practice: the toolbox, one column per step of the loop
   (before you record → record → reflect → refine → keep going, and back)
 
-It is bright and cold, the pale grey of a hospital (no cream, no warm
-paper): a light ground, with the films
+It is bright and cold, the pale blue-grey of a hospital (no cream, no warm
+paper, no pure white: every light surface leans blue): a light ground, with the films
 in one dark band across the middle, edge to edge (`SPACE.band`). The
 videos and the dark are blocks of colour on the page, not the page.
 
