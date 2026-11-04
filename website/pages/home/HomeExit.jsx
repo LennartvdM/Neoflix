@@ -8,6 +8,7 @@
 import React from 'react';
 import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
 import { BEATS } from '../../shared/argument';
+import useCarry from '../../shared/index/useCarry';
 import './home-exit.css';
 
 function Door({ href, className, children }) {
@@ -27,6 +28,19 @@ function Door({ href, className, children }) {
   );
 }
 
+// A clip card carries its still to the beat's chip on /neoflix.
+function BeatDoor({ beat }) {
+  const go = useCarry();
+  const t = `beat:${beat.id}`;
+  return (
+    <a className="home-exit__beat" href={`/neoflix#${beat.id}`} onClick={(e) => go(e, t)}>
+      <img src={beat.clip.still} alt="" loading="lazy" data-token={t} />
+      <span className="home-exit__beat-n">{String(beat.n).padStart(2, '0')}</span>
+      <span className="home-exit__beat-name">{beat.name}</span>
+    </a>
+  );
+}
+
 export default function HomeExit() {
   return (
     <div className="home-exit" data-nav-tone="dark">
@@ -38,11 +52,7 @@ export default function HomeExit() {
         <ol className="home-exit__beats">
           {BEATS.map((beat) => (
             <li key={beat.id}>
-              <Door href={`/neoflix#${beat.id}`} className="home-exit__beat">
-                <img src={beat.clip.still} alt="" loading="lazy" />
-                <span className="home-exit__beat-n">{String(beat.n).padStart(2, '0')}</span>
-                <span className="home-exit__beat-name">{beat.name}</span>
-              </Door>
+              <BeatDoor beat={beat} />
             </li>
           ))}
         </ol>

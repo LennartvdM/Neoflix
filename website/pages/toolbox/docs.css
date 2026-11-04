@@ -949,3 +949,40 @@
   border-radius: 8px;
   text-decoration: none;
 }
+
+/* Where the page sits in the loop (LoopLocator in ToolboxPage.jsx). */
+.docs-loop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 28px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(28, 54, 100, 0.1);
+  font-size: 13px;
+  font-weight: 600;
+  color: #22343c;
+}
+.docs-loop__part,
+.docs-loop__from {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.docs-loop__part .ix-tok {
+  color: #3a9a9c;
+}
+.docs-loop__of {
+  font-weight: 500;
+  color: #6b7c84;
+}
+.docs-loop__from a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  text-decoration: none;
+}
+.docs-loop__from a:hover {
+  color: #3a9a9c;
+}

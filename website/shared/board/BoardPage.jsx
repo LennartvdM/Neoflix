@@ -10,6 +10,7 @@
  * from a search result arrives settled, not mid-animation.
  */
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import useScrollSpy from '../../lib/hooks/useScrollSpy';
 import { useBackdropTarget } from '../backdrop/useBackdrop';
 import { BLOG_DECK, blogIdxForSection } from '../backdrop/decks';
@@ -18,16 +19,22 @@ import './board.css';
 
 export default function BoardPage({ tone = 'dark', sectionIds = [], scrollTo, title, activeId, wide = false, children }) {
   const scrollRef = useRef(null);
+  const { hash } = useLocation();
+  const landed = useRef(false);
 
+  // Land at rest on arrival; after that a new hash (a token carried here
+  // from the navbar index while already on this page) glides to its place.
   useLayoutEffect(() => {
     const root = scrollRef.current;
     if (!root) return;
-    const target = scrollTo || (typeof window !== 'undefined' ? window.location.hash.slice(1) : '');
-    let top = 0;
+    const target = (!landed.current && scrollTo) || hash.slice(1);
     const el = target && document.getElementById(target);
-    if (el) top = el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop;
-    root.scrollTo({ top, behavior: 'instant' });
-  }, [scrollTo]);
+    if (landed.current && !el) return;
+    let top = 0;
+    if (el) top = el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
+    root.scrollTo({ top: Math.max(0, top), behavior: landed.current ? 'smooth' : 'instant' });
+    landed.current = true;
+  }, [scrollTo, hash]);
 
   // `activeId` (e.g. the beat being looked at on a board page) overrides
   // the scroll position as what the backdrop shows.

@@ -202,21 +202,34 @@ export function captionLines(sentence) {
 }
 
 /**
- * The loop — the toolbox's five parts, the board's other axis. A beat's
- * exits hang in the column of the part their planned toolbox page belongs
- * to (`plan` numbering from the blueprint's toolbox outline: 1.x is Before
- * you record, 2.x Record, …; "Start here" sits at the start of the loop).
+ * The loop — the toolbox's five parts, the board's other axis and one of
+ * the site's three sets of things (beats, loop parts, papers) that every
+ * page shows in its own arrangement (shared/index).
+ *
+ * Where a toolbox page sits in the loop is read from its slug: the
+ * toolbox as mirrored today already runs in this order (Welcome + Level 1
+ * is before you record; Level 2 is split by its RECORD / REFLECT / REFINE
+ * dividers, chapters 5–9, 10–11, 12–16; Level 3 is keep going). A beat's
+ * exits hang in the column of the part their page belongs to. The
+ * blueprint's planned numbering is kept on each exit as `plan`, for when
+ * the toolbox is restructured.
  */
 export const LOOP = [
-  { id: 'before', name: 'Before you record' },
-  { id: 'record', name: 'Record' },
-  { id: 'reflect', name: 'Reflect' },
-  { id: 'refine', name: 'Refine' },
-  { id: 'keep', name: 'Keep going' },
+  { id: 'before', name: 'Before you record', entry: '' },
+  { id: 'record', name: 'Record', entry: 'level-2-in-action/record' },
+  { id: 'reflect', name: 'Reflect', entry: 'level-2-in-action/reflect' },
+  { id: 'refine', name: 'Refine', entry: 'level-2-in-action/refine' },
+  { id: 'keep', name: 'Keep going', entry: 'level-3-growth/level-3-growth' },
 ];
 
-export function loopPartOf(plan) {
-  if (/^start here/i.test(plan || '')) return 'before';
-  const n = Number(/^(\d)\./.exec(plan || '')?.[1]);
-  return LOOP[n - 1]?.id || null;
+export function loopOfSlug(slug = '') {
+  if (!slug || slug.startsWith('welcome') || slug.startsWith('level-1')) return 'before';
+  if (slug.startsWith('level-3')) return 'keep';
+  if (!slug.startsWith('level-2')) return null;
+  const rest = slug.slice(slug.indexOf('/') + 1);
+  const divider = /^(record|reflect|refine)(\/|$)/.exec(rest);
+  if (divider) return divider[1];
+  const n = parseFloat(/^(\d+(?:\.\d+)?)/.exec(rest)?.[1]);
+  if (!n) return 'record';
+  return n < 10 ? 'record' : n < 12 ? 'reflect' : 'refine';
 }

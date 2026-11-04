@@ -29,6 +29,15 @@ working in; they're short, and GitHub renders them when browsing too.
   `shared/` holds what every page shares (navbar, footer, the backdrop,
   the motion system); `lib/` holds hooks and helpers. See `CONTENT.md`
   for the per-page table. Toolbox content → `docs-content/` markdown (but see the mirror rule).
+- **Coherence is the index, not the pages' sameness** → `shared/index/`.
+  Pages are deliberately different interfaces (home plays the beats as
+  film, /neoflix crosses beats with the loop, /publications puts papers on
+  their years, the toolbox walks the loop). What ties them together is
+  that they show the same things as the same tokens, the navbar lights
+  where the reader is among them, and a clicked token travels to its
+  place on the next page. A new page names its things with `<Token>`,
+  publishes the one in front of the reader with `useLit`, and marks each
+  thing's landing spot with `anchor`.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
   desktop tree or a mobile tree (`< 600px`) — separate lazy chunks.
 - **Motion system** → `RouteSlider` (page slide), `BackdropProvider`

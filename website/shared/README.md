@@ -9,6 +9,7 @@ it goes in that page's folder instead.
 | `MobileDock.jsx` | The bar along the bottom on phones |
 | `routeMeta.js` | Browser tab titles, search snippets and link-preview cards, per page. Adding a route here is what makes the build emit its HTML file and sitemap entry. |
 | `argument.js` | The six beats — every claim, proof and door of the argument. The homepage and `/neoflix` read it. |
+| `index/` | What holds the site together. The site is three sets of things — six beats, five loop parts, six papers — and every page is its own interface onto them. A thing is a token (`beat:cost`, `loop:reflect`, `paper:providers`), drawn the same everywhere by `Token.jsx`. The navbar is the index of all three sets and lights what the reader is looking at (pages publish it with `useLit`) and what it relates to (`relations.js`, read off `argument.js`); hovering a token marks its mentions on the page; clicking one carries it (`carry.js`) to its `data-token-anchor` on the page that owns it. |
 | `board/` | The design language: the grid, the seven hooks (claim, proof, witness, instrument, instruction, exit, orientation), their motion, the film door. `/neoflix` and `/publications` are compositions of these. |
 | `IllustrationClip.jsx` | The video player used for decorative clips, with the still-image fallback |
 | `ErrorBoundary.jsx` | Catches a crash and shows a page instead of a blank screen |

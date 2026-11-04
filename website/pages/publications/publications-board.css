@@ -101,10 +101,11 @@
   gap: 2px;
 }
 .pb-card__n {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pb-card__n .ix-tok {
   color: var(--accent);
 }
 .pb-card__short {
@@ -226,4 +227,10 @@
   .pb-col--letter {
     grid-column: 1 / -1;
   }
+}
+
+/* A carried paper lands clear of the navbar. */
+.pb-card,
+.pb-letter {
+  scroll-margin-top: calc(var(--nav-h, 60px) + 24px);
 }

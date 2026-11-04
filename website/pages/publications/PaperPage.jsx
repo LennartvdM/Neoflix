@@ -7,6 +7,9 @@ import { assetUrl } from '../../lib/utils/assetUrl';
 import { publicationPdfs } from './content';
 import { recordForSlug, doiUrl } from './records';
 import { formatAttachmentMeta } from './PublicationAttachment';
+import Token from '../../shared/index/Token';
+import { useLit } from '../../shared/index/IndexContext';
+import { token } from '../../shared/index/relations';
 import './paper-page.css';
 
 /**
@@ -35,6 +38,8 @@ export default function PaperPage() {
   // The backdrop is keyed per route elsewhere; a paper reads better
   // against the flat page colour than against moving footage.
   useBackdropTarget('blog', null);
+  // The index lights this paper and the beats it proves.
+  useLit(found ? token('paper', found.id) : null);
 
   if (!found || !found.record?.abstract) return <Navigate to="/publications" replace />;
 
@@ -59,6 +64,7 @@ export default function PaperPage() {
         <article className="paper-page__card">
           <header className="paper-page__head">
             <p className="paper-page__kicker">
+              <Token t={token('paper', id)} size="m" anchor style={{ marginRight: 10, color: '#3a9a9c' }} />
               {record.journal} · {record.year}
             </p>
             <h1>{record.title}</h1>

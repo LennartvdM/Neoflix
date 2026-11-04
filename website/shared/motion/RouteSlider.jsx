@@ -121,6 +121,9 @@ export default function RouteSlider({ children }) {
           // here means they slide out with the page instead of hanging
           // over the incoming one (see DocsSidebar.jsx).
           data-route-slide=""
+          // Which navbar slot this slide is — the carry (shared/index)
+          // finds its landing token in the arriving slide, not the leaving.
+          data-slot={slotKey}
           custom={directionAtStart.current}
           variants={variants}
           initial="enter"

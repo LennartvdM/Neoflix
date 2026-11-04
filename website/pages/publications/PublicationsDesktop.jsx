@@ -17,7 +17,8 @@
  * Words: arc.js (what we say about each paper), records.js (the facts).
  * Card ids are the old anchors, so /publications#narrative still lands.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { LayoutGroup, motion } from 'framer-motion';
 import BoardPage from '../../shared/board/BoardPage';
 import { Exit, Proof } from '../../shared/board/hooks';
@@ -25,6 +26,9 @@ import useDownloadGuard from '../../lib/hooks/useDownloadGuard';
 import { renderMarkdown } from '../../lib/utils/renderMarkdown';
 import { assetUrl } from '../../lib/utils/assetUrl';
 import { beatsForPaper } from '../../shared/argument';
+import Token from '../../shared/index/Token';
+import { useLit } from '../../shared/index/IndexContext';
+import { token } from '../../shared/index/relations';
 import { ARC, ARC_INTRO } from './arc';
 import { publicationOrder, publicationRecords, paperPath, doiUrl, shortAuthors } from './records';
 import { publicationPdfs, sections, bundle } from './content';
@@ -57,17 +61,27 @@ function PdfDoor({ id }) {
   );
 }
 
-function PaperCard({ id, n, open, onToggle }) {
+function PaperCard({ id, open, onToggle, onFocus }) {
   const record = publicationRecords[id];
   const arc = ARC[id];
   const page = paperPath(id);
   const journal = doiUrl(record);
   const beats = beatsForPaper(id);
   return (
-    <motion.article layout transition={LAYOUT} id={id} className="pb-card" data-open={open ? 'true' : 'false'}>
+    <motion.article
+      layout
+      transition={LAYOUT}
+      id={id}
+      className="pb-card"
+      data-open={open ? 'true' : 'false'}
+      onMouseEnter={() => onFocus(id)}
+      onMouseLeave={() => onFocus(null)}
+    >
       <motion.button layout="position" type="button" className="pb-card__head" onClick={onToggle} aria-expanded={open}>
-        <span className="pb-card__n">Paper {n}</span>
-        <span className="pb-card__short">{arc.short}</span>
+        <span className="pb-card__n">
+          <Token t={token('paper', id)} size="m" anchor />
+          <span className="pb-card__short">{arc.short}</span>
+        </span>
         <span className="pb-card__journal">{record.journal}</span>
       </motion.button>
       <motion.h2 layout="position" className="pb-card__title">
@@ -94,7 +108,7 @@ function PaperCard({ id, n, open, onToggle }) {
             {journal && <Exit href={journal} label={record.journal} direction="across" />}
             <PdfDoor id={id} />
             {beats.map((b) => (
-              <Exit key={b.id} href={`/neoflix#${b.id}`} label={`The argument · ${b.name}`} />
+              <Exit key={b.id} href={`/neoflix#${b.id}`} label={`The argument · ${b.name}`} token={token('beat', b.id)} />
             ))}
           </nav>
         </motion.div>
@@ -128,9 +142,17 @@ function Letter({ open, onToggle }) {
 }
 
 export default function PublicationsDesktop() {
-  const initial = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
-  const [open, setOpen] = useState(SECTION_IDS.includes(initial) ? initial : null);
+  const { hash } = useLocation();
+  const [open, setOpen] = useState(() => (SECTION_IDS.includes(hash.slice(1)) ? hash.slice(1) : null));
+  const [focus, setFocus] = useState(null);
   const toggle = (id) => setOpen((o) => (o === id ? null : id));
+  // A paper token carried here (from the index, a thread on /neoflix)
+  // arrives as a hash: open that paper.
+  useEffect(() => {
+    if (publicationOrder.includes(hash.slice(1))) setOpen(hash.slice(1));
+  }, [hash]);
+  const lit = focus || (publicationOrder.includes(open) ? open : null);
+  useLit(lit && token('paper', lit));
 
   return (
     <BoardPage tone="light" wide sectionIds={SECTION_IDS} title="Publications">
@@ -164,9 +186,9 @@ export default function PublicationsDesktop() {
                       <PaperCard
                         key={id}
                         id={id}
-                        n={publicationOrder.indexOf(id) + 1}
                         open={open === id}
                         onToggle={() => toggle(id)}
+                        onFocus={setFocus}
                       />
                     ))}
                   </div>

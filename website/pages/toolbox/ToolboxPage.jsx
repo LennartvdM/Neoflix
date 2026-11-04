@@ -9,7 +9,47 @@ import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
 import { useTabletLayout } from '../../lib/hooks/useTabletLayout';
 import { useBackdropTarget } from '../../shared/backdrop/useBackdrop';
 import { TOOLBOX_DECK, toolboxIdxForSlug } from '../../shared/backdrop/decks';
+import Token from '../../shared/index/Token';
+import useCarry from '../../shared/index/useCarry';
+import { useLit } from '../../shared/index/IndexContext';
+import { token } from '../../shared/index/relations';
+import { BEATS, LOOP, loopOfSlug } from '../../shared/argument';
 import './docs.css';
+
+/**
+ * Where this page sits in the loop, and which beats of the argument lead
+ * here. The toolbox's own navigation (the sidebar) is GitBook's; this
+ * line is the site's — the same tokens as the navbar index and /neoflix,
+ * so a toolbox page is placed in the whole, not just in its chapter.
+ */
+function LoopLocator({ slug }) {
+  const go = useCarry();
+  const part = loopOfSlug(slug);
+  useLit(part && token('loop', part));
+  if (!part) return null;
+  const at = LOOP.findIndex((l) => l.id === part);
+  const from = BEATS.filter((b) => b.exits.some((e) => e.slug === slug));
+  return (
+    <div className="docs-loop">
+      <span className="docs-loop__part">
+        <Token t={token('loop', part)} size="m" anchor />
+        <span>{LOOP[at].name}</span>
+        <span className="docs-loop__of">part {at + 1} of the loop</span>
+      </span>
+      {from.length > 0 && (
+        <span className="docs-loop__from">
+          <span className="docs-loop__of">From the argument</span>
+          {from.map((b) => (
+            <a key={b.id} href={`/neoflix#${b.id}`} onClick={(e) => go(e, token('beat', b.id))}>
+              <Token t={token('beat', b.id)} />
+              {b.name}
+            </a>
+          ))}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function DocsPage() {
   const params = useParams();
@@ -119,6 +159,7 @@ export default function DocsPage() {
 
         <main className="docs-main">
           <article className="docs-article">
+            <LoopLocator slug={slug} />
             {sectionCrumb && (
               <div className="docs-section-crumb">{sectionCrumb.toUpperCase()}</div>
             )}

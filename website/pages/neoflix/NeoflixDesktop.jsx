@@ -22,16 +22,21 @@
  *
  * All words come from shared/argument.js; this file only composes.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { LayoutGroup, motion } from 'framer-motion';
 import BoardPage from '../../shared/board/BoardPage';
 import { Claim, Proof, Witness, Exit } from '../../shared/board/hooks';
 import { INSTRUMENTS } from '../../shared/board/instruments';
 import { useFilm } from '../../shared/board/FilmDoor';
-import { toolboxDoor, paperCite, paperHref } from '../../shared/board/doors';
+import { toolboxDoor, paperCite } from '../../shared/board/doors';
 import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
+import Token from '../../shared/index/Token';
+import useCarry from '../../shared/index/useCarry';
+import { useLit } from '../../shared/index/IndexContext';
+import { token } from '../../shared/index/relations';
 import WorldMapEmbed from '../toolbox/blocks/WorldMapEmbed';
-import { BEATS, LOOP, PAPERS, loopPartOf } from '../../shared/argument';
+import { BEATS, LOOP, PAPERS, loopOfSlug } from '../../shared/argument';
 import { ARC } from '../publications/arc';
 import './neoflix-board.css';
 
@@ -89,42 +94,47 @@ function spans(beat, open) {
 // numbering is stale (see the blueprint's outline); the column says where.
 const pegTitle = (label) => label.replace(/^Toolbox · /, '').replace(/^[\d.]+\s+/, '');
 
-function Peg({ door }) {
+// A peg is a door into the toolbox, headed by its loop part's token —
+// which carries itself to the part's marker on the toolbox page.
+function Peg({ door, part }) {
   const navigate = useTransitionNavigate();
+  const go = useCarry();
   return (
     <a
       className="ab-peg"
       href={door.href}
       onClick={(e) => {
+        if (part) return go(e, token('loop', part), door.href);
         if (e.metaKey || e.ctrlKey || e.shiftKey) return;
         e.preventDefault();
         navigate(door.href);
       }}
     >
-      <span className="ab-peg__head" aria-hidden="true" />
-      {pegTitle(door.label)}
+      {part ? <Token t={token('loop', part)} className="ab-peg__head" /> : <span className="ab-peg__dot" aria-hidden="true" />}
+      <span>{pegTitle(door.label)}</span>
     </a>
   );
 }
 
-function Threads({ papers }) {
-  const navigate = useTransitionNavigate();
+function Threads({ papers, onFocus }) {
+  const go = useCarry();
   return (
     <div className="ab-threads">
       {PAPER_IDS.map((id) => {
         const cited = papers?.includes(id);
-        const href = paperHref(id);
+        const t = token('paper', id);
         return (
           <span key={id} className="ab-thread" data-cited={cited ? 'true' : 'false'}>
             {cited && (
               <a
                 className="ab-thread__dot"
-                href={href}
+                href={`/publications#${id}`}
+                data-token={t}
                 title={`Paper ${PAPERS[id].n} · ${ARC[id]?.short}`}
                 aria-label={`Paper ${PAPERS[id].n}: ${ARC[id]?.short}`}
-                {...(href?.startsWith('/')
-                  ? { onClick: (e) => { e.preventDefault(); navigate(href); } }
-                  : { target: '_blank', rel: 'noopener noreferrer' })}
+                onMouseEnter={() => onFocus?.(t)}
+                onMouseLeave={() => onFocus?.(null)}
+                onClick={(e) => go(e, t)}
               />
             )}
           </span>
@@ -134,13 +144,13 @@ function Threads({ papers }) {
   );
 }
 
-function Beat({ beat, open, onToggle, onFocus }) {
+function Beat({ beat, open, onToggle, onFocus, onPoint }) {
   const openFilm = useFilm();
   const Instrument = beat.instrument && INSTRUMENTS[beat.instrument];
   const sz = spans(beat, open);
   const pegsByPart = {};
   beat.exits.forEach((e) => {
-    const part = loopPartOf(e.plan);
+    const part = loopOfSlug(e.slug);
     const door = toolboxDoor(e.slug);
     if (part && door) (pegsByPart[part] = pegsByPart[part] || []).push(door);
   });
@@ -155,7 +165,7 @@ function Beat({ beat, open, onToggle, onFocus }) {
       onMouseEnter={() => onFocus(beat.id)}
     >
       <div className="ab-label">
-        <span className="ab-label__n">{String(beat.n).padStart(2, '0')}</span>
+        <Token t={token('beat', beat.id)} size="m" anchor />
         <span className="ab-label__name">{beat.name}</span>
         <button type="button" className="ab-label__toggle" onClick={onToggle} aria-expanded={open}>
           {open ? 'Close' : 'Open'}
@@ -217,12 +227,12 @@ function Beat({ beat, open, onToggle, onFocus }) {
       {LOOP.map((part, i) => (
         <div key={part.id} className="ab-loop" style={{ gridColumn: `loop${i + 1}` }} data-empty={pegsByPart[part.id] ? 'false' : 'true'}>
           {(pegsByPart[part.id] || []).map((door) => (
-            <Peg key={door.href} door={door} />
+            <Peg key={door.href} door={door} part={part.id} />
           ))}
         </div>
       ))}
 
-      <Threads papers={beat.papers} />
+      <Threads papers={beat.papers} onFocus={onPoint} />
     </motion.section>
   );
 }
@@ -282,9 +292,19 @@ function SignOff() {
 }
 
 export default function NeoflixDesktop({ scrollTo }) {
-  const initial = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
-  const [open, setOpen] = useState(BEATS.some((b) => b.id === initial) ? initial : null);
+  const { hash } = useLocation();
+  const isBeat = (id) => BEATS.some((b) => b.id === id);
+  const [open, setOpen] = useState(() => (isBeat(hash.slice(1)) ? hash.slice(1) : null));
   const [focus, setFocus] = useState(null);
+  const [pointed, setPointed] = useState(null);
+  // A beat token carried here from elsewhere on the site (the index, a
+  // paper's door) arrives as a hash: open that beat.
+  useEffect(() => {
+    if (isBeat(hash.slice(1))) setOpen(hash.slice(1));
+  }, [hash]);
+  // The site index lights what's in front of the reader: a paper dot under
+  // the pointer, else the open or hovered beat.
+  useLit(pointed || ((open || focus) && token('beat', open || focus)));
 
   return (
     <BoardPage
@@ -304,11 +324,14 @@ export default function NeoflixDesktop({ scrollTo }) {
         <div className="ab-head" aria-hidden="true">
           <span className="ab-head__arg">Six beats</span>
           {LOOP.map((part, i) => (
-            <span key={part.id} className="ab-head__loop" style={{ gridColumn: `loop${i + 1}` }}>{part.name}</span>
+            <span key={part.id} className="ab-head__loop" style={{ gridColumn: `loop${i + 1}` }}>
+              <Token t={token('loop', part.id)} />
+              {part.name}
+            </span>
           ))}
           <span className="ab-head__papers">
             {PAPER_IDS.map((id) => (
-              <span key={id}>{PAPERS[id].n}</span>
+              <Token key={id} t={token('paper', id)} />
             ))}
           </span>
         </div>
@@ -321,6 +344,7 @@ export default function NeoflixDesktop({ scrollTo }) {
               open={open === beat.id}
               onToggle={() => setOpen((o) => (o === beat.id ? null : beat.id))}
               onFocus={setFocus}
+              onPoint={setPointed}
             />
           ))}
           <Units />

@@ -1,0 +1,201 @@
+/* Tokens (Token.jsx), the navbar index (Navbar.jsx) and the carry
+   (carry.js). One look for a thing, wherever it appears. */
+
+.ix-tok {
+  --ix-accent: #48c1c4;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  vertical-align: middle;
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.25s ease, opacity 0.25s ease,
+    filter 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+/* A beat: a chip of its clip. */
+.ix-tok--beat {
+  width: 26px;
+  height: 18px;
+  border-radius: 4px;
+  background: #33504a center / cover no-repeat;
+}
+.ix-tok--beat.ix-tok--m {
+  width: 46px;
+  height: 30px;
+  border-radius: 6px;
+}
+
+/* A paper: its number in a ring. */
+.ix-tok--paper {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font: 700 10px/1 Inter, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.ix-tok--paper.ix-tok--m {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+/* A loop part: its segment, among the five, standing out. */
+.ix-tok--loop {
+  gap: 2px;
+  height: 8px;
+}
+.ix-tok__pip {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.3;
+}
+.ix-tok__pip[data-self] {
+  width: 14px;
+  height: 6px;
+  opacity: 1;
+}
+.ix-tok--m .ix-tok__pip {
+  width: 5px;
+  height: 5px;
+}
+.ix-tok--m .ix-tok__pip[data-self] {
+  width: 20px;
+  height: 7px;
+}
+/* In the index the five parts sit side by side and make the loop. */
+.ix-tok--seg .ix-tok__pip:not([data-self]) {
+  display: none;
+}
+.ix-tok--seg .ix-tok__pip[data-self] {
+  width: 22px;
+}
+
+/* The carry. */
+.ix-ghost {
+  box-shadow: 0 10px 30px -8px rgba(10, 30, 30, 0.45), 0 0 0 2px #48c1c4 !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+[data-arrived] {
+  animation: ix-arrive 1s ease-out;
+}
+@keyframes ix-arrive {
+  0% { box-shadow: 0 0 0 0 rgba(72, 193, 196, 0.85); }
+  100% { box-shadow: 0 0 0 14px rgba(72, 193, 196, 0); }
+}
+
+/* ── The navbar index ────────────────────────────────────────────────── */
+
+.ix-bar {
+  display: flex;
+  align-items: center;
+  gap: clamp(22px, 3vw, 44px);
+  height: 60px;
+}
+.ix-set {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ix-set__tokens {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #3e6464;
+}
+.ix-set[data-kind='loop'] .ix-set__tokens {
+  gap: 3px;
+}
+.ix-set__tokens::after {
+  /* the loop closes on itself */
+  content: none;
+}
+.ix-set[data-kind='loop'] .ix-set__tokens::after {
+  content: '↺';
+  margin-left: 3px;
+  font-size: 13px;
+  line-height: 1;
+  color: #8aa3a3;
+}
+.ix-item {
+  position: relative;
+  display: inline-flex;
+  padding: 6px 1px;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+.ix-item .ix-tok {
+  opacity: 0.4;
+  filter: grayscale(0.8);
+}
+.ix-set[data-here] .ix-item .ix-tok {
+  opacity: 0.85;
+  filter: grayscale(0.25);
+}
+.ix-item[data-state='related'] .ix-tok {
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 0 0 1.5px rgba(82, 156, 156, 0.55);
+}
+.ix-item[data-state='lit'] .ix-tok {
+  opacity: 1;
+  filter: none;
+  transform: translateY(-1px) scale(1.14);
+  box-shadow: 0 0 0 2px #529c9c;
+}
+.ix-item[data-state='lit'] .ix-tok--paper {
+  background: #529c9c;
+  border-color: #529c9c;
+  color: #fff;
+  box-shadow: none;
+}
+.ix-item[data-state='lit'] .ix-tok--loop,
+.ix-item[data-state='related'] .ix-tok--loop {
+  box-shadow: none;
+  color: #529c9c;
+}
+.ix-item:hover .ix-tok,
+.ix-item:focus-visible .ix-tok {
+  opacity: 1;
+  filter: none;
+  transform: translateY(-2px) scale(1.18);
+}
+.ix-item::after {
+  content: attr(data-name);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  z-index: 5;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: #15242e;
+  color: #fff;
+  font: 600 12px/1.2 Inter, system-ui, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -3px);
+  transition: opacity 0.15s ease, transform 0.2s ease;
+}
+.ix-item:hover::after,
+.ix-item:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Narrower laptops: only the current page's set keeps its tokens. */
+@media (max-width: 1180px) {
+  .ix-set:not([data-here]) .ix-set__tokens {
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  .ix-set__tokens {
+    display: none !important;
+  }
+}

@@ -19,6 +19,8 @@ import IllustrationClip from '../IllustrationClip';
 import useTransitionNavigate from '../../lib/hooks/useTransitionNavigate';
 import { useInView } from './motion';
 import { useFilm } from './FilmDoor';
+import Token from '../index/Token';
+import useCarry from '../index/useCarry';
 import './hooks.css';
 
 /* ── Layout ──────────────────────────────────────────────────────────── */
@@ -171,8 +173,9 @@ export function Instruction({ doThis, why, leiden, size = 'panel' }) {
  * like the navbar; doors that open in place (`onOpen`) say so by an
  * arrow that points into the page; doors to another site say so too.
  */
-export function Exit({ href, label, onOpen, direction = 'down' }) {
+export function Exit({ href, label, onOpen, direction = 'down', token }) {
   const navigate = useTransitionNavigate();
+  const go = useCarry();
   const arrow = onOpen ? '▸' : direction === 'across' ? '↗' : '→';
   if (onOpen) {
     return (
@@ -183,14 +186,21 @@ export function Exit({ href, label, onOpen, direction = 'down' }) {
     );
   }
   const internal = href?.startsWith('/');
+  // An exit to a thing (a beat, a paper, a loop part) wears its token and
+  // carries it to the thing's place on the next page.
   return (
     <a
       className="hook-exit"
       href={href}
       {...(internal
-        ? { onClick: (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(href); } }
+        ? {
+            onClick: token
+              ? (e) => go(e, token, href)
+              : (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(href); },
+          }
         : { target: '_blank', rel: 'noopener noreferrer' })}
     >
+      {token && <Token t={token} />}
       <span>{label}</span>
       <span aria-hidden="true" className="hook-exit__arrow">{internal ? arrow : '↗'}</span>
     </a>
