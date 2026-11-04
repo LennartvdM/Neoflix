@@ -193,9 +193,11 @@ const Plane = memo(function Plane({ planeRef, focus, lit, hits, trail, rail, pla
   const B = SPACE.bounds;
   return (
     <div className="plane" ref={planeRef} data-searching={hits ? '' : undefined}>
+      {/* the screening band: the films, in the dark */}
+      <div className="band" style={{ top: SPACE.band.y, height: SPACE.band.h }} />
       {/* the named places, legible from far away */}
       {SPACE.regions.map((g) => (
-        <div key={g.id} className="region" style={{ left: SPACE.left - 160, top: g.y + Math.min(g.h, 900) / 2 }}>
+        <div key={g.id} className={`region region--${g.id}`} style={{ left: SPACE.left - 160, top: g.y + Math.min(g.h, 900) / 2 }}>
           <strong>{g.name}</strong>
           <span>{g.note}</span>
         </div>

@@ -14,6 +14,10 @@ thing everywhere:
 - **south** the practice: the toolbox, one column per step of the loop
   (before you record → record → reflect → refine → keep going, and back)
 
+It is on paper, like the library's pages: a bright ground, with the films
+in one dark band across the middle, edge to edge (`SPACE.band`). The
+videos and the dark are blocks of colour on the page, not the page.
+
 The three tiers the site always had are three **distances** from it, not
 three pages (the gauge, bottom right): *close up* (one record),
 *the argument* (films with their papers), *everything* (the library,

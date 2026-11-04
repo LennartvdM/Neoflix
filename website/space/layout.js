@@ -132,7 +132,12 @@ export function layoutSpace(catalog, graph) {
 
   const argument = { x: left, y: ROWS.paper, w: totalW, h: FILM.h + FILM.cap - ROWS.paper };
 
-  return { nodes, columns, edges, rails, bounds, regions, groups, left, totalW, argument };
+  // The films are shown in the dark, the way films are: one dark band
+  // across the bright ground, edge to edge, with the film group labels on
+  // it. Everything else (evidence, practice) is on paper.
+  const band = { y: ROWS.film - 250, h: FILM.h + FILM.cap + 250 + 280 };
+
+  return { nodes, columns, edges, rails, bounds, regions, groups, left, totalW, argument, band };
 }
 
 /** Which named place a world point is in. */

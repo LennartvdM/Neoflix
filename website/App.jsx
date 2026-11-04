@@ -63,7 +63,7 @@ function AppShell() {
     return (
       <main id="main-content" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
         <ErrorBoundary>
-          <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#0a1b20' }} />}>
+          <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#f3f5f4' }} />}>
             <Space />
           </Suspense>
         </ErrorBoundary>
