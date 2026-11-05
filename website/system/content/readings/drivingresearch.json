@@ -1,0 +1,608 @@
+{
+  "id": "drivingresearch",
+  "kind": "reading",
+  "licence": "CC BY",
+  "pdf": "driving-research-resuscitation-2024.pdf",
+  "sections": [
+    {
+      "id": "abstract",
+      "title": "Abstract",
+      "passages": [
+        {
+          "id": "abstract-1",
+          "kind": "paragraph",
+          "text": "Aim: Studies in animals have shown that vocal cords (VCs) close during apnoea before and after birth, thereby impairing the effect of non-invasive ventilation. We tested the feasibility of visualising VCs using ultrasonography (US) and investigated the position and movement of the VCs during non-invasive respiratory support of preterm infants at birth."
+        },
+        {
+          "id": "abstract-2",
+          "kind": "paragraph",
+          "text": "Methods: In an observational study, VCs were visualised using US in infants <30 weeks gestation during both stabilisation after birth and at one hour after birth. Respiratory efforts were simultaneously recorded. The percentage of time the VCs were closed in the first ten minutes was determined from videoframes acquired at 15 Hz and compared with respiratory flow patterns measured using a respiratory function monitor."
+        },
+        {
+          "id": "abstract-3",
+          "kind": "paragraph",
+          "text": "Results: US of the VCs could be performed in 20/20 infants included (median (IQR) gestational age 27+6 (27+1–28+6) weeks) without interfering with stabilisation, of whom 60% (12/20) were initially breathing and 40% (8/20) were apnoeic at birth. In breathing infants, the VCs closed between breaths and during breath holds, which accounted for 57% (49–66) of the time. In apnoeic infants receiving positive pressure ventilation, the VCs were closed for 93% (81–99) of the time. US at one hour after birth could be performed in 14/20 infants, VCs were closed between breaths and during breath holds, accounting for 46% (27–52) of the time."
+        },
+        {
+          "id": "abstract-4",
+          "kind": "paragraph",
+          "text": "Conclusion: Visualising VCs in preterm infants at birth using US is feasible. The VCs were closed during apnoea, in between breaths and during breath holds, impairing the effect of ventilation given."
+        }
+      ]
+    },
+    {
+      "id": "introduction",
+      "title": "Introduction",
+      "passages": [
+        {
+          "id": "introduction-1",
+          "kind": "paragraph",
+          "text": "The respiratory drive in preterm infants is often insufficient to establish lung aeration at birth, which is necessary during transition from intra-uterine to extra-uterine life.1,2 Current international resuscitation guidelines recommend respiratory support in a non-invasive manner using continuous positive airway pressure (CPAP) and/or intermittent positive pressure ventilation (iPPV) applied via a facemask.3–7"
+        },
+        {
+          "id": "introduction-2",
+          "kind": "paragraph",
+          "text": "However, several studies demonstrated that non-invasive iPPV is often ineffective in achieving lung aeration unless the infant breathes spontaneously.8–10 It was speculated that active closure of the vocal cords (VCs) causes obstruction and prevents air from entering the lungs."
+        },
+        {
+          "id": "introduction-3",
+          "kind": "paragraph",
+          "text": "Antenatally, active laryngeal adduction during fetal apnoea is necessary to keep the airways expanded with lung liquid as this is the primary stimulus for fetal lung growth. However, during fetal breathing movements the larynx opens to allow liquid to leave the"
+        },
+        {
+          "id": "introduction-4",
+          "kind": "paragraph",
+          "text": "lung via the trachea.1,11,12 Despite this knowledge, it has been assumed that this characteristic of the larynx changes from a fetal state, where the larynx closes during apnoea, into a neonatal state whereby it is predominantly open immediately after birth. However, a recent experimental study using phase contrast X-ray imaging showed that laryngeal adduction persisted in apnoeic preterm rabbit pups directly after birth.13 It’s currently unclear whether active laryngeal closure also occurs at birth in human preterm infants.",
+          "continues": true
+        },
+        {
+          "id": "introduction-5",
+          "kind": "paragraph",
+          "text": "Point of care ultrasonography (POCUS) has traditionally been used by neonatologists to evaluate cerebral abnormalities such as intraventricular haemorrhage, or to perform echocardiography.14 The use of POCUS in neonatology has expanded to other clinical applications, such as abdominal and lung ultrasound.15 Non-invasive ultrasonography (US) of the VCs has also been utilized in neonatal, paediatric and adult populations.16–18 While the gold standard for determining VC movement is flexible nasolaryngoscopy, US showed comparable sensitivity and specificity for visualising VCs.17,18 We have investigated the feasibility of using US to visualise the VC position and movement in preterm infants during transition at birth. We also determined the percentage of time the VCs were closed and whether this was correlated with the effectiveness of the applied non-invasive respiratory support."
+        }
+      ]
+    },
+    {
+      "id": "methods",
+      "title": "Methods",
+      "passages": [
+        {
+          "id": "methods-1",
+          "kind": "paragraph",
+          "text": "A single-centre prospective observational study was conducted at the Neonatal Intensive Care Unit (NICU) of the Leiden University Medical Center (LUMC) between September, 2021 and April, 2023. Medical-ethical approval was obtained from the accredited Medical Research Ethics Committee of Leiden-Den Haag-Delft (NL77936.058.21)."
+        },
+        {
+          "id": "methods-2",
+          "kind": "heading",
+          "text": "Procedure"
+        },
+        {
+          "id": "methods-3",
+          "kind": "paragraph",
+          "text": "Preterm infants born between 24+0 and 29+6 weeks of gestation were eligible for inclusion. Parental consent for enrolment in this study was obtained before birth. Exclusion criteria were significant congenital malformations impeding US probe positioning or infants requiring immediate intubation and/or cardiac resuscitation. Also, patients were excluded if they were enrolled in the ABC3 study and were assigned to physiological-based cord clamping [Protocol nr. NL67770.058.18 / NCT0380851] because of limited space in the delivery room when stabilising an infant with intact umbilical cord on the Concord table."
+        },
+        {
+          "id": "methods-4",
+          "kind": "paragraph",
+          "text": "US of the VCs was performed in the delivery room on the infants included in this study during the first 10 minutes after birth and again for 10 minutes at one hour after birth when infants were admitted to the NICU. The procedures used to stabilise infants after birth conformed with local guidelines. Cord clamping was performed after 30–60 seconds, depending on the condition of the infant. Immediately after birth, the infant was placed in a plastic wrap. After clamping of the cord, the infant was transferred to the resuscitation table where non-invasive respiratory support was initiated. For the US, heated gel was applied on the probe and the probe was placed in a transverse position on the ventral side of the neck at the location of the VCs (Fig. 1)."
+        },
+        {
+          "id": "methods-5",
+          "kind": "caption",
+          "text": "Fig. 1 – Set-up for performing laryngeal ultrasonography during stabilisation at birth. A 1-person airway support is used, while the infant’s head is placed in neutral position and iPPV or CPAP is applied via a T-piece with a flow sensor. While respiratory support is applied, it is possible to perform ultrasonography of the vocal cords at the same time.”"
+        },
+        {
+          "id": "methods-6",
+          "kind": "paragraph",
+          "text": "US was performed in infants using the Aplio i700 Diagnostic Ultrasound Machine (Canon medical systems Europe B.V.) with the 17 MHz Hockey Stick probe, designed to have a small footprint. Recordings were transferred wirelessly to the patient’s electronic"
+        },
+        {
+          "id": "methods-7",
+          "kind": "paragraph",
+          "text": "health record (HiX, Chipsoft, the Netherlands) according to local NICU settings.",
+          "continues": true
+        },
+        {
+          "id": "methods-8",
+          "kind": "paragraph",
+          "text": "Video and physiological measurements were acquired at 200 Hz and digitised using the respiratory function monitor (RFM), New Life Box NEO-RDS (NewLifeBox NEO-RSD computer system; Advanced Life Diagnostics, Weener, Germany), supported by the Polybench physiological software (Applied Biosignals). This enables simultaneous respiratory function monitoring and video camera (Applied Biosignals, Weener, Germany) recording. We obtained SpO2 and HR measurements using a Radical-7 Masimo SET pulse oximeter probe (Masimo Corporation, CA, USA). The Teledyne Oxygen Analyser AX300-I (Teledyne Analytical Instruments, CA, USA) inserted into the inspiratory limb of the NeopuffTM circuit measured fraction of inspired oxygen (FiO2), while the disposable Avea Varflex Flow transducer (Carefusion, CA, USA), connected between the NeopuffTM and the facemask, measured gas flows and pressures in and out of the T-piece system of the Neopuff."
+        },
+        {
+          "id": "methods-9",
+          "kind": "heading",
+          "text": "Analysis"
+        },
+        {
+          "id": "methods-10",
+          "kind": "paragraph",
+          "text": "Feasibility was defined as the number of successfully performed US recordings of VC position during stabilisation without any (logistical) difficulties, allowing assessment of VC status during the first 10 minutes of stabilisation in the delivery room. As this was a feasibility study, a sample of convenience of 20 was chosen."
+        },
+        {
+          "id": "methods-11",
+          "kind": "paragraph",
+          "text": "The position and motion of the VCs were evaluated by reviewing frames at 15 Hz (Fig. 2) that were synchronised with respiratory function data using Adobe Premiere Pro V.22.4.0 (Adobe, CA, USA). Videos were analysed by one researcher (VH). In case VC position was not completely evident, these recordings were reviewed by a second researcher (RV). The percentage of time the VCs were open or closed immediately after birth was calculated and compared with respiratory flow patterns. In infants receiving iPPV, expired tidal volumes (Vte) were compared between open and closed VCs. If mask leak was >25%, as determined by the flow not returning to zero, a supraphysiological Vti and low Vte, inflations were categorised as having large leak and excluded from analysis."
+        },
+        {
+          "id": "methods-12",
+          "kind": "caption",
+          "text": "Fig. 2 – Position of the vocal cords on ultrasonography recordings that are scored as open (A) or closed (B). VC, vocal cord; AR, arytenoid cartilage; TC, thyroid cartilage."
+        },
+        {
+          "id": "methods-13",
+          "kind": "paragraph",
+          "text": "The following basic characteristics were collected; gestational age, birth weight, sex, mode of delivery, maternal general anaesthesia, single or twin gestations, complications of pregnancy (pregnancy-induced hypertension (PE/HELPP), preterm prelabour rupture of membranes, intra-uterine growth restriction, intra-uterine infection (chorioamnionitis) or multiple complications of pregnancy), use of antenatal corticosteroids (single dose, full dose), type of respiratory support received in the delivery room and the 1, 5 and 10 min Apgar scores."
+        },
+        {
+          "id": "methods-14",
+          "kind": "paragraph",
+          "text": "Normally distributed data are presented as mean ± standard deviation; SD, whereas data that is not normally distributed are presented as median (interquartile range; IQR). Categorical variables are presented as number (%). Statistical analysis was performed using SPSS software version 25.0 (IBM, Chicago, Illinois). Data was checked for meeting the assumption of normality using frequency distributions. Vte was compared using a Student’s t-test."
+        }
+      ]
+    },
+    {
+      "id": "results",
+      "title": "Results",
+      "passages": [
+        {
+          "id": "results-1",
+          "kind": "paragraph",
+          "text": "In total 194 eligible parent couples were admitted to the LUMC, of which 68 consented for study participation (Fig. 3). 48 infants were not included for the following reasons: participation in another study that precluded performing US (n = 10); precipitous delivery that"
+        },
+        {
+          "id": "results-2",
+          "kind": "paragraph",
+          "text": "preceded equipment preparation or unavailability of the research team (n = 8) or they no longer met inclusion criteria as they passed gestation of 30 weeks (n = 30). Thus, 20 infants were included in the study. Baseline characteristics are shown in Table 1.",
+          "continues": true
+        },
+        {
+          "id": "results-3",
+          "kind": "caption",
+          "text": "Fig. 3 – Flowchart."
+        },
+        {
+          "id": "results-4",
+          "kind": "caption",
+          "text": "Table 1 – Baseline characteristics. Numerical data are presented as median [IQR]. Categorical data are presented as n (%)."
+        },
+        {
+          "id": "results-5",
+          "kind": "paragraph",
+          "text": "At birth, 8/20 (40%) infants received initial iPPV after which they were switched to CPAP whereas 12/20 (60%) infants received only CPAP as respiratory support. None of the infants were intubated in the first ten minutes after birth, 6 infants received surfactant via a minimally invasive surfactant therapy (MIST) procedure or were intubated at one hour after birth."
+        },
+        {
+          "id": "results-6",
+          "kind": "heading",
+          "text": "Feasibility"
+        },
+        {
+          "id": "results-7",
+          "kind": "paragraph",
+          "text": "US of the VCs could be performed in all 20/20 (100%) infants at birth and in 14/20 (60%) infants at one hour after birth. Performing the US did not appear to interfere with any of the standard protocols used to stabilise infants at birth. Delayed cord clamping is standard procedure in our unit and thus we were only able to start US recording after one minute following birth. In case of twin birth, only the first of the twins could be evaluated since in all cases the second of the twins was born within 10 minutes. The first reliable US measurements were obtained at a mean ± SD of 2.2 ± 1.1 min. We were able to assess the VCs for a median (IQR) of 95% (84–100) of the early interval, i.e. the time recorded at birth and for 100% (75–100) of the late interval, i.e. the time recorded at one hour after birth. The occasions when the VCs could not be visualised at birth was mostly due to tactile stimulation or repositioning of the infant."
+        },
+        {
+          "id": "results-8",
+          "kind": "heading",
+          "text": "Position of vocal cords"
+        },
+        {
+          "id": "results-9",
+          "kind": "paragraph",
+          "text": "A total of 5058 VC movements in 20 infants were analysed. In 79% (4005/5058) of the movements, an abduction of the VCs was first observed followed by adduction that closed the cords (Fig. 2 and Supplement 1). In between these movements, or during breath holds, the VCs were categorised as closed. In 21% (1053/5058) of the VC movements, an abduction was observed that was followed by a narrowing of the aperture between the cords, but only until they were halfway closed, before the cords abducted again. This was categorised as ‘open’ for the whole movement."
+        },
+        {
+          "id": "results-10",
+          "kind": "paragraph",
+          "text": "Infants received either CPAP or iPPV followed by CPAP during stabilisation. The caregivers provided initial non-invasive iPPV when"
+        },
+        {
+          "id": "results-11",
+          "kind": "paragraph",
+          "text": "apnoea and/or irregular breathing movements or bradycardia was observed.",
+          "continues": true
+        },
+        {
+          "id": "results-12",
+          "kind": "paragraph",
+          "text": "In infants receiving only CPAP (n = 12), the VCs were closed for a median (IQR) of 57% (49–66) of the time during the first 10 minutes"
+        },
+        {
+          "id": "results-13",
+          "kind": "paragraph",
+          "text": "after birth. More specifically, the VCs were closed for 68% (62–75) of the time in the first three minutes and 56% (49–63) of the time from three to ten minutes after birth (Fig. 4). At 1 hour after birth, 6 infants were intubated or were receiving MIST so only 14/20 infants were",
+          "continues": true
+        },
+        {
+          "id": "results-14",
+          "kind": "paragraph",
+          "text": "assessed at this time. At 1 hour after birth, in all infants who were on CPAP, US could be performed in 100% of instances and the VCs were closed for a median (IQR) of 46% (27–52) of the time. During this time VC closures were associated with breath holds and the periods between breaths (Fig. 4).",
+          "continues": true
+        },
+        {
+          "id": "results-15",
+          "kind": "caption",
+          "text": "Fig. 4 – The percentage of time that the vocal cords are in a closed position. Data is presented as median (IQR)."
+        },
+        {
+          "id": "results-16",
+          "kind": "paragraph",
+          "text": "In infants who were apnoeic and received iPPV initially, mask ventilation was given for a mean ± SD of 2.5 ± 1.4 min. In these infants the VCs were closed for a median of 93% (80–99) of the time during iPPV, opening for only brief periods of time (Fig. 4). RFM data of 368 inflations given during iPPV were matched with US recordings acquired synchronously. A large leak occurred in 22% (79/368) of the inflations. In 56% (205/368) of the inflations, the VCs remained closed. Instead, the inflation pressure appeared to push the cords distally, resulting in a truncated inspiratory gas flow wave, with flow returning to zero immediately after reaching peak flow at the start of the inflation (Fig. 5A). In 23% (84/368) of the inflations, the VCs opened at irregular times during the inflation, resulting in variable gas flows and volumes entering the lung (Fig. 5B). The Vte measured during inflations that coincided with closed VCs were significantly lower (mean ± SD Vte of 3.5 ± 2.0 mL/kg) compared with inflations given when the VCs were open (5.7 ± 2.6 mL/kg; p = 0.002). When support for these infants in the delivery room was switched from iPPV to CPAP, VCs were closed for a median (IQR) of 50% (42–61) in the minutes following CPAP administration."
+        },
+        {
+          "id": "results-17",
+          "kind": "caption",
+          "text": "Fig. 5 – RFM synchronised with ultrasonography of vocal cords. Vital parameters depicted by the RFM include positive end-expiratory pressure and peak inspiratory pressure (pink), flow and respiratory rate (green), expired tidal volume (blue) and mask leak (orange), oxygenation, heart rate, and fraction of inspired oxygen. A. iPPV inflations are given to an infant of 25 + 4 weeks with closed vocal cords. B. iPPV inflations are given to an infant of 27 + 6 weeks with vocal cords that opened at irregular times during the inflations."
+        }
+      ]
+    },
+    {
+      "id": "discussion",
+      "title": "Discussion",
+      "passages": [
+        {
+          "id": "discussion-1",
+          "kind": "paragraph",
+          "text": "In this study, we demonstrated that during stabilisation of very preterm infants at birth, it is feasible to visualise the VCs using US, which does not interfere with the protocols used to stabilise these infants after birth. Using laryngeal US, we were able to assess the position of the VCs for 95% of the time and observed that, at birth, the larynx was predominantly closed, especially in apnoeic infants where iPPV was deemed necessary. During iPPV, the majority of inflations appeared to be ineffective at aerating the lung, unless the VCs simultaneously opened in association with a spontaneous breath."
+        },
+        {
+          "id": "discussion-2",
+          "kind": "paragraph",
+          "text": "The findings of our present study confirm our previous observations using RFM recordings, demonstrating that IPPV is often ineffective in preterm infants at birth, which was attributed to airway obstruction.(8–10) We speculated that this was due to closed VCs. During fetal life, hypoxia is a potent inhibitor of fetal breathing, causing prolonged apnoea and VC adduction, and this hypoxic suppres-"
+        },
+        {
+          "id": "discussion-2b",
+          "kind": "paragraph",
+          "text": "sion",
+          "continues": true
+        },
+        {
+          "id": "discussion-3",
+          "kind": "paragraph",
+          "text": "of breathing persists well into new-born life.19 This was recently confirmed in a preterm rabbit model, showing that at birth the VCs are predominantly closed in apnoea, negating the effect of non-invasively applied iPPV.13 We now can confirm that, based on our observations in human preterm infants, the physiological control of the VCs at birth is very similar between species. Indeed, in infants who were apnoeic at birth, the VCs were closed for 93% of the time when iPPV was given and that VC closure led to a lower Vte during iPPV compared to when the VCs were open. Our previous research has also shown that the flow patterns observed in apnoeic infants (Fig. 5), were largely due to naso- and oropharyngeal distention during positive pressure inflation.8,20 As result, measuring tidal volumes while no air is entering the lung can be misleading and emphasises the potential benefit of capnography to assess the effectiveness of ventilation during this period.21.",
+          "continues": true
+        },
+        {
+          "id": "discussion-4",
+          "kind": "paragraph",
+          "text": "We also observed that spontaneous breathing occurred during iPPV, which is consistent with previous research20, but as VC opening only coincided with 23% of inflations, this greatly reduces the effectiveness of iPPV. While synchronous ventilation is common practice in the NICU, ventilation at birth is still non-synchronised, despite the finding that most preterm infants breathe in between and during inflations.2 Next to stimulating breathing effort, triggering ventilation to synchronise with breathing effort might increase the effectiveness of non-invasive ventilation."
+        },
+        {
+          "id": "discussion-5",
+          "kind": "paragraph",
+          "text": "The preterm infants who were spontaneously breathing after birth and received CPAP, still had closed VCs for 57% of the time. We often observed expiratory braking manoeuvres (EBMs), which are characterised by adduction of the VCs during mid to late expiration that interrupts expiratory air flow. EBMs play an important role in defending end-expiratory lung gas volumes during and immediately after lung aeration and can be triggered by a declining functional residual capacity (FRC).1,22–25 In infants receiving CPAP with/without iPPV, we observed that the percentage of time that VCs were closed, reduced over time, which is likely due to the physiological changes occurring in the infant as they transition after birth. At one hour after birth the VCs were closed for 46% of the time, but their position was highly dependent on the breathing pattern of the infant. If the infant was crying or grunting, the VCs were closed more often, which explains the large variation at one hour after birth. In addition, the oedema caused by the clearance of airway liquid into lung tissue is also known to activate J-receptors within lung tissue.26,27 These receptors signal via vagal"
+        },
+        {
+          "id": "discussion-6",
+          "kind": "paragraph",
+          "text": "afferents and have direct input into the brainstem to modify respiratory patterns including the triggering of EBMs. As such, differences in the degree of oedema and activation of these receptors may also contribute to the larger variation observed at this time. It is also likely that the relatively low number of infants examined at one hour after birth contributed to this large variation (n = 14).",
+          "continues": true
+        },
+        {
+          "id": "discussion-7",
+          "kind": "paragraph",
+          "text": "A limitation of our study is the small sample size. We primarily aimed to test the feasibility of visualising VCs at birth and for this only 20 infants were needed. However, we have reviewed 400 minutes of recordings at frame rates of 15 Hz and our observations of VC position were quite consistent between infants, which increases the validity of our findings. Delaying cord clamping for 1 minute was standard practice and for this reason it was not possible to visualise the cords directly after birth. Nevertheless, it is likely that we would have made similar observations in that time frame, noting that the VCs are closed unless the infant is taking a breath."
+        }
+      ]
+    },
+    {
+      "id": "conclusions",
+      "title": "Conclusions",
+      "passages": [
+        {
+          "id": "conclusions-1",
+          "kind": "paragraph",
+          "text": "We demonstrated that visualising VCs in very preterm infants at birth is feasible and does not interfere with stabilisation. We found that VCs are closed during apnoea, in between breaths and during breath holds, impairing the effect of non-invasively applied iPPV. The results of this study underline the importance of stimulating spontaneous breathing and raises the question as to whether non-invasive iPPV in the delivery room should be synchronised with the infant’s respiratory efforts."
+        }
+      ]
+    }
+  ],
+  "omitted": [
+    "front matter (journal header, author list and affiliations, corresponding-author box, DOI, received/accepted dates, copyright and licence line)",
+    "keywords",
+    "abbreviations box",
+    "running headers and page numbers",
+    "Table 1 body (data; caption kept)",
+    "figure images (Figs 1–5; captions kept)",
+    "funding",
+    "CRediT authorship contribution statement",
+    "declaration of competing interest",
+    "Appendix A (pointer to online supplementary data)",
+    "author details",
+    "references"
+  ],
+  "notes": [
+    {
+      "at": "abstract-1",
+      "type": "gloss",
+      "text": "The vocal cords sit in the larynx and can shut the airway. Apnoea means not breathing. Non-invasive ventilation is support given by mask, with no tube in the windpipe."
+    },
+    {
+      "at": "abstract-3",
+      "type": "gloss",
+      "text": "27+6 means 27 weeks and 6 days of gestation. IQR, the interquartile range, holds the middle half of the infants; median and IQR are used when data are skewed."
+    },
+    {
+      "at": "abstract-3",
+      "type": "link",
+      "text": "The two numbers this site carries from the paper: 8 of 20 infants were not breathing at birth, and their cords were closed a median 93% of the time they were ventilated.",
+      "links": [
+        "finding:not-breathing",
+        "finding:cords-closed"
+      ]
+    },
+    {
+      "at": "introduction-1",
+      "type": "gloss",
+      "text": "CPAP holds a steady pressure in the airway; iPPV adds intermittent inflations on top of it. In this study both were given through a facemask and T-piece."
+    },
+    {
+      "at": "introduction-2",
+      "type": "context",
+      "text": "This is the delivery-room problem in its plainest form: ventilation is given, yet the lungs do not fill. The study asks whether the block sits at the vocal cords.",
+      "links": [
+        "concept:first-minutes",
+        "claim:urgency"
+      ]
+    },
+    {
+      "at": "introduction-3",
+      "type": "gloss",
+      "text": "Adduction brings the vocal cords together, closing the larynx. Before birth this closure holds lung liquid in, which the growing lung needs; after birth, air has to get past it."
+    },
+    {
+      "at": "introduction-5",
+      "type": "gloss",
+      "text": "POCUS is ultrasound done at the bedside by the treating team. Flexible nasolaryngoscopy passes a thin camera through the nose to look at the cords directly."
+    },
+    {
+      "at": "methods-1",
+      "type": "link",
+      "text": "Done in the Leiden NICU, the same unit whose video-review sessions the rest of this site describes.",
+      "links": [
+        "unit:leiden"
+      ]
+    },
+    {
+      "at": "methods-3",
+      "type": "link",
+      "text": "Parents were asked before birth. For any recording in the delivery room there is no calm moment afterwards to ask, so consent has to come first.",
+      "links": [
+        "practice:consent",
+        "guidance:level-2-in-action/5.-preparation-and-consent/5.1-obtain-consent"
+      ]
+    },
+    {
+      "at": "methods-5",
+      "type": "context",
+      "text": "One person holds the mask while a second places the probe across the front of the neck. The ultrasound runs alongside usual care rather than replacing any step of it."
+    },
+    {
+      "at": "methods-8",
+      "type": "gloss",
+      "text": "A respiratory function monitor (RFM) measures pressure, flow and volume at the mask. Here it was recorded together with video, so every inflation could be lined up against the cords."
+    },
+    {
+      "at": "methods-11",
+      "type": "link",
+      "text": "Video review used as a research instrument: footage synchronised with monitor data, read frame by frame, and checked by a second reviewer whenever the picture was unclear.",
+      "links": [
+        "claim:skills",
+        "practice:research",
+        "guidance:level-2-in-action/15.-recordings-for-research"
+      ]
+    },
+    {
+      "at": "methods-11",
+      "type": "gloss",
+      "text": "Vti and Vte are the volumes going in and coming out at the mask. When far more goes in than comes back, gas is escaping round the mask, so those inflations were set aside."
+    },
+    {
+      "at": "results-5",
+      "type": "gloss",
+      "text": "MIST, minimally invasive surfactant therapy, gives surfactant through a thin catheter in the windpipe while the infant keeps breathing on CPAP, instead of full intubation."
+    },
+    {
+      "at": "results-7",
+      "type": "context",
+      "text": "Check the arithmetic: 14 of 20 infants is 70%, although the paper prints 60% here. The first minute is missing because cord clamping was delayed."
+    },
+    {
+      "at": "results-9",
+      "type": "gloss",
+      "text": "Abduction opens the cords; adduction closes them. A movement that only half-closed before reopening was scored as open, so the closed-time figures are, if anything, an underestimate."
+    },
+    {
+      "at": "results-16",
+      "type": "context",
+      "text": "The abstract gives the range for this figure as 81–99; this paragraph prints 80–99. The median, 93%, is the same in both.",
+      "links": [
+        "finding:cords-closed"
+      ]
+    },
+    {
+      "at": "results-17",
+      "type": "gloss",
+      "text": "A truncated flow wave: pressure rises, but gas stops flowing almost at once because the closed cords block the way. Panel B shows what happens when the cords open mid-inflation."
+    },
+    {
+      "at": "discussion-3",
+      "type": "guide",
+      "text": "When reviewing a resuscitation recording, a reassuring tidal volume during mask ventilation is not proof that air reached the lungs; the authors point to capnography as a better check."
+    },
+    {
+      "at": "discussion-4",
+      "type": "gloss",
+      "text": "Synchronised ventilation times each inflation to the infant's own breath. It is routine on the NICU but not yet at birth, which is the gap this paragraph names."
+    },
+    {
+      "at": "discussion-5",
+      "type": "gloss",
+      "text": "An expiratory braking manoeuvre is the infant briefly closing the cords during a breath out to keep air in. FRC is the air left in the lungs at the end of that breath."
+    },
+    {
+      "at": "discussion-5",
+      "type": "gloss",
+      "text": "J-receptors are sensors in lung tissue that respond to fluid around the air sacs; they signal to the breathing centre in the brainstem through the vagus nerve."
+    },
+    {
+      "at": "discussion-7",
+      "type": "context",
+      "text": "Limits to keep in mind: 20 infants, one centre, one main reader of the footage, and nothing from the first minute after birth."
+    },
+    {
+      "at": "conclusions-1",
+      "type": "link",
+      "text": "The one physiological study in this series. The other papers ask what recording and reviewing does for a team; here the recording answers a question about the infant.",
+      "links": [
+        "paper:narrative",
+        "paper:recordreflectrefine",
+        "guidance:level-2-in-action/13.1-the-neoflix-approach/13.2-input-for-research"
+      ]
+    },
+    {
+      "at": "conclusions-1",
+      "type": "guide",
+      "text": "For a unit reviewing its own births: watch whether mask inflations coincide with the infant's own breaths, and how soon breathing is stimulated. Both are visible on a recording.",
+      "links": [
+        "practice:record",
+        "concept:closed-cords"
+      ]
+    }
+  ],
+  "intermissions": [
+    {
+      "after": "introduction",
+      "concept": "first-minutes"
+    },
+    {
+      "after": "results",
+      "concept": "closed-cords"
+    }
+  ],
+  "morsels": [
+    {
+      "at": "abstract-4",
+      "quote": "Visualising VCs in preterm infants at birth using US is feasible.",
+      "tags": [
+        "practice:research",
+        "concept:closed-cords"
+      ],
+      "why": "The feasibility answer in one line."
+    },
+    {
+      "at": "abstract-3",
+      "quote": "In apnoeic infants receiving positive pressure ventilation, the VCs were closed for 93% (81–99) of the time.",
+      "tags": [
+        "finding:cords-closed",
+        "concept:closed-cords"
+      ],
+      "why": "The headline number."
+    },
+    {
+      "at": "introduction-2",
+      "quote": "However, several studies demonstrated that non-invasive iPPV is often ineffective in achieving lung aeration unless the infant breathes spontaneously.8–10",
+      "tags": [
+        "concept:first-minutes",
+        "claim:urgency"
+      ],
+      "why": "The clinical problem behind the study."
+    },
+    {
+      "at": "introduction-4",
+      "quote": "It’s currently unclear whether active laryngeal closure also occurs at birth in human preterm infants.",
+      "tags": [
+        "practice:research",
+        "concept:closed-cords"
+      ],
+      "why": "The open question, stated plainly."
+    },
+    {
+      "at": "results-5",
+      "quote": "At birth, 8/20 (40%) infants received initial iPPV after which they were switched to CPAP whereas 12/20 (60%) infants received only CPAP as respiratory support.",
+      "tags": [
+        "finding:not-breathing"
+      ],
+      "why": "How many needed inflations at birth."
+    },
+    {
+      "at": "results-7",
+      "quote": "Performing the US did not appear to interfere with any of the standard protocols used to stabilise infants at birth.",
+      "tags": [
+        "practice:record",
+        "practice:research"
+      ],
+      "why": "Looking did not get in the way of care."
+    },
+    {
+      "at": "results-16",
+      "quote": "In 56% (205/368) of the inflations, the VCs remained closed.",
+      "tags": [
+        "finding:cords-closed",
+        "concept:closed-cords"
+      ],
+      "why": "Per inflation, not just per minute."
+    },
+    {
+      "at": "discussion-1",
+      "quote": "During iPPV, the majority of inflations appeared to be ineffective at aerating the lung, unless the VCs simultaneously opened in association with a spontaneous breath.",
+      "tags": [
+        "concept:closed-cords",
+        "concept:first-minutes"
+      ],
+      "why": "What the closed cords mean at the mask."
+    },
+    {
+      "at": "discussion-3",
+      "quote": "We now can confirm that, based on our observations in human preterm infants, the physiological control of the VCs at birth is very similar between species.",
+      "tags": [
+        "concept:closed-cords"
+      ],
+      "why": "From animal model to human infant."
+    },
+    {
+      "at": "discussion-3",
+      "quote": "As result, measuring tidal volumes while no air is entering the lung can be misleading and emphasises the potential benefit of capnography to assess the effectiveness of ventilation during this period.21.",
+      "tags": [
+        "concept:memory-vs-recording",
+        "concept:first-minutes"
+      ],
+      "why": "The monitor can mislead."
+    },
+    {
+      "at": "discussion-4",
+      "quote": "While synchronous ventilation is common practice in the NICU, ventilation at birth is still non-synchronised, despite the finding that most preterm infants breathe in between and during inflations.2",
+      "tags": [
+        "concept:closed-cords",
+        "practice:research"
+      ],
+      "why": "The gap the study points to."
+    },
+    {
+      "at": "discussion-5",
+      "quote": "The preterm infants who were spontaneously breathing after birth and received CPAP, still had closed VCs for 57% of the time.",
+      "tags": [
+        "concept:closed-cords"
+      ],
+      "why": "Closure is not only an apnoea problem."
+    },
+    {
+      "at": "discussion-7",
+      "quote": "However, we have reviewed 400 minutes of recordings at frame rates of 15 Hz and our observations of VC position were quite consistent between infants, which increases the validity of our findings.",
+      "tags": [
+        "claim:skills",
+        "concept:memory-vs-recording",
+        "practice:research"
+      ],
+      "why": "Recordings, read closely, as evidence."
+    },
+    {
+      "at": "conclusions-1",
+      "quote": "The results of this study underline the importance of stimulating spontaneous breathing and raises the question as to whether non-invasive iPPV in the delivery room should be synchronised with the infant’s respiratory efforts.",
+      "tags": [
+        "concept:closed-cords",
+        "practice:research",
+        "concept:first-minutes"
+      ],
+      "why": "The take-home and the next question."
+    }
+  ]
+}
