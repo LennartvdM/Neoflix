@@ -2,7 +2,8 @@
 
 This repo is maintained conversationally ("AI as CMS"): the owner describes a
 change, you find the right file and make it. This file is the map and the
-rulebook. `CONTENT.md` is the content lookup table; `README.md` covers build
+rulebook. `CONTENT.md` is the content lookup table; `INVENTORY.md` counts all the
+material (films, papers, toolbox, site prose, structure) as of 2026-11; `README.md` covers build
 and deploy. A full architecture/performance audit lives in `AUDIT.md`
 (2026-08; its Phase 0–2 findings are implemented).
 
