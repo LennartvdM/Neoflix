@@ -79,6 +79,12 @@ working in; they're short, and GitHub renders them when browsing too.
   `/neoflix` the library is present as a layer that grows with the
   reader's "ripeness" (`system/ripeness.js`, `system/ui/LibraryLayer.jsx`)
   — mounted in `App.jsx` outside the page slide, like the navbar.
+- **A package for a Claude chat session** → `chat-package/`
+  (`bash chat-package/build.sh <out>` after `bash build.sh`): the material
+  as JSON computed by the site's own modules, images as data URIs, a
+  single-file starter artifact, screenshots, the code minus large media,
+  and `START-HERE.md` / `DIRECTION.md` (the owner's own words). Rebuild
+  it when the design or the material moves on.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
   desktop tree or a mobile tree (`< 600px`) — separate lazy chunks.
   **Mobile is out of scope for design work (owner's decision, 2026-11).**

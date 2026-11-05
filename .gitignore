@@ -27,3 +27,4 @@ pnpm-debug.log*
 
 # Claude Code internal state
 .claude/
+chat-package/out/
