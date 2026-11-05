@@ -65,6 +65,11 @@ working in; they're short, and GitHub renders them when browsing too.
   with explainer-animation slots, practices, roles, units), with typed
   links; system-check fails on a broken one. No warm colours anywhere
   (the owner: warm is a deviation from sterility).
+- **The papers as readings** → `website/system/content/readings/` (read
+  its README). The four open-licence papers are there **verbatim** (her
+  PhD work: never edit the passages; our notes are a separate layer),
+  the two publisher-licence papers as notes in our own words. Check with
+  `python3 website/scripts/verify-reading.py website/system/content/readings/*.json`.
 - **The library** → `website/system/` (read its README). Every toolbox
   page, paper and film is a record, assembled from modules by rules in
   `system/modules/plans.js`; films, papers and guidance are linked once,
