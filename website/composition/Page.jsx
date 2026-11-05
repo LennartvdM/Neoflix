@@ -26,6 +26,7 @@ import { prefersReducedMedia } from '../lib/utils/reducedMedia';
 import { canonicalUrl } from '../shared/routeMeta';
 import { motion } from 'framer-motion';
 import { buildOntology } from './ontology';
+import { conceptsFor } from '../system/content/ontology';
 import { CHAPTERS } from './tour';
 
 const ONTOLOGY = buildOntology({ catalog, graph });
@@ -160,6 +161,25 @@ function Atmosphere({ k, onPick }) {
       </div>
       <FilmChip k={k} onPick={onPick} />
     </div>
+  );
+}
+
+/**
+ * An explainer: the slot for an abstract moving illustration of a
+ * concept (system/content/ontology.js). Placeholders for now: a quiet
+ * frame with the concept's name and its brief, and generic motion so
+ * the slot reads as moving, not as an image.
+ */
+function Explainer({ concept }) {
+  return (
+    <figure className="explainer" data-concept={concept.id} title={`Animation, to come: ${concept.motion}`}>
+      <div className="explainer__stage" aria-hidden="true"><i /><i /><i /></div>
+      <figcaption>
+        <span className="explainer__tag">How it works · placeholder</span>
+        <strong>{concept.name}</strong>
+        <span>{concept.brief}</span>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -575,6 +595,9 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
   }
 
   const want = <Wants want={page.want} onPick={onPick} onPath={onPath} refOf={refOf} follow={follow} setFollow={setFollow} title={page.layout === 'cover' ? 'Or take a path' : 'You might also want'} />;
+  // The one concept this page's subject most needs explained.
+  const subject = node.kind === 'record' ? node.key : node.kind === 'stop' && typeof node.stop?.at === 'string' ? node.stop.at : null;
+  const explainer = subject && subject.includes(':') && page.layout !== 'cover' ? conceptsFor(subject)[0] || null : null;
   // The edge you came in on: how the page you were on connects to this one.
   const thread = record && came && came !== record.key ? graph.threadBetween(came, record.key) : null;
 
@@ -638,6 +661,7 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
             </p>
           )}
           {layout !== 'scene' && words}
+          {explainer && <Explainer concept={explainer} />}
           {want}
         </div>
         <div className="pg__main" ref={mainRef}>

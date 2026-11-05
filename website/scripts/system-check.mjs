@@ -22,6 +22,7 @@ import { assemble, rowsOf, COLUMNS } from '../system/assemble.js';
 import { searchLibrary } from '../system/search.js';
 import { buildAtlas } from '../composition/atlas.js';
 import { buildOntology } from '../composition/ontology.js';
+import { ontologyLinks, entry, PRACTICES, CLAIMS } from '../system/content/ontology.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(await fs.readFile(path.join(__dirname, '../generated/docs-manifest.json'), 'utf8'));
@@ -142,6 +143,18 @@ check('every page gives what is needed, and no more than three wants', () => {
     n.kids.forEach((k, i) => walk(k, [...addr, i]));
   };
   atlas.spine.forEach((n, i) => walk(n, [i]));
+});
+
+// The ontology (system/content/ontology.js) names what the material is
+// made of (claims, findings, concepts, practices, roles, units) and links
+// it. Every link must land, on the catalogue or on the ontology itself.
+check('the ontology holds together', () => {
+  for (const [from, to] of ontologyLinks()) {
+    const ok = catalog.has(to) || !!entry(to);
+    if (!ok) fail(`ontology: ${from} points at "${to}", which doesn't exist`);
+  }
+  for (const p of PRACTICES) if (!LOOP.some((l) => l.id === p.step)) fail(`ontology: practice:${p.id} in an unknown step "${p.step}"`);
+  for (const f of catalog.list('film')) if (!CLAIMS.some((c) => c.film === f.key)) fail(`ontology: ${f.key} illustrates no claim`);
 });
 
 check('kinds are the three the site knows', () => {

@@ -307,7 +307,7 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
    the "came from" line, on the map. */
 .cmp {
   --link-evidence: #3b5bdb;
-  --link-practice: #2d8a4e;
+  --link-practice: #14868c;
   --link-film: #1c1c6e;
   --link-path: #9195b2;
 }
@@ -348,7 +348,7 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 .map__legend i { display: inline-block; width: 10px; height: 10px; margin-right: -8px; border-radius: 50%; background: var(--link-evidence); vertical-align: -1px; }
 .map__legend i[data-k='film'] { border-radius: 2px; background: var(--brand); width: 14px; }
 .map__legend i[data-k='guidance'] { width: 7px; height: 7px; background: #8aa0e6; }
-.map__legend i[data-k='trail'] { width: 16px; height: 6px; border-radius: 3px; background: rgba(226, 180, 92, 0.6); }
+.map__legend i[data-k='trail'] { width: 16px; height: 6px; border-radius: 3px; background: rgba(120, 205, 214, 0.75); }
 .map__x { margin-left: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(28, 28, 110, 0.13); font-size: 13px; font-weight: 600; color: rgba(28, 28, 110, 0.7); }
 .map__x:hover { background: #fff; color: var(--brand); }
 .map__x kbd { margin-left: 4px; font: 500 11px Inter, sans-serif; color: var(--ink-mute); }
@@ -359,7 +359,7 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 .map__edge { fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 8 11; opacity: 0; animation: dot-in 0.6s var(--d) var(--ease-arrive) forwards; transition: stroke-opacity 0.25s, stroke-width 0.25s; stroke-opacity: 0.75; }
 .map__plot[data-focus] .map__edge { stroke-opacity: 0.3; }
 .map__plot[data-focus] .map__edge[data-hot] { stroke-opacity: 1; stroke-width: 7; }
-.map__route { fill: none; stroke: #e2b45c; stroke-width: 9; stroke-linejoin: round; stroke-linecap: round; stroke-opacity: 0.45; stroke-dasharray: 1; stroke-dashoffset: 1; animation: wire-in 1.4s 0.6s var(--ease-arrive) forwards; }
+.map__route { fill: none; stroke: #9fdde3; stroke-width: 9; stroke-linejoin: round; stroke-linecap: round; stroke-opacity: 0.45; stroke-dasharray: 1; stroke-dashoffset: 1; animation: wire-in 1.4s 0.6s var(--ease-arrive) forwards; }
 .map__node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; transition: opacity 0.2s, transform 0.2s var(--ease); }
 .map__node span { position: absolute; top: calc(100% + 4px); white-space: nowrap; font-size: 11.5px; font-weight: 600; color: var(--ink); }
 .map__node--paper b { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--link-evidence); color: #fff; font: 500 15px var(--display); box-shadow: 0 0 0 3px #fff; }
@@ -367,7 +367,7 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 .map__node--guidance { width: 11px; height: 11px; border-radius: 50%; background: #8aa0e6; box-shadow: 0 0 0 2px #fff; }
 .map__node:hover { transform: translate(-50%, -50%) scale(1.12); z-index: 2; }
 .map__plot[data-focus] .map__node:not([data-hot]) { opacity: 0.3; }
-.map__node[data-visited]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #c08a1e; box-shadow: 0 0 0 2px #fff; }
+.map__node[data-visited]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #2aa3ad; box-shadow: 0 0 0 2px #fff; }
 .map__node[data-here] { z-index: 3; }
 .map__node[data-here]::before { content: ''; position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; border: 2px solid var(--accent); animation: here 1.8s ease-out infinite; pointer-events: none; }
 .map__node--guidance[data-here]::before { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
@@ -566,3 +566,31 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 .under__slip:hover .under__tab, .under__slip:focus-visible .under__tab { opacity: 0; }
 .under__slip:hover :is(.under__title, .under__line, small), .under__slip:focus-visible :is(.under__title, .under__line, small) { opacity: 1; }
 @media (max-width: 759px) { .under { display: none; } .over { position: static; margin-top: 12px; } }
+
+/* No warm colour anywhere: warm is a deviation from sterility (the owner,
+   2026-11). The library's modules carry an amber for papers and a cream
+   highlight; inside the composition they are cooled. */
+.cmp .sys { --k-paper: #3b5bdb; --k-film: #14868c; }
+.cmp .sys mark { background: rgba(140, 174, 244, 0.28); }
+
+/* ── explainers: slots for abstract moving illustrations (placeholders) ── */
+.explainer { margin: 0 0 30px; max-width: 420px; }
+.pg--scene .explainer { margin: 0 0 28px; }
+.explainer__stage {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(205, 220, 240, 0.4));
+  box-shadow: inset 0 0 0 1px rgba(28, 28, 110, 0.06);
+}
+.explainer__stage i { position: absolute; border-radius: 50%; background: rgba(59, 91, 219, 0.16); animation: expl 7s ease-in-out infinite alternate; }
+.explainer__stage i:nth-child(1) { width: 34%; aspect-ratio: 1; left: 12%; top: 22%; }
+.explainer__stage i:nth-child(2) { width: 22%; aspect-ratio: 1; left: 52%; top: 40%; background: rgba(20, 134, 140, 0.16); animation-delay: -2.3s; }
+.explainer__stage i:nth-child(3) { width: 14%; aspect-ratio: 1; left: 74%; top: 16%; background: rgba(28, 28, 110, 0.12); animation-delay: -4.1s; }
+@keyframes expl { from { transform: translate(0, 0) scale(1); } to { transform: translate(14%, -10%) scale(1.15); } }
+.explainer figcaption { display: grid; gap: 3px; margin-top: 12px; }
+.explainer__tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
+.explainer strong { font-family: var(--display); font-size: 17px; font-weight: 500; color: var(--brand); }
+.explainer figcaption > span:last-child { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) { .explainer__stage i { animation: none; } }

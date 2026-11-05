@@ -58,6 +58,12 @@ working in; they're short, and GitHub renders them when browsing too.
   in the tree, unrouted; their rules below apply only if they return.
   This is a playground: early rules in this file that protect the old
   pages are not reasons to hold it back.
+- **The ontology** (draft, 2026-11) → `website/system/content/ontology.js`,
+  explained in `website/composition/ONTOLOGY.md`: what the material is
+  made of below films/papers/toolbox pages (claims, findings, concepts
+  with explainer-animation slots, practices, roles, units), with typed
+  links; system-check fails on a broken one. No warm colours anywhere
+  (the owner: warm is a deviation from sterility).
 - **The library** → `website/system/` (read its README). Every toolbox
   page, paper and film is a record, assembled from modules by rules in
   `system/modules/plans.js`; films, papers and guidance are linked once,
