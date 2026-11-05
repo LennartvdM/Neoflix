@@ -39,15 +39,15 @@ export function buildOntology({ catalog, graph }) {
   const evidence = (key, about) => {
     const f = graph.findingsOf(about).find((x) => `paper:${x.paper}` === key);
     const p = catalog.get(key);
-    return { key, why: 'The evidence', title: `Paper ${p.n} · ${p.short}`, line: f?.text || first(p.found) };
+    return { key, type: 'evidence', why: 'The evidence', title: `Paper ${p.n} · ${p.short}`, line: f?.text || first(p.found) };
   };
   const practice = (key) => {
     const g = catalog.get(key);
-    return { key, why: 'How to do it', title: `${g.number ? `${g.number} ` : ''}${g.title}`, line: first(g.excerpt) };
+    return { key, type: 'practice', why: 'How to do it', title: `${g.number ? `${g.number} ` : ''}${g.title}`, line: first(g.excerpt) };
   };
   const onFilm = (key) => {
     const f = catalog.get(key);
-    return { key, why: 'On film', title: f.name, line: f.claim };
+    return { key, type: 'film', why: 'On film', title: f.name, line: f.claim };
   };
 
   /** What a record's reader could want next (≤ 2). */
@@ -83,7 +83,7 @@ export function buildOntology({ catalog, graph }) {
     }
     // A stop of the story.
     const s = node.stop;
-    const paths = catalog.paths.map((p) => ({ path: p.id, key: `path:${p.id}`, why: 'A path', title: p.name, line: p.blurb }));
+    const paths = catalog.paths.map((p) => ({ path: p.id, key: `path:${p.id}`, type: 'path', why: 'A path', title: p.name, line: p.blurb }));
     if (s.doors) return { layout: 'cover', figure: node.index === 0 ? 'film:team' : null, want: cap(paths, 3) };
     if (Array.isArray(s.at)) return { layout: 'list', list: s.at, want: [] };
     if (s.at === 'region:practice') return { layout: 'list', list: node.kids.map((k) => `step:${k.phase}`), want: [] };

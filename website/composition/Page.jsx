@@ -8,7 +8,7 @@
  * chapter), Space Grotesk for display and Inter for reading, white cards
  * on the pale ground, the films dark.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { catalog, graph, lib, stillFor, clipFor } from '../system/library';
 import { LOOP, loopName } from '../system/catalog';
 import { urlFor, keyForPath } from '../system/urls';
@@ -103,19 +103,30 @@ function Thing({ k, big, ordinal, onPick }) {
   return <Guide k={k} big={big} ordinal={ordinal} onPick={onPick} />;
 }
 
-/** What the reader could want: small, one line each, to one side. */
-function Wants({ want, onPick, onPath, title = 'You might also want' }) {
+/**
+ * What the reader could want: small, one line each, to one side, and
+ * tied to what the page is about by a drawn edge (Wires), so the page
+ * shows *why* each is offered. Following one lights its edge first.
+ */
+function Wants({ want, onPick, onPath, refOf, follow, setFollow, title = 'You might also want' }) {
   if (!want.length) return null;
+  const take = (w) => {
+    setFollow(w.key);
+    setTimeout(() => { if (w.path) onPath(w.path); else onPick(w.key); }, 230);
+  };
   return (
     <aside className="wants" aria-label={title}>
       <p className="wants__h">{title}</p>
       {want.map((w) => (
         <a
           key={w.key}
+          ref={refOf(w.key)}
           className="want"
+          data-type={w.type}
+          data-follow={follow === w.key ? '' : undefined}
           href={w.path ? `/paths/${w.path}` : urlFor(w.key)}
           data-id={w.key}
-          onClick={(e) => { e.preventDefault(); if (w.path) onPath(w.path); else onPick(w.key); }}
+          onClick={(e) => { e.preventDefault(); take(w); }}
         >
           <span className="want__why">{w.why}</span>
           <strong>{w.title}</strong>
@@ -124,6 +135,63 @@ function Wants({ want, onPick, onPath, title = 'You might also want' }) {
         </a>
       ))}
     </aside>
+  );
+}
+
+/**
+ * The edges: from what the page is about to each thing on offer, drawn
+ * in when the page arrives, coloured by what kind of link it is (the
+ * evidence, the practice, a film, a path).
+ */
+function Wires({ bodyRef, mainRef, wantRefs, want, follow }) {
+  const [paths, setPaths] = useState([]);
+  // A passive effect, not a layout one: this component is a child of the
+  // element it measures, and a parent's ref is attached after its
+  // children's layout effects run.
+  useEffect(() => {
+    const body = bodyRef.current;
+    if (!body || !want.length) { setPaths([]); return undefined; }
+    const measure = () => {
+      const target = mainRef.current?.firstElementChild;
+      if (!target) { setPaths([]); return; }
+      const b = body.getBoundingClientRect();
+      const m = target.getBoundingClientRect();
+      const out = [];
+      want.forEach((w, i) => {
+        const el = wantRefs.current.get(w.key);
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const x1 = r.right - b.left;
+        const y1 = r.top + r.height / 2 - b.top;
+        const x2 = m.left - b.left;
+        const span = Math.min(m.height * 0.5, 220);
+        const y2 = m.top - b.top + Math.min(m.height, 440) * 0.5 + (want.length > 1 ? (i / (want.length - 1) - 0.5) * span : 0);
+        if (x2 - x1 < 8) return;
+        const dx = (x2 - x1) * 0.55;
+        out.push({ key: w.key, type: w.type, x2, y2, d: `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}` });
+      });
+      setPaths(out);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(body);
+    // The words column is sticky: when the page scrolls, the ends move.
+    const scroller = body.closest('.pg');
+    let raf = 0;
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; measure(); }); };
+    scroller?.addEventListener('scroll', onScroll, { passive: true });
+    return () => { ro.disconnect(); scroller?.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, [bodyRef, mainRef, wantRefs, want]);
+  if (!paths.length) return null;
+  return (
+    <svg className="wires" aria-hidden="true">
+      {paths.map((p, i) => (
+        <g key={p.key} data-type={p.type} data-follow={follow === p.key ? '' : undefined} style={{ '--d': `${0.25 + i * 0.12}s` }}>
+          <path d={p.d} pathLength="1" />
+          <circle cx={p.x2} cy={p.y2} r="4.5" />
+        </g>
+      ))}
+    </svg>
   );
 }
 
@@ -197,8 +265,13 @@ function RecordWords({ record }) {
  * `search` is the search form, when searching; `resume` a "carry on"
  * offer for the first page.
  */
-export default function Page({ node, onPick, onPath, onProbe, search, resume, onResume }) {
+export default function Page({ node, came, onPick, onPath, onProbe, search, resume, onResume }) {
   const page = useMemo(() => ONTOLOGY.pageOf(node), [node]);
+  const bodyRef = useRef(null);
+  const mainRef = useRef(null);
+  const wantRefs = useRef(new Map());
+  const refOf = (k) => (el) => { if (el) wantRefs.current.set(k, el); else wantRefs.current.delete(k); };
+  const [follow, setFollow] = useState(null);
   const record = node.kind === 'record' ? catalog.get(node.key) : null;
   const plans = useMemo(() => {
     if (!record) return [];
@@ -261,7 +334,9 @@ export default function Page({ node, onPick, onPath, onProbe, search, resume, on
     words = <RecordWords record={record} />;
   }
 
-  const want = <Wants want={page.want} onPick={onPick} onPath={onPath} title={page.layout === 'cover' ? 'Or take a path' : 'You might also want'} />;
+  const want = <Wants want={page.want} onPick={onPick} onPath={onPath} refOf={refOf} follow={follow} setFollow={setFollow} title={page.layout === 'cover' ? 'Or take a path' : 'You might also want'} />;
+  // The edge you came in on: how the page you were on connects to this one.
+  const thread = record && came && came !== record.key ? graph.threadBetween(came, record.key) : null;
 
   let main = null;
   if (page.layout === 'list') {
@@ -299,12 +374,19 @@ export default function Page({ node, onPick, onPath, onProbe, search, resume, on
   return (
     <div className={`pg pg--${page.layout}`}>
       {head}
-      <div className="pg__body">
+      <div className="pg__body" ref={bodyRef}>
+        <Wires bodyRef={bodyRef} mainRef={mainRef} wantRefs={wantRefs} want={page.want} follow={follow} />
         <div className="pg__words">
+          {thread && (
+            <p className="came" data-type={thread.kind}>
+              <i aria-hidden="true">↖</i>
+              <span><b>From {labelOf(came)}</b>{thread.text}</span>
+            </p>
+          )}
           {words}
           {want}
         </div>
-        <div className="pg__main">{main}</div>
+        <div className="pg__main" ref={mainRef}>{main}</div>
       </div>
     </div>
   );

@@ -28,7 +28,9 @@ library's content files (next sections); these are its own.
 | A loop step's name ("Before you record"…) | `LOOP` in `system/catalog.js` |
 | The modules of an open record | `system/modules/` (`MODULE_NAMES`, `plans.js`) |
 | The sidebar's foot ("↑↓ the story · → deeper · ← back"), the ways on at the page's edges ("3 pages deeper", "Back to the story") | `composition/Sidebar.jsx`, `composition/Composition.jsx` |
-| Neoflix, Search, The long read, Contact (top of the sidebar) | `composition/Composition.jsx` |
+| Neoflix, Map, Search, The long read, Contact (top of the sidebar) | `composition/Composition.jsx` |
+| The map's title, band names ("The evidence", "The films", "The toolbox") and legend | `composition/LibraryMap.jsx` |
+| "From Film · Urgency" and the sentence under it on a record you followed a link to | `threadBetween` in `system/graph.js` (the sentence is the content's own: a finding, a film's "in practice") |
 
 ## The old homepage — `pages/home/` (not routed at the moment)
 

@@ -41,7 +41,10 @@ working in; they're short, and GitHub renders them when browsing too.
   come back, without ever being the whole index. What a page shows is the
   ontology (`composition/ontology.js`): what the reader needs, biggest;
   at most three things they could want, small, each with its reason;
-  nothing else. The look is adopted from the owner's Talent naar de Top
+  nothing else. The graph is visible: each want is tied to the page's
+  subject by a drawn edge, a followed link opens with the edge you came in
+  on, and "Map" shows the whole library as one graph on demand
+  (`composition/LibraryMap.jsx`). The look is adopted from the owner's Talent naar de Top
   deck (Vragenlijst-Executive-Search) for now: Space Grotesk + Inter,
   indigo inks, white cards, the frosted sidebar. It renders outside the navbar and
   `RouteSlider` (`App.jsx`, `SPACE_ROUTES`). `website/space/` (the

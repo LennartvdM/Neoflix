@@ -301,3 +301,84 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 @media (prefers-reduced-motion: reduce) {
   .card, .want, .cmp__side, .cmp__area { transition: none; }
 }
+
+/* ── the graph on the page ─────────────────────────────────────────── */
+/* Each kind of link has one colour, everywhere: on the page's edges, on
+   the "came from" line, on the map. */
+.cmp {
+  --link-evidence: #3b5bdb;
+  --link-practice: #2d8a4e;
+  --link-film: #1c1c6e;
+  --link-path: #9195b2;
+}
+.pg__body { position: relative; }
+.pg__words, .pg__main { position: relative; z-index: 1; }
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.wires g { --c: var(--link-path); color: var(--c); }
+.wires g[data-type='evidence'] { --c: var(--link-evidence); }
+.wires g[data-type='practice'] { --c: var(--link-practice); }
+.wires g[data-type='film'] { --c: var(--link-film); }
+.wires path { fill: none; stroke: var(--c); stroke-width: 2; stroke-opacity: 0.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: wire-in 0.7s var(--d, 0.3s) var(--ease-arrive) forwards; transition: stroke-width 0.2s, stroke-opacity 0.2s; }
+.wires circle { fill: var(--c); opacity: 0; animation: dot-in 0.3s calc(var(--d, 0.3s) + 0.6s) var(--ease-arrive) forwards; }
+.wires g[data-follow] path { stroke-width: 3; stroke-opacity: 0.9; }
+@keyframes wire-in { to { stroke-dashoffset: 0; } }
+@keyframes dot-in { to { opacity: 1; } }
+.want { border-left: 0; }
+.want[data-type='evidence'] .want__why { color: var(--link-evidence); }
+.want[data-type='practice'] .want__why { color: var(--link-practice); }
+.want[data-type='film'] .want__why { color: var(--link-film); }
+.want[data-type='evidence'] i { color: var(--link-evidence); }
+.want[data-type='practice'] i { color: var(--link-practice); }
+.want[data-type='film'] i { color: var(--link-film); }
+.want[data-follow] { background: #fff; box-shadow: var(--tile-shadow-hi); }
+
+/* the edge you came in on */
+.came { display: flex; gap: 10px; align-items: baseline; max-width: 46ch; margin: 0 0 22px; padding: 12px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.45); font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+.came i { font-style: normal; color: var(--link-path); }
+.came b { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
+.came[data-type='evidence'] i, .came[data-type='evidence'] b { color: var(--link-evidence); }
+.came[data-type='practice'] i, .came[data-type='practice'] b { color: var(--link-practice); }
+
+/* ── the map: the whole library, on demand ─────────────────────────── */
+.map { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: rgba(209, 226, 237, 0.55); -webkit-backdrop-filter: blur(10px) saturate(1.2); backdrop-filter: blur(10px) saturate(1.2); }
+.map__sheet { width: min(1260px, 100%); max-height: 100%; display: flex; flex-direction: column; padding: 22px 28px 26px; border-radius: 26px; background: rgba(255, 255, 255, 0.88); box-shadow: 0 2px 6px rgba(20, 20, 58, 0.07), 0 30px 80px rgba(20, 20, 58, 0.22); }
+.map__head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+.map__head h2 { font-family: var(--display); font-size: 22px; font-weight: 500; color: var(--brand); }
+.map__legend { display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; margin-left: auto; font-size: 12px; color: var(--ink-soft); }
+.map__legend i { display: inline-block; width: 10px; height: 10px; margin-right: -8px; border-radius: 50%; background: var(--link-evidence); vertical-align: -1px; }
+.map__legend i[data-k='film'] { border-radius: 2px; background: var(--brand); width: 14px; }
+.map__legend i[data-k='guidance'] { width: 7px; height: 7px; background: #8aa0e6; }
+.map__legend i[data-k='trail'] { width: 16px; height: 3px; border-radius: 2px; background: #c08a1e; }
+.map__x { margin-left: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(28, 28, 110, 0.13); font-size: 13px; font-weight: 600; color: rgba(28, 28, 110, 0.7); }
+.map__x:hover { background: #fff; color: var(--brand); }
+.map__x kbd { margin-left: 4px; font: 500 11px Inter, sans-serif; color: var(--ink-mute); }
+.map__plot { position: relative; width: 100%; aspect-ratio: 1200 / 660; max-height: calc(100vh - 140px); }
+.map__plot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.map__band { font: 600 10.5px Inter, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; fill: var(--ink-mute); }
+.map__tick { font: 500 11.5px Inter, sans-serif; fill: var(--ink-mute); }
+.map__edge { fill: none; stroke: var(--link-practice); stroke-width: 1; stroke-opacity: 0.22; stroke-dasharray: 1; stroke-dashoffset: 1; animation: wire-in 0.8s var(--d) var(--ease-arrive) forwards; transition: stroke-opacity 0.2s, stroke-width 0.2s; }
+.map__edge[data-kind='evidence'] { stroke: var(--link-evidence); }
+.map__plot[data-focus] .map__edge { stroke-opacity: 0.07; }
+.map__plot[data-focus] .map__edge[data-hot] { stroke-opacity: 0.85; stroke-width: 2; }
+.map__route { fill: none; stroke: #c08a1e; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; stroke-opacity: 0.75; stroke-dasharray: 1; stroke-dashoffset: 1; animation: wire-in 1.4s 0.6s var(--ease-arrive) forwards; }
+.map__node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; transition: opacity 0.2s, transform 0.2s var(--ease); }
+.map__node span { position: absolute; top: calc(100% + 4px); white-space: nowrap; font-size: 11.5px; font-weight: 600; color: var(--ink); }
+.map__node--paper b { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--link-evidence); color: #fff; font: 500 15px var(--display); box-shadow: 0 0 0 3px #fff; }
+.map__node--film img { display: block; width: 76px; height: 46px; object-fit: cover; border-radius: 9px; box-shadow: 0 0 0 3px #fff, 0 6px 16px rgba(20, 20, 58, 0.18); }
+.map__node--guidance { width: 11px; height: 11px; border-radius: 50%; background: #8aa0e6; box-shadow: 0 0 0 2px #fff; }
+.map__node:hover { transform: translate(-50%, -50%) scale(1.12); z-index: 2; }
+.map__plot[data-focus] .map__node:not([data-hot]) { opacity: 0.3; }
+.map__node[data-visited]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #c08a1e; box-shadow: 0 0 0 2px #fff; }
+.map__node[data-here] { z-index: 3; }
+.map__node[data-here]::before { content: ''; position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; border: 2px solid var(--accent); animation: here 1.8s ease-out infinite; pointer-events: none; }
+.map__node--guidance[data-here]::before { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+.map__node--guidance[data-here] { background: var(--accent); }
+@keyframes here { from { transform: scale(0.6); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+.map__tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 22px)); width: max-content; max-width: 280px; padding: 10px 14px; border-radius: 12px; background: var(--brand); color: #fff; font-size: 13px; line-height: 1.4; pointer-events: none; box-shadow: 0 10px 28px rgba(20, 20, 58, 0.25); }
+.map__tip small { display: block; margin-bottom: 3px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #9fb6f5; }
+.map__tip em { display: block; margin-top: 4px; font-style: normal; font-size: 11.5px; color: #c5cdf0; }
+@media (prefers-reduced-motion: reduce) {
+  .wires path, .map__edge, .map__route { animation: none; stroke-dashoffset: 0; }
+  .wires circle { animation: none; opacity: 1; }
+  .map__node[data-here]::before { animation: none; }
+}

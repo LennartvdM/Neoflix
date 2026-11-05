@@ -39,6 +39,20 @@ The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
     on, in the order a reader needs it.
   - *rest*: not on the page. Reachable (the sidebar, down, right), never
     listed. Citations and the like are actions in a record's title block.
+- **The graph is visible, in three places**, one colour per kind of
+  link everywhere (blue the evidence, green the practice, indigo a film,
+  grey a path):
+  - *on every page*, each want is tied to what the page is about by a
+    drawn edge, so the page shows why it's offered; following one lights
+    its edge before the page moves;
+  - *on arrival*, a record reached from another page opens with the edge
+    you came in on ("From Film · Urgency: In one of our studies, 8 of 20
+    infants…", `graph.threadBetween`);
+  - *the map* (`LibraryMap.jsx`, "Map" in the sidebar): the whole library
+    as one graph on demand, three bands (papers on their years, films,
+    the toolbox's pages in the five steps), where you are pulsing, your
+    route through it in gold, hover to light connections, click to go.
+    The pages never show the whole index; the map is where it lives.
 - **The sidebar isn't the index either**: only your chapter opens; the
   others are one line each; a branch shows the trail you took and two
   pages either side of yours, the rest counted.
@@ -57,7 +71,8 @@ its stop. Other pages are `/?at=3.1`.
 | `ontology.js` | What each page gives: its need, its wants (≤ 3, with reasons), its layout. Node-safe. |
 | `Composition.jsx` | Where you are (from the URL), the pager (wheel, keys), the page slide, the ways on at the page's edges, search, bookkeeping. |
 | `Sidebar.jsx` | The anchor: where you are, without the whole index. |
-| `Page.jsx` | One page, drawn from the ontology: the running head, the words, the wants, the need. |
+| `Page.jsx` | One page, drawn from the ontology: the running head, the words, the wants and their edges, the edge you came in on, the need. |
+| `LibraryMap.jsx` | The whole library as one graph, on demand. |
 | `tour.js` | The story: its stops, their words, their short names in the sidebar. Node-safe. |
 | `composition.css` | The look. |
 
@@ -80,6 +95,10 @@ tiles. If the deck's language changes, change the tokens at the top of
   (until the wheel is quiet for 200 ms, and at least 560 ms after a
   move). A text that scrolls inside its element keeps the wheel until it
   reaches its end; only then does the page move.
+- **The edges measure the page after it is attached** (`Wires` in
+  `Page.jsx` uses a passive effect: it is a child of the element it
+  measures, and a parent's ref isn't set yet during a child's layout
+  effect). They re-measure on resize and on the page's own scroll.
 - **A page longer than the screen scrolls first**: the pager lets any
   scrolling element (the page, a long text) keep the wheel until it
   reaches its end.

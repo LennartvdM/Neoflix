@@ -30,6 +30,7 @@ import { resolveSlug } from '../pages/toolbox/docsIndex';
 import { buildAtlas } from './atlas';
 import Page, { labelOf } from './Page';
 import Sidebar from './Sidebar';
+import LibraryMap from './LibraryMap';
 import '../system/system.css';
 import './composition.css';
 
@@ -134,6 +135,7 @@ export default function Composition() {
   // ── search: a page of its own, over the story ──────────────────────────
   const [query, setQuery] = useState(() => (pathname.startsWith('/search') ? new URLSearchParams(search).get('q') || '' : ''));
   const [searching, setSearching] = useState(() => pathname.startsWith('/search'));
+  const [mapOpen, setMapOpen] = useState(false);
   const result = useMemo(() => (searching && query.trim() ? searchLibrary(query, lib) : null), [searching, query]);
 
   const go = useCallback((addr, { replace } = {}) => {
@@ -196,7 +198,7 @@ export default function Composition() {
       return false;
     };
     const onWheel = (e) => {
-      if (e.ctrlKey) return;
+      if (e.ctrlKey || mapOpen) return;
       const unit = e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? window.innerHeight : 1;
       const dx = e.deltaX * unit;
       const dy = e.deltaY * unit;
@@ -217,11 +219,11 @@ export default function Composition() {
     };
     window.addEventListener('wheel', onWheel, { passive: false });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [step, room.phone]);
+  }, [step, room.phone, mapOpen]);
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || mapOpen) return;
       const t = e.target;
       const typing = t instanceof HTMLElement && t.closest('input, textarea, [contenteditable]');
       if (e.key === 'Escape') {
@@ -240,7 +242,7 @@ export default function Composition() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [step, searching]);
+  }, [step, searching, mapOpen]);
 
   // Hovering a link in an open record lights where it lands, if it's here.
   const root = useRef(null);
@@ -280,6 +282,7 @@ export default function Composition() {
           <header className="cmp__mast">
             <a href="/" onClick={(e) => { e.preventDefault(); go([0]); }}>Neoflix</a>
             <nav>
+              <button type="button" onClick={() => setMapOpen(true)}>Map</button>
               <button type="button" onClick={() => setSearching((s) => !s)}>Search</button>
               <a href="/neoflix" onClick={(e) => { e.preventDefault(); navigate('/neoflix'); }}>The long read</a>
               <a href="/contact" onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>Contact</a>
@@ -303,6 +306,7 @@ export default function Composition() {
           >
             <Page
               node={shown}
+              came={searching || cur.length < 2 ? null : (() => { const p = ATLAS.at(cur.slice(0, -1)); return p.key || (p.kind === 'stop' && typeof p.stop.at === 'string' && catalog.has(p.stop.at) ? p.stop.at : null); })()}
               onPick={pick}
               onPath={(id) => go(ATLAS.homeOfPath.get(id))}
               onProbe={onProbe}
@@ -335,6 +339,16 @@ export default function Composition() {
           </>
         )}
       </main>
+
+      <AnimatePresence>
+        {mapOpen && (
+          <LibraryMap
+            here={node.key || (node.kind === 'stop' && typeof node.stop.at === 'string' && catalog.has(node.stop.at) ? node.stop.at : null)}
+            onGo={(k) => { setMapOpen(false); pick(k); }}
+            onClose={() => setMapOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {room.phone && (
         <nav className="cmp__phonebar" aria-label="Pages">
