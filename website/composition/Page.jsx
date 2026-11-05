@@ -104,6 +104,66 @@ function Thing({ k, big, ordinal, onPick }) {
   return <Guide k={k} big={big} ordinal={ordinal} onPick={onPick} />;
 }
 
+/*
+ * Two ways to show a film, and they mean different things:
+ *
+ *   feathered    the film as the moment, the world the words are in. It
+ *                has no edge: it dissolves into the page (Atmosphere) or
+ *                into a dark card the words sit on (Scene). You don't
+ *                pick it up; you're in it.
+ *   demarcated   the film as a record, a thing: a hard, clean frame
+ *                (Film, the percolating stills, a set's tiles). You can
+ *                open it, cite it, pack it.
+ *
+ * A scene carries a small demarcated still of its own film: the moment,
+ * and the record of it, one click away.
+ */
+function useReduced() {
+  const [reduced] = useState(prefersReducedMedia);
+  return reduced;
+}
+
+function FilmChip({ k, onPick }) {
+  const r = catalog.get(k);
+  return (
+    <a className="chip" href={urlFor(k)} data-id={k} onClick={(e) => { e.preventDefault(); onPick(k); }}>
+      <img src={stillFor(r)} alt="" draggable={false} />
+      <span><small>Film {r.order + 1} of 6</small>{r.name}</span>
+    </a>
+  );
+}
+
+function Scene({ k, eyebrow, title, text, onPick }) {
+  const r = catalog.get(k);
+  const reduced = useReduced();
+  return (
+    <article className="scene" data-id={k}>
+      <div className="scene__media" aria-hidden="true">
+        {reduced ? <img src={stillFor(r)} alt="" /> : <video src={clipFor(r)} poster={stillFor(r)} autoPlay muted loop playsInline preload="auto" />}
+      </div>
+      <div className="scene__words">
+        <p className="eyebrow">{eyebrow}</p>
+        <h1 className="title">{title}</h1>
+        <p className="scene__lead">{text}</p>
+        <FilmChip k={k} onPick={onPick} />
+      </div>
+    </article>
+  );
+}
+
+function Atmosphere({ k, onPick }) {
+  const r = catalog.get(k);
+  const reduced = useReduced();
+  return (
+    <div className="atmos" data-id={k}>
+      <div className="atmos__media" aria-hidden="true">
+        {reduced ? <img src={stillFor(r)} alt="" /> : <video src={clipFor(r)} poster={stillFor(r)} autoPlay muted loop playsInline preload="auto" />}
+      </div>
+      <FilmChip k={k} onPick={onPick} />
+    </div>
+  );
+}
+
 /**
  * What the reader could want: small, one line each, to one side, and
  * tied to what the page is about by a drawn edge (Wires), so the page
@@ -162,12 +222,15 @@ function Wires({ bodyRef, mainRef, wantRefs, want, follow }) {
         const el = wantRefs.current.get(w.key);
         if (!el) return;
         const r = el.getBoundingClientRect();
-        const x1 = r.right - b.left;
+        // The wants may sit left of the subject (most pages) or right of it
+        // (a scene): the edge leaves the side facing the subject.
+        const leftOf = r.left + r.width / 2 < m.left + m.width / 2;
+        const x1 = (leftOf ? r.right : r.left) - b.left;
         const y1 = r.top + r.height / 2 - b.top;
-        const x2 = m.left - b.left;
+        const x2 = (leftOf ? m.left : m.right) - b.left;
         const span = Math.min(m.height * 0.5, 220);
         const y2 = m.top - b.top + Math.min(m.height, 440) * 0.5 + (want.length > 1 ? (i / (want.length - 1) - 0.5) * span : 0);
-        if (x2 - x1 < 8) return;
+        if (Math.abs(x2 - x1) < 8) return;
         const dx = (x2 - x1) * 0.55;
         out.push({ key: w.key, type: w.type, x2, y2, d: `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}` });
       });
@@ -210,11 +273,13 @@ function Wires({ bodyRef, mainRef, wantRefs, want, follow }) {
 const SLOTS = {
   // relative to the figure: [x, y, w, h], x/y as fractions or px offsets
   big: (f) => ({ x: f.x + f.w - 128, y: f.y + f.h + 12, w: 244, h: 204 }),
-  top: (f, i, n) => {
+  // `from` is where along the top edge the row starts (a scene's left
+  // half is under the running head, so its row starts at the middle).
+  top: (f, i, n, from = 0) => {
     const w = [156, 162, 154][i % 3];
     const h = [100, 104, 98][i % 3];
-    const step = Math.min(186, (f.w - 20) / Math.max(n, 1));
-    return { x: f.x + 8 + i * step + (i % 2) * 6, y: f.y - h - 12 + (i % 2 ? -4 : 2), w, h };
+    const step = from ? 176 : Math.min(186, (f.w - 20) / Math.max(n, 1));
+    return { x: f.x + 8 + f.w * from + i * step + (i % 2) * 6, y: f.y - h - 12 + (i % 2 ? -4 : 2), w, h };
   },
 };
 
@@ -245,7 +310,7 @@ function Bit({ k }) {
   );
 }
 
-function Percolate({ keys, mainRef, big, onPick }) {
+function Percolate({ keys, mainRef, big, from = 0, onPick }) {
   const [box, setBox] = useState(null);
   useEffect(() => {
     const main = mainRef.current;
@@ -267,7 +332,7 @@ function Percolate({ keys, mainRef, big, onPick }) {
   const tops = withBig ? keys.slice(1, 4) : keys.slice(0, 3);
   const items = [
     ...(withBig ? [{ k: keys[0], s: SLOTS.big(box), big: true }] : []),
-    ...tops.map((k, i) => ({ k, s: SLOTS.top(box, i, tops.length) })),
+    ...tops.map((k, i) => ({ k, s: SLOTS.top(box, i, tops.length, from) })),
   ];
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h / 2;
@@ -467,6 +532,9 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
   // The edge you came in on: how the page you were on connects to this one.
   const thread = record && came && came !== record.key ? graph.threadBetween(came, record.key) : null;
 
+  // A story stop about one film is a scene: the film feathered into a
+  // card, the stop's words on it, the wants beside it.
+  const layout = page.layout === 'figure' && node.kind === 'stop' && page.figure?.startsWith('film:') ? 'scene' : page.layout;
   let main = null;
   if (page.layout === 'list') {
     const n = page.list.length;
@@ -496,12 +564,17 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
         </Here.Provider>
       </div>
     );
+  } else if (layout === 'scene') {
+    const st = node.stop;
+    main = <div className="figure"><Scene k={page.figure} eyebrow={st.short} title={st.title} text={st.text} onPick={onPick} /></div>;
+  } else if (layout === 'cover' && page.figure?.startsWith('film:')) {
+    main = <div className="figure"><Atmosphere k={page.figure} onPick={onPick} /></div>;
   } else if (page.figure) {
     main = <div className="figure"><Thing k={page.figure} big onPick={onPick} /></div>;
   }
 
   return (
-    <div className={`pg pg--${page.layout}`}>
+    <div className={`pg pg--${layout}`}>
       {head}
       <div className="pg__body" ref={bodyRef}>
         <Wires bodyRef={bodyRef} mainRef={mainRef} wantRefs={wantRefs} want={page.want} follow={follow} />
@@ -512,12 +585,12 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
               <span><b>From {labelOf(came)}</b>{thread.text}</span>
             </p>
           )}
-          {words}
+          {layout !== 'scene' && words}
           {want}
         </div>
         <div className="pg__main" ref={mainRef}>
           {main}
-          {page.adjacent?.length > 0 && <Percolate keys={page.adjacent} mainRef={mainRef} big={page.layout !== 'read'} onPick={onPick} />}
+          {page.adjacent?.length > 0 && <Percolate keys={page.adjacent} mainRef={mainRef} big={page.layout !== 'read'} from={layout === 'scene' ? 0.46 : 0} onPick={onPick} />}
         </div>
       </div>
     </div>

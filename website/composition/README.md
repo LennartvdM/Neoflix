@@ -105,6 +105,24 @@ chapter; the frosted sidebar card; pill buttons. The films are the dark
 tiles. If the deck's language changes, change the tokens at the top of
 `composition.css` to match.
 
+### Two ways to show a film (they mean different things)
+
+After the owner's earlier /neoflix layouts ("Task-driven focus can lead
+to tunnel vision"): a film is either **feathered** or **demarcated**.
+
+- **Feathered: the moment.** No edge; the film dissolves into what's
+  around it. A story stop about a film is a *scene* (`Scene` in
+  `Page.jsx`): the film feathers into a dark card and the stop's words
+  sit on it, headline and a barred lead, with the wants beside it. The
+  first page's film is *atmosphere* (`Atmosphere`): it dissolves into
+  the page itself. You're in it; you don't pick it up.
+- **Demarcated: the record.** A hard, clean frame (a crisp 1px edge): a
+  film record's own card, the percolating stills, a set's tiles, the
+  *chip* (`FilmChip`). Something you can open, cite, pack.
+- A feathered film always carries a small demarcated chip of itself
+  ("Film 1 of 6 · Urgency · Open the film"): the moment, and the record
+  of it, one click away.
+
 ## Traps
 
 - **One gesture, one page.** The pager swallows the rest of a gesture

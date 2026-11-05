@@ -45,7 +45,10 @@ working in; they're short, and GitHub renders them when browsing too.
   a click away); nothing else. The graph is visible: each want is tied to the page's
   subject by a drawn edge, a followed link opens with the edge you came in
   on, and "Map" shows the whole library as one graph on demand
-  (`composition/LibraryMap.jsx`). The look is adopted from the owner's Talent naar de Top
+  (`composition/LibraryMap.jsx`). A film is either feathered (the
+  moment: it dissolves into a dark card or the page, the words on it) or
+  demarcated (the record: a hard frame you can open); see the README.
+  The look is adopted from the owner's Talent naar de Top
   deck (Vragenlijst-Executive-Search) for now: Space Grotesk + Inter,
   indigo inks, white cards, the frosted sidebar. It renders outside the navbar and
   `RouteSlider` (`App.jsx`, `SPACE_ROUTES`). `website/space/` (the
