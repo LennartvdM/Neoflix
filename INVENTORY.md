@@ -13,7 +13,7 @@ done here): find the ontology in it; the draft is
 | Blurred backdrop loops | 6 (≈1.4 MB) | `website/public/videos/blur*.mp4` | /neoflix, /publications |
 | Phone clips | 6 + intro montage (9.6 MB) | `website/public/videos/mobile/` | old phone homepage (not routed) |
 | Stills / posters | 13 webp + 8 jpg/png | `videos/stills/`, `videos/mobile/*_poster.*` | yes |
-| The session film | 1 (Vimeo, 6:44), transcribed: 58 lines, 7 scenes, 11 quotable moments | `system/content/session-film.js` (transcript supplied by the owner) | yes: moments on pages, a transcript page |
+| The session film | 1 (Vimeo, 6:44), transcribed: 64 turns (±0.5 s), 11 sequences, 11 quotable moments, 18 keyframes | `system/content/session-film.js`, stills in `public/videos/session/` (from the owner's context package) | yes: moments on pages, a transcript page |
 | Toolbox videos | 3 (GoPro on the resuscitation table, putting on the eye-tracking glasses ×2) | `docs-content/.gitbook/assets` → `public/docs-assets` (95 MB total) | inside a few toolbox pages |
 | Papers | 6 PDFs + a zip bundle (24 MB) | `website/public/papers/` | yes |
 | Publisher screenshots | 6 | `website/public/previews/` | /publications |
@@ -155,4 +155,4 @@ positive; 28 interviews; 19 differences / 7 changes; recorded since
    actually ask), the history of video recording in healthcare.
 6. **Gaps**: no material for parents (though paper 3 invited them), no
    people (who the team is), no audio, no explainer animations yet
-   (10 briefs exist), (the session film is transcribed since; see `system/content/session-film.js`).
+   (10 briefs exist). The session film is transcribed since, with keyframes; see `system/content/session-film.js`.

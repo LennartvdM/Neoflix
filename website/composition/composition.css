@@ -637,8 +637,11 @@ button.rchip:hover { background: #fff; color: var(--accent); }
 .rd__caption b { display: block; margin-bottom: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
 
 /* ── the session film, cut up ───────────────────────────────────────── */
-.moment { margin: 0 0 28px; max-width: 420px; padding: 20px 22px 18px; border-radius: 20px; background: radial-gradient(120% 90% at 30% 0%, #1a2440 0%, #0f1628 70%); color: #e6ecfb; box-shadow: 0 2px 6px rgba(12, 18, 34, 0.16), 0 18px 40px rgba(12, 18, 34, 0.26); }
+.moment { margin: 0 0 28px; max-width: 420px; padding: 20px 22px 18px; border-radius: 20px; overflow: hidden; background: radial-gradient(120% 90% at 30% 0%, #1a2440 0%, #0f1628 70%); color: #e6ecfb; box-shadow: 0 2px 6px rgba(12, 18, 34, 0.16), 0 18px 40px rgba(12, 18, 34, 0.26); }
 .pg--scene .moment { margin-top: 0; }
+/* Feathered: the still dissolves into the card; the caption rises onto it. */
+.moment__still { display: block; width: calc(100% + 44px); max-width: none; height: auto; margin: -20px -22px -46px; aspect-ratio: 720 / 406; object-fit: cover; -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%); mask-image: linear-gradient(to bottom, #000 45%, transparent 100%); opacity: 0.85; }
+.moment figcaption { position: relative; }
 .moment figcaption { display: grid; gap: 4px; margin-bottom: 12px; }
 .moment__tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: #9fdde3; }
 .moment strong { font-family: var(--display); font-size: 18px; font-weight: 500; color: #fff; }
@@ -658,6 +661,12 @@ button.rchip:hover { background: #fff; color: var(--accent); }
 .tr__scene .rd__h { display: flex; align-items: baseline; gap: 12px; }
 .tr__scene .rd__h em { font-style: normal; color: var(--accent); }
 .tr__scene .rd__h small { margin-left: auto; font-family: Inter, sans-serif; font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.tr__head { display: grid; grid-template-columns: 168px 1fr; gap: 18px; align-items: start; margin-bottom: 10px; }
+.tr__head .rd__h { margin-top: 2px; }
+/* Demarcated: a hard frame, the scene's record; click plays from it. */
+.tr__frame { display: block; padding: 0; border-radius: 10px; overflow: hidden; outline: 1px solid rgba(17, 17, 98, 0.18); outline-offset: -1px; box-shadow: 0 1px 3px rgba(12, 18, 34, 0.12); }
+.tr__frame img { display: block; width: 100%; height: auto; transition: transform 0.4s ease; }
+.tr__frame:hover img { transform: scale(1.04); }
 .tr__says { margin: -4px 0 14px; font-size: 14px; color: var(--ink-soft); }
 .tr__row { padding: 8px 12px; border-radius: 12px; }
 .tr__row[data-cut] { background: rgba(140, 174, 244, 0.14); }

@@ -11,6 +11,7 @@
  * Runs after build-docs.mjs (it reads the generated manifest).
  */
 import { promises as fs } from 'node:fs';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildCatalog, parseKey, LOOP } from '../system/catalog.js';
@@ -23,7 +24,7 @@ import { searchLibrary } from '../system/search.js';
 import { buildAtlas } from '../composition/atlas.js';
 import { buildOntology } from '../composition/ontology.js';
 import { ontologyLinks, entry, PRACTICES, CLAIMS } from '../system/content/ontology.js';
-import { SESSION_FILM, LINES, MOMENTS, SCENES, linesOf } from '../system/content/session-film.js';
+import { SESSION_FILM, LINES, MOMENTS, SCENES, FRAMES, frameSrc, linesOf } from '../system/content/session-film.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(await fs.readFile(path.join(__dirname, '../generated/docs-manifest.json'), 'utf8'));
@@ -208,6 +209,13 @@ check('the session film’s moments hold together', () => {
   }
   SCENES.forEach((s, i) => { if (i && s.from !== SCENES[i - 1].to) fail(`session film: scene ${s.id} doesn't follow the one before`); });
   if (LINES.some((l, i) => i && l.t < LINES[i - 1].t)) fail('session film: lines out of order');
+  // Every moment and scene shows a keyframe that exists, at a time inside it.
+  for (const x of [...MOMENTS, ...SCENES]) {
+    const f = FRAMES[x.frame];
+    if (!f) { fail(`session film: ${x.id} has no frame`); continue; }
+    if (!existsSync(new URL(`../public${frameSrc(x.frame)}`, import.meta.url))) fail(`session film: frame ${x.frame} missing from public/`);
+    if (!(f.t >= x.from - 1 && f.t <= x.to)) fail(`session film: frame ${x.frame} (${f.t}s) lies outside ${x.id}`);
+  }
 });
 
 check('kinds are the three the site knows', () => {

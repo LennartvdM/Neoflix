@@ -14,4 +14,4 @@ export const lib = { catalog, graph };
 
 export const stillFor = (film) => assetUrl(`/videos/stills/${film.clip}.webp`);
 export const clipFor = (film) => assetUrl(`/videos/${film.clip}.mp4`);
-export const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+export const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
