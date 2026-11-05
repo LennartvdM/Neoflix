@@ -187,8 +187,13 @@ function Wires({ bodyRef, mainRef, wantRefs, want, follow }) {
     <svg className="wires" aria-hidden="true">
       {paths.map((p, i) => (
         <g key={p.key} data-type={p.type} data-follow={follow === p.key ? '' : undefined} style={{ '--d': `${0.25 + i * 0.12}s` }}>
-          <path d={p.d} pathLength="1" />
-          <circle cx={p.x2} cy={p.y2} r="4.5" />
+          {/* A dashed line can't draw itself in with its own dashes, so a
+              solid copy in a mask does the drawing and the dashes show through. */}
+          <mask id={`wire-${i}`} maskUnits="userSpaceOnUse">
+            <path className="wires__reveal" d={p.d} pathLength="1" />
+          </mask>
+          <path className="wires__line" d={p.d} mask={`url(#wire-${i})`} />
+          <circle cx={p.x2} cy={p.y2} r="6" />
         </g>
       ))}
     </svg>

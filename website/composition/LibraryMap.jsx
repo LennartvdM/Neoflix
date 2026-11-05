@@ -98,7 +98,7 @@ export default function LibraryMap({ here, onGo, onClose }) {
             {L.steps.map((s) => <text key={s.id} className="map__tick" x={s.x} y={s.y} textAnchor="middle">{s.name} · {s.n}</text>)}
             {L.edges.map((e, i) => {
               const hot = focus && (e.a === focus || e.b === focus);
-              return <path key={i} className="map__edge" data-kind={e.kind} data-hot={hot ? '' : undefined} pathLength="1" style={{ '--d': `${0.15 + i * 0.006}s` }} d={curve(L.at[e.a], L.at[e.b])} />;
+              return <path key={i} className="map__edge" data-kind={e.kind} data-hot={hot ? '' : undefined} style={{ '--d': `${0.15 + i * 0.006}s` }} d={curve(L.at[e.a], L.at[e.b])} />;
             })}
             {route.length > 1 && <path className="map__route" pathLength="1" d={route.map((k, i) => `${i ? 'L' : 'M'}${L.at[k].x},${L.at[k].y}`).join(' ')} />}
           </svg>

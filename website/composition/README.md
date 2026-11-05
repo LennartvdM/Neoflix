@@ -39,9 +39,11 @@ The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
     on, in the order a reader needs it.
   - *rest*: not on the page. Reachable (the sidebar, down, right), never
     listed. Citations and the like are actions in a record's title block.
-- **The graph is visible, in three places**, one colour per kind of
-  link everywhere (blue the evidence, green the practice, indigo a film,
-  grey a path):
+- **The graph is visible, in three places**, drawn like marker on a
+  whiteboard, not traces on a circuit board (the owner, 2026-11): broad,
+  dashed, white, quiet. The kind of link is said by the label colour on
+  the card (blue the evidence, green the practice, indigo a film), not by
+  the line:
   - *on every page*, each want is tied to what the page is about by a
     drawn edge, so the page shows why it's offered; following one lights
     its edge before the page moves;
@@ -95,6 +97,10 @@ tiles. If the deck's language changes, change the tokens at the top of
   (until the wheel is quiet for 200 ms, and at least 560 ms after a
   move). A text that scrolls inside its element keeps the wheel until it
   reaches its end; only then does the page move.
+- **A dashed edge can't draw itself in with its own dashes** (the draw-in
+  trick is a dash the length of the path). On the page each edge draws a
+  solid copy into a mask and the dashes show through it; on the map the
+  edges fade in instead.
 - **The edges measure the page after it is attached** (`Wires` in
   `Page.jsx` uses a passive effect: it is a child of the element it
   measures, and a parent's ref isn't set yet during a child's layout
