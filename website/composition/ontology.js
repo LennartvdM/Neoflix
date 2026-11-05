@@ -48,7 +48,8 @@ const cap = (list, n) => {
   return list.filter((w) => w && !seen.has(w.key) && seen.add(w.key)).slice(0, n);
 };
 
-import { claimOfFilm } from '../system/content/ontology.js';
+import { claimOfFilm, PRACTICES } from '../system/content/ontology.js';
+import { momentsFor } from '../system/content/session-film.js';
 
 export function buildOntology({ catalog, graph, readings = {} }) {
   // The paper's own sentence that best fits a subject, when its reading
@@ -159,6 +160,7 @@ export function buildOntology({ catalog, graph, readings = {} }) {
     // A paper as a reading (its own words) or as our notes on it.
     if (node.kind === 'section') return { layout: 'paper', paper: node.paper, section: node.section, want: [] };
     if (node.kind === 'synopsis') return { layout: 'synopsis', paper: node.paper, want: [] };
+    if (node.kind === 'transcript') return { layout: 'transcript', want: [] };
     if (node.kind === 'record') {
       const r = catalog.get(node.key);
       if (!r) return { layout: 'read', modules: [], want: [] };
@@ -180,5 +182,29 @@ export function buildOntology({ catalog, graph, readings = {} }) {
     return { layout: 'figure', want: [] };
   }
 
-  return { pageOf, wantsOf, percolateOf, underOf };
+  /**
+   * A moment from the session film that shows what this is (≤ 1): the
+   * record itself first, then its claim, then the practices it documents.
+   */
+  const witnessOf = (key) => {
+    if (!key) return null;
+    const keys = [key];
+    if (kindOf(key) === 'film' && claimOfFilm(key)) keys.push(`claim:${claimOfFilm(key).id}`);
+    if (kindOf(key) === 'guidance') PRACTICES.filter((p) => p.pages.includes(key)).forEach((p) => keys.push(`practice:${p.id}`));
+    for (const k of keys) { const m = momentsFor(k)[0]; if (m) return m.id; }
+    return null;
+  };
+
+  const base = pageOf;
+  function pageWithWitness(node) {
+    const page = base(node);
+    if (page.layout === 'figure' || page.layout === 'read') {
+      const subject = node.kind === 'record' ? node.key : node.stop?.at;
+      const w = typeof subject === 'string' ? witnessOf(subject) : null;
+      if (w) return { ...page, witness: w };
+    }
+    return page;
+  }
+
+  return { pageOf: pageWithWitness, wantsOf, percolateOf, underOf, witnessOf };
 }

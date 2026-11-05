@@ -27,6 +27,7 @@ library's content files (next sections); these are its own.
 | A path's name and blurb | `system/content/paths.js` |
 | A loop step's name ("Before you record"…) | `LOOP` in `system/catalog.js` |
 | The argument's claims, the findings with their figures, the concepts (and each explainer's brief), practices, roles, units | `system/content/ontology.js` (draft; see `composition/ONTOLOGY.md`) |
+| The session film's transcript (every line, its time, who says it), its scenes, and the moments other pages quote ("From the person to the situation"…) | `system/content/session-film.js` |
 | The modules of an open record | `system/modules/` (`MODULE_NAMES`, `plans.js`) |
 | The sidebar's foot ("↑↓ the story · → deeper · ← back"), the ways on at the page's edges ("3 pages deeper", "Back to the story") | `composition/Sidebar.jsx`, `composition/Composition.jsx` |
 | Neoflix, Map, Search, The long read, Contact (top of the sidebar) | `composition/Composition.jsx` |

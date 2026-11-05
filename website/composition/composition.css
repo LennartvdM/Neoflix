@@ -635,3 +635,35 @@ button.rchip:hover { background: #fff; color: var(--accent); }
 .rd__section { margin-top: 8px; }
 @media (max-width: 1100px) { .rd__row { grid-template-columns: 1fr; } .rd__margin { padding: 0 0 18px; } }
 .rd__caption b { display: block; margin-bottom: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
+
+/* ── the session film, cut up ───────────────────────────────────────── */
+.moment { margin: 0 0 28px; max-width: 420px; padding: 20px 22px 18px; border-radius: 20px; background: radial-gradient(120% 90% at 30% 0%, #1a2440 0%, #0f1628 70%); color: #e6ecfb; box-shadow: 0 2px 6px rgba(12, 18, 34, 0.16), 0 18px 40px rgba(12, 18, 34, 0.26); }
+.pg--scene .moment { margin-top: 0; }
+.moment figcaption { display: grid; gap: 4px; margin-bottom: 12px; }
+.moment__tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: #9fdde3; }
+.moment strong { font-family: var(--display); font-size: 18px; font-weight: 500; color: #fff; }
+.moment__lines { display: grid; gap: 9px; }
+.fline { margin: 0; display: grid; grid-template-columns: auto 1fr; column-gap: 10px; font-size: 14px; line-height: 1.5; }
+.fline b { grid-column: 1 / -1; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #9fb6f5; }
+.fline span { grid-column: 1 / -1; }
+.fline[data-who='footage'] span { font-style: italic; opacity: 0.8; }
+.moment__play { margin-top: 16px; padding: 9px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); color: #fff; font-weight: 600; font-size: 13px; }
+.moment__play:hover { background: rgba(255, 255, 255, 0.22); }
+.moment__play--light { margin: 4px 0 26px; background: var(--brand); }
+.moment__play--light:hover { background: var(--accent); }
+
+/* the transcript page */
+.tr { max-width: 760px; }
+.tr__scene { margin-top: 30px; }
+.tr__scene .rd__h { display: flex; align-items: baseline; gap: 12px; }
+.tr__scene .rd__h em { font-style: normal; color: var(--accent); }
+.tr__scene .rd__h small { margin-left: auto; font-family: Inter, sans-serif; font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.tr__says { margin: -4px 0 14px; font-size: 14px; color: var(--ink-soft); }
+.tr__row { padding: 8px 12px; border-radius: 12px; }
+.tr__row[data-cut] { background: rgba(140, 174, 244, 0.14); }
+.tr .fline { grid-template-columns: 52px 1fr; color: var(--ink); font-size: 15.5px; line-height: 1.6; }
+.tr .fline b { grid-column: 2; color: var(--ink-mute); }
+.tr .fline span { grid-column: 2; }
+.tr .fline__t { grid-row: 1 / span 2; align-self: start; padding-top: 2px; font-size: 12px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; text-align: left; }
+.tr .fline__t:hover { text-decoration: underline; }
+.tr .fline[data-who='vo'] span { font-family: var(--display); font-size: 16px; color: var(--brand); }

@@ -29,6 +29,7 @@ import { buildOntology } from './ontology';
 import { entry } from '../system/content/ontology';
 import { CHAPTERS } from './tour';
 import Reading from './Reading';
+import { Moment, Transcript } from './SessionFilm';
 import { readings } from '../system/readings';
 
 const ONTOLOGY = buildOntology({ catalog, graph, readings });
@@ -553,6 +554,7 @@ export default function Page({ node, came, onPick, onPath, onProbe, onDeeper, se
     );
   }
   if (node.kind === 'section' || node.kind === 'synopsis') return <Reading node={node} onPick={onPick} />;
+  if (node.kind === 'transcript') return <Transcript />;
   if (node.kind === 'search') {
     head = <Head title="Search" />;
     words = <div className="words">{search}</div>;
@@ -659,6 +661,8 @@ export default function Page({ node, came, onPick, onPath, onProbe, onDeeper, se
             </p>
           )}
           {layout !== 'scene' && words}
+          {/* a moment from the session film that shows this, said by the people in it */}
+          {page.witness && <Moment id={page.witness} />}
           {want}
         </div>
         <div className="pg__main" ref={mainRef}>

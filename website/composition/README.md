@@ -89,6 +89,7 @@ its stop. Other pages are `/?at=3.1`.
 | `Sidebar.jsx` | The anchor: where you are, without the whole index. |
 | `Page.jsx` | One page, drawn from the ontology: the running head, the words, the wants and their edges, the edge you came in on, the need. |
 | `Intermission.jsx` | An explainer edge to edge, between stops of the story (placeholder stage; see `ONTOLOGY.md`). |
+| `SessionFilm.jsx` | The session film cut up: a *moment* on a page whose subject it shows (who said what, ▶ from that second; `witnessOf` in `ontology.js`), and the whole transcript as a page (under the first and last stops). Data: `system/content/session-film.js`. |
 | `LibraryMap.jsx` | The whole library as one graph, on demand. |
 | `tour.js` | The story: its stops, their words, their short names in the sidebar. Node-safe. |
 | `composition.css` | The look. |

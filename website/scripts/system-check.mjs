@@ -23,6 +23,7 @@ import { searchLibrary } from '../system/search.js';
 import { buildAtlas } from '../composition/atlas.js';
 import { buildOntology } from '../composition/ontology.js';
 import { ontologyLinks, entry, PRACTICES, CLAIMS } from '../system/content/ontology.js';
+import { SESSION_FILM, LINES, MOMENTS, SCENES, linesOf } from '../system/content/session-film.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(await fs.readFile(path.join(__dirname, '../generated/docs-manifest.json'), 'utf8'));
@@ -195,6 +196,19 @@ check('the ontology holds together', () => {
   }
   if (failures === before) console.log(`  ok  the readings hold together (${files.length})`);
 }
+
+// The session film, cut up (system/content/session-film.js): every moment
+// covers real lines inside the film and is tagged with things that exist;
+// scenes tile the film in order.
+check('the session film’s moments hold together', () => {
+  for (const m of MOMENTS) {
+    if (!(m.from < m.to && m.to <= SESSION_FILM.length)) fail(`session film: moment ${m.id} has a bad range`);
+    if (!linesOf(m).length) fail(`session film: moment ${m.id} covers no lines`);
+    for (const k of m.tags) if (!catalog.has(k) && !entry(k)) fail(`session film: moment ${m.id} tagged with unknown ${k}`);
+  }
+  SCENES.forEach((s, i) => { if (i && s.from !== SCENES[i - 1].to) fail(`session film: scene ${s.id} doesn't follow the one before`); });
+  if (LINES.some((l, i) => i && l.t < LINES[i - 1].t)) fail('session film: lines out of order');
+});
 
 check('kinds are the three the site knows', () => {
   for (const key of catalog.records.keys()) if (!['guidance', 'paper', 'film'].includes(parseKey(key).kind)) fail(`odd key ${key}`);

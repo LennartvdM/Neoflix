@@ -87,7 +87,7 @@ export function buildAtlas(catalog, graph, readings = {}) {
 
   // What each stop of the story opens onto.
   const kidsOfStop = (s) => {
-    if (s.doors) return catalog.paths.map(path);
+    if (s.doors) return [...catalog.paths.map(path), { id: `film-transcript:${s.id}`, kind: 'transcript', key: null, label: 'The session film, transcribed', num: null, kids: [] }];
     if (Array.isArray(s.at)) return records(s.at);
     if (s.at === 'region:practice') return LOOP.map(step);
     const col = /^column:(.+)$/.exec(s.at);
