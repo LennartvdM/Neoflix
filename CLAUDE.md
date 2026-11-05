@@ -47,7 +47,9 @@ working in; they're short, and GitHub renders them when browsing too.
   on, and "Map" shows the whole library as one graph on demand
   (`composition/LibraryMap.jsx`). A film is either feathered (the
   moment: it dissolves into a dark card or the page, the words on it) or
-  demarcated (the record: a hard frame you can open); see the README.
+  demarcated (the record: a hard frame you can open), and overlap means
+  something: over = part of it, under = what it rests on (the evidence,
+  tucked beneath), separate = elsewhere; see the README.
   The look is adopted from the owner's Talent naar de Top
   deck (Vragenlijst-Executive-Search) for now: Space Grotesk + Inter,
   indigo inks, white cards, the frosted sidebar. It renders outside the navbar and

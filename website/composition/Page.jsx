@@ -145,7 +145,6 @@ function Scene({ k, eyebrow, title, text, onPick }) {
         <p className="eyebrow">{eyebrow}</p>
         <h1 className="title">{title}</h1>
         <p className="scene__lead">{text}</p>
-        <FilmChip k={k} onPick={onPick} />
       </div>
     </article>
   );
@@ -272,7 +271,7 @@ function Wires({ bodyRef, mainRef, wantRefs, want, follow }) {
  */
 const SLOTS = {
   // relative to the figure: [x, y, w, h], x/y as fractions or px offsets
-  big: (f) => ({ x: f.x + f.w - 128, y: f.y + f.h + 12, w: 244, h: 204 }),
+  big: (f, below = 0) => ({ x: f.x + f.w - 128, y: f.y + f.h + 12 + below, w: 244, h: 204 }),
   // `from` is where along the top edge the row starts (a scene's left
   // half is under the running head, so its row starts at the middle).
   top: (f, i, n, from = 0) => {
@@ -310,7 +309,54 @@ function Bit({ k }) {
   );
 }
 
-function Percolate({ keys, mainRef, big, from = 0, onPick }) {
+/**
+ * Under: what the subject rests on, tucked beneath its bottom edge and
+ * peeking out (the evidence behind a film or a toolbox page). Point at
+ * one and it slides out from under, with the finding that ties it here.
+ */
+function Under({ items, mainRef, onPick }) {
+  const [box, setBox] = useState(null);
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main || !items.length) { setBox(null); return undefined; }
+    const measure = () => {
+      const fig = main.firstElementChild?.firstElementChild || main.firstElementChild;
+      if (!fig) return;
+      const m = main.getBoundingClientRect();
+      const r = fig.getBoundingClientRect();
+      setBox({ x: r.left - m.left, y: r.top - m.top, w: r.width, h: r.height });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(main);
+    return () => ro.disconnect();
+  }, [mainRef, items]);
+  if (!box || !items.length) return null;
+  return (
+    <div className="under" style={{ left: box.x + 28, top: box.y + box.h - 70 }} aria-label="What this rests on">
+      {items.map((u, i) => {
+        const r = catalog.get(u.key);
+        return (
+          <a
+            key={u.key}
+            className="under__slip"
+            href={urlFor(u.key)}
+            data-id={u.key}
+            style={{ '--i': i }}
+            onClick={(e) => { e.preventDefault(); onPick(u.key); }}
+          >
+            <span className="under__tab" aria-hidden="true"><b>{r.n}</b>{r.short}</span>
+            <strong className="under__title"><b>{r.n}</b>{r.short}</strong>
+            <span className="under__line">{u.line}</span>
+            <small>Paper {r.n} · {r.journal}, {r.year} →</small>
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+function Percolate({ keys, mainRef, big, from = 0, below = 0, onPick }) {
   const [box, setBox] = useState(null);
   useEffect(() => {
     const main = mainRef.current;
@@ -331,7 +377,7 @@ function Percolate({ keys, mainRef, big, from = 0, onPick }) {
   const withBig = big && keys.length > 1;
   const tops = withBig ? keys.slice(1, 4) : keys.slice(0, 3);
   const items = [
-    ...(withBig ? [{ k: keys[0], s: SLOTS.big(box), big: true }] : []),
+    ...(withBig ? [{ k: keys[0], s: SLOTS.big(box, below), big: true }] : []),
     ...tops.map((k, i) => ({ k, s: SLOTS.top(box, i, tops.length, from) })),
   ];
   const cx = box.x + box.w / 2;
@@ -566,7 +612,13 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
     );
   } else if (layout === 'scene') {
     const st = node.stop;
-    main = <div className="figure"><Scene k={page.figure} eyebrow={st.short} title={st.title} text={st.text} onPick={onPick} /></div>;
+    main = (
+      <div className="figure">
+        <Scene k={page.figure} eyebrow={st.short} title={st.title} text={st.text} onPick={onPick} />
+        {/* over: its own record, laid over its edge */}
+        <div className="over"><FilmChip k={page.figure} onPick={onPick} /></div>
+      </div>
+    );
   } else if (layout === 'cover' && page.figure?.startsWith('film:')) {
     main = <div className="figure"><Atmosphere k={page.figure} onPick={onPick} /></div>;
   } else if (page.figure) {
@@ -590,7 +642,8 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
         </div>
         <div className="pg__main" ref={mainRef}>
           {main}
-          {page.adjacent?.length > 0 && <Percolate keys={page.adjacent} mainRef={mainRef} big={page.layout !== 'read'} from={layout === 'scene' ? 0.46 : 0} onPick={onPick} />}
+          {page.under?.length > 0 && <Under items={page.under} mainRef={mainRef} onPick={onPick} />}
+          {page.adjacent?.length > 0 && <Percolate keys={page.adjacent} mainRef={mainRef} big={page.layout !== 'read' && layout !== 'scene'} from={layout === 'scene' ? 0.46 : 0} below={page.under?.length ? 78 : 0} onPick={onPick} />}
         </div>
       </div>
     </div>

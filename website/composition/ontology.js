@@ -16,7 +16,15 @@
  *          subject's edges, quiet until pointed at. Not a list and not
  *          a want: the sense that the thing you're looking at sits in a
  *          body of material, and the nearest of it is one click away.
- *   rest   everything else in the library. Not on the page. It is
+ *   rest   everything else in the library.
+ *
+ * And a grammar of overlap, for where things sit relative to the subject:
+ *   over      part of it: its own record, laid over its edge (a film's
+ *             chip on its scene)
+ *   under     what it rests on: the evidence, tucked beneath its edge,
+ *             peeking out; pull it out to read the finding (`under`)
+ *   separate  somewhere else you could go: the wants and the neighbours,
+ *             apart from it, joined to it or tethered away by an edge Not on the page. It is
  *          reachable (the sidebar, down, right) but the page doesn't
  *          spend the reader's attention listing it.
  *
@@ -56,12 +64,28 @@ export function buildOntology({ catalog, graph }) {
     return { key, type: 'film', why: 'On film', title: f.name, line: f.claim };
   };
 
-  /** What a record's reader could want next (≤ 2). */
-  const wantsOf = (key) => {
+  /**
+   * What a subject rests on, shown tucked under it (≤ 3): the papers
+   * behind a film or a toolbox page, each with the finding that ties it
+   * to this subject. A paper rests on nothing here.
+   */
+  const underOf = (key) => {
+    if (kindOf(key) === 'paper') return [];
+    return graph.papersOf(key).slice(0, 3).map((p) => evidence(p.key, key));
+  };
+
+  /**
+   * What a record's reader could want next (≤ 2). With `under` shown, the
+   * evidence is already there, beneath the subject, so the wants are the
+   * ways onward instead.
+   */
+  const wantsOf = (key, { under = false } = {}) => {
     const k = kindOf(key);
     const papers = graph.papersOf(key).map((p) => p.key);
     const guides = graph.guidanceOf(key).map((g) => g.key);
     const films = graph.filmsOf(key).map((f) => f.key);
+    if (k === 'film' && under) return cap([guides[0] && practice(guides[0]), guides[1] && practice(guides[1])], 2);
+    if (k === 'guidance' && under) return cap([films[0] && onFilm(films[0]), films[1] && onFilm(films[1])], 2);
     if (k === 'film') return cap([papers[0] && evidence(papers[0], key), guides[0] && practice(guides[0])], 2);
     if (k === 'paper') return cap([films[0] && onFilm(films[0]), guides[0] && practice(guides[0])], 2);
     return cap([papers[0] && evidence(papers[0], key), films[0] && onFilm(films[0])], 2);
@@ -128,11 +152,12 @@ export function buildOntology({ catalog, graph }) {
     if (s.at === 'region:practice') return { layout: 'list', list: node.kids.map((k) => `step:${k.phase}`), want: [] };
     if (/^column:/.test(s.at)) return { layout: 'list', list: node.kids.map((k) => k.key), want: [] };
     if (catalog.has(s.at)) {
-      const want = wantsOf(s.at);
-      return { layout: 'figure', figure: s.at, want, adjacent: percolateOf(s.at, want.map((w) => w.key)) };
+      const under = underOf(s.at);
+      const want = wantsOf(s.at, { under: under.length > 0 });
+      return { layout: 'figure', figure: s.at, want, under, adjacent: percolateOf(s.at, [...want, ...under].map((w) => w.key)) };
     }
     return { layout: 'figure', want: [] };
   }
 
-  return { pageOf, wantsOf, percolateOf };
+  return { pageOf, wantsOf, percolateOf, underOf };
 }

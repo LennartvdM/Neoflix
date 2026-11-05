@@ -526,3 +526,43 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
   .pg--scene .pg__words { order: 2; padding-top: 0; }
   .scene__words { padding: 0 20px 24px; }
 }
+
+/* ── a grammar of overlap ──────────────────────────────────────────────
+   over      part of it: its own record, laid over its edge
+   under     what it rests on: tucked beneath its edge, peeking out
+   separate  elsewhere: apart from it, joined or tethered by an edge */
+
+/* over: a scene's own film record straddles its bottom edge */
+.figure { position: relative; }
+.over { position: absolute; right: -28px; bottom: -26px; z-index: 4; }
+
+/* under: the evidence, tucked beneath the subject's bottom edge */
+.under { position: absolute; z-index: 1; display: flex; gap: 12px; }
+.under__slip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 232px;
+  height: 128px;
+  padding: 16px 16px 14px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(20, 20, 58, 0.06), 0 10px 26px rgba(20, 20, 58, 0.12);
+  color: var(--ink);
+  transform: translateY(calc(var(--i) * 6px));
+  transition: transform 0.45s var(--ease-arrive), height 0.45s var(--ease-arrive), box-shadow 0.3s var(--ease);
+}
+/* what peeks out below the edge: the number and the short name */
+.under__tab { position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; align-items: baseline; gap: 8px; font-family: var(--display); font-size: 14px; font-weight: 500; color: var(--brand); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity 0.2s; }
+.under__tab b { font-weight: 500; font-size: 20px; color: var(--accent); }
+.under__title { display: flex; align-items: baseline; gap: 8px; font-family: var(--display); font-size: 15px; font-weight: 500; color: var(--brand); }
+.under__title b { font-weight: 500; font-size: 20px; color: var(--accent); }
+.under__title, .under__line, .under__slip small { opacity: 0; transition: opacity 0.25s var(--ease); }
+.under__line { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+.under__slip small { margin-top: auto; font-size: 11.5px; font-weight: 600; color: var(--accent); }
+/* pulled out from under: it slides down clear of the edge and opens */
+.under__slip:hover, .under__slip:focus-visible { z-index: 5; height: 200px; transform: translateY(78px); box-shadow: var(--tile-shadow-hi); }
+.under__slip:hover .under__tab, .under__slip:focus-visible .under__tab { opacity: 0; }
+.under__slip:hover :is(.under__title, .under__line, small), .under__slip:focus-visible :is(.under__title, .under__line, small) { opacity: 1; }
+@media (max-width: 759px) { .under { display: none; } .over { position: static; margin-top: 12px; } }

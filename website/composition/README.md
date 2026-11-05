@@ -123,6 +123,24 @@ to tunnel vision"): a film is either **feathered** or **demarcated**.
   ("Film 1 of 6 · Urgency · Open the film"): the moment, and the record
   of it, one click away.
 
+### A grammar of overlap
+
+Where something sits relative to the subject says what it is to it (the
+owner, 2026-11: "under and over and separate meaning different things"):
+
+- **Over: part of it.** Its own record laid over its edge: a scene's film
+  chip straddles the card's bottom-right corner (`.over`).
+- **Under: what it rests on.** The evidence behind a film or a toolbox
+  page is tucked beneath the subject's bottom edge, a sliver of each
+  paper peeking out with its number and name (`Under` in `Page.jsx`,
+  `underOf` in `ontology.js`). Point at one and it slides out from under
+  with the finding that ties it to this subject; click to open the
+  paper. Because the evidence is under the subject, the wants on those
+  pages are the ways onward (how to do it, or the film) instead.
+- **Separate: somewhere else.** The wants and the percolating neighbours
+  keep a gap from the subject, joined to it by an edge or tethered away
+  off the page.
+
 ## Traps
 
 - **One gesture, one page.** The pager swallows the rest of a gesture
