@@ -20,9 +20,8 @@ import { urlFor, keyForPath } from '../system/urls.js';
 import { planRecord } from '../system/modules/plans.js';
 import { assemble, rowsOf, COLUMNS } from '../system/assemble.js';
 import { searchLibrary } from '../system/search.js';
-import { buildWorld, itemsFor } from '../composition/contexts.js';
 import { buildAtlas } from '../composition/atlas.js';
-import { assemble as magnetAssemble } from '../composition/magnet.js';
+import { buildOntology } from '../composition/ontology.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(await fs.readFile(path.join(__dirname, '../generated/docs-manifest.json'), 'utf8'));
@@ -117,45 +116,32 @@ check('every record has a page in the atlas, and every move lands', () => {
   atlas.spine.forEach((n, i) => walk(n, [i]));
 });
 
-// Every page is assembled by the magnet (composition/magnet.js), and
-// nobody looks at most of them. Assemble every page of the atlas at
-// desktop size (rough module sizes) and fail if elements overlap, leave
-// the page, or something a page can't do without has nowhere to clamp.
-check('every page of the atlas assembles', () => {
-  const world = buildWorld(catalog);
+// What every page shows comes from the ontology (composition/ontology.js):
+// what the reader needs, at most three things they could want, nothing
+// else. Check every page of the atlas: the need is there (a record's
+// own modules exist for it, a set isn't empty), the wants are few and
+// real, and none of them is the page itself.
+check('every page gives what is needed, and no more than three wants', () => {
   const atlas = buildAtlas(catalog, graph);
-  const bounds = { x: 20, y: 20, w: 1040, h: 808 };
-  const voice = { w: 400, h: 420 };
-  const at = (s) => (s.at === 'everything' ? { lens: 'everything' } : Array.isArray(s.at) || /^(column|region):/.test(s.at) ? { lens: s.at } : { anchor: s.at });
-  const cases = [];
+  const { pageOf } = buildOntology({ catalog, graph });
   const walk = (n, addr) => {
-    if (n.kind === 'stop') cases.push([`stop ${n.stop.id}`, { mode: 'tour', ...at(n.stop), voice }]);
-    else if (n.kind === 'step') cases.push([`step ${n.phase}`, { mode: 'step', lens: `column:${n.phase}`, voice }]);
-    else if (n.kind === 'path') cases.push([`path ${n.pathId}`, { mode: 'search', hits: n.kids.map((k) => k.key), voice }]);
-    else if (!cases.some((c) => c[0] === `record ${n.key}`)) {
-      const modules = planRecord(catalog.get(n.key), {}, lib).filter((p) => !['map', 'loop', 'loopbrowse', 'paperlist', 'player', 'sequence', 'paths'].includes(p.id))
-        .map((p) => ({ id: `mod:${p.id}`, w: p.id === 'text' ? 560 : 360, h: p.id === 'text' ? 700 : 260, scalable: false, squeeze: 170 }));
-      cases.push([`record ${n.key}`, { mode: 'read', anchor: n.key, modules, voice: { w: 380, h: 380 } }]);
+    const name = `${addr.join('.')} (${n.key || n.id})`;
+    const page = pageOf(n);
+    if (page.want.length > 3) fail(`${name}: ${page.want.length} wants`);
+    for (const w of page.want) {
+      if (w.path ? !catalog.path(w.path) : !catalog.has(w.key)) fail(`${name}: wants something that doesn't exist (${w.key})`);
+      if (w.key === n.key) fail(`${name}: wants itself`);
+      if (!w.why || !w.title) fail(`${name}: a want without its reason`);
+    }
+    if (page.layout === 'list' && !page.list.length) fail(`${name}: a set with nothing in it`);
+    if (page.layout === 'read') {
+      const plans = planRecord(catalog.get(n.key), {}, lib).map((p) => p.id);
+      const missing = page.modules.filter((m) => !plans.includes(m));
+      if (!page.figure && page.modules.length - missing.length === 0) fail(`${name}: a record page with nothing of its own to show`);
     }
     n.kids.forEach((k, i) => walk(k, [...addr, i]));
   };
   atlas.spine.forEach((n, i) => walk(n, [i]));
-  for (const [name, ctx] of cases) {
-    const items = itemsFor(world, ctx, graph, 0.95);
-    const { rects, dropped } = magnetAssemble(items, { bounds, gap: 10 });
-    for (const id of dropped) if (items.find((i) => i.id === id)?.must) fail(`${name}: ${id} has nowhere to clamp`);
-    const vis = [...rects.entries()];
-    for (const [id, q] of vis) {
-      if (q.x < bounds.x - 1 || q.y < bounds.y - 1 || q.x + q.w > bounds.x + bounds.w + 1 || q.y + q.h > bounds.y + bounds.h + 1) fail(`${name}: ${id} leaves the page`);
-    }
-    for (let i = 0; i < vis.length; i += 1) {
-      for (let j = i + 1; j < vis.length; j += 1) {
-        const a = vis[i][1];
-        const b = vis[j][1];
-        if (a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h) fail(`${name}: ${vis[i][0]} overlaps ${vis[j][0]}`);
-      }
-    }
-  }
 });
 
 check('kinds are the three the site knows', () => {

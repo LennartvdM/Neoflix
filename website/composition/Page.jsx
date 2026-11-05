@@ -1,23 +1,20 @@
 /**
- * One page of the atlas: its elements, clamped (magnet.js), at rest.
+ * One page of the atlas, drawn from the ontology (ontology.js): what the
+ * reader needs, big; at most three things they could want, small and to
+ * one side; nothing else.
  *
- * A page is a context (contexts.js): a stop of the story shows its
- * subject big with what it connects to clamped round it; a record shows
- * its modules round its main one; a step of the loop its chapters; a
- * path its steps. Pages don't morph into each other (that was the
- * canvas, the Prezi feel); a new page slides in whole, and its elements
- * are already where they belong.
- *
- * The voice and the modules are as tall as what they say: rendered at
- * their width, measured before paint, then assembled.
+ * The visual language is the owner's Talent naar de Top deck
+ * (Vragenlijst-Executive-Search): a running head (a numbered pill and the
+ * chapter), Space Grotesk for display and Inter for reading, white cards
+ * on the pale ground, the films dark.
  */
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { catalog, graph, lib, stillFor, clipFor } from '../system/library';
 import { LOOP, loopName } from '../system/catalog';
 import { urlFor, keyForPath } from '../system/urls';
 import { usePins, togglePin } from '../system/state';
 import { planRecord } from '../system/modules/plans';
-import { MODULES, MODULE_NAMES, SessionFilmButton } from '../system/modules';
+import { MODULES, SessionFilmButton } from '../system/modules';
 import { FrontContext } from '../system/modules/front';
 import { Here } from '../system/ui/nav';
 import { shortAuthors, doiUrl } from '../pages/publications/records';
@@ -26,17 +23,11 @@ import { TAGLINE } from '../pages/home/content';
 import { resolveSlug } from '../pages/toolbox/docsIndex';
 import { assetUrl } from '../lib/utils/assetUrl';
 import { prefersReducedMedia } from '../lib/utils/reducedMedia';
-import { itemsFor } from './contexts';
-import { assemble } from './magnet';
+import { canonicalUrl } from '../shared/routeMeta';
+import { buildOntology } from './ontology';
 import { CHAPTERS } from './tour';
 
-export const GAP = 10;
-const PAD = 24; // inside the voice and the modules (composition.css)
-
-// Shown otherwise: a film is its own element; the library is the atlas.
-const NOT_IN_READING = new Set(['map', 'loop', 'loopbrowse', 'paperlist', 'player', 'sequence', 'paths']);
-const MOD_W = { text: 560, thread: 560, pathcards: 560, found: 440, summary: 380, findings: 380, abstract: 360, practice: 340, film: 340, inpractice: 340, cite: 300 };
-export const plansOf = (record, from) => planRecord(record, { from }, lib).filter((p) => !NOT_IN_READING.has(p.id)).sort((a, b) => a.order - b.order);
+const ONTOLOGY = buildOntology({ catalog, graph });
 
 export const labelOf = (key) => {
   const r = catalog.get(key);
@@ -46,168 +37,154 @@ export const labelOf = (key) => {
   return `${r.number ? `${r.number} ` : ''}${r.id === '' ? 'Welcome to the toolbox' : r.title}`;
 };
 
-function stopState(s) {
-  if (s.at === 'everything') return { lens: 'everything' };
-  if (Array.isArray(s.at) || /^(column|region):/.test(s.at)) return { lens: s.at };
-  return { anchor: s.at };
-}
+const MODULE_TITLE = { inpractice: 'In the unit', found: 'What it found', summary: 'Asked, and what changed', text: null };
 
-/* ── a record, as an element ───────────────────────────────────────────── */
+/* ── the things a page can show ────────────────────────────────────────── */
 
-function RecordEl({ id, kind, rect, anchor, visited, playing, onPick, world }) {
-  const head = kind === 'head' ? world.heads.find((h) => h.id === id) : null;
-  const r = head ? null : catalog.get(id);
+function Film({ k, big, quiet, onPick }) {
+  const r = catalog.get(k);
   const [reduced] = useState(prefersReducedMedia);
-  let body;
-  if (kind === 'film') {
-    body = (
-      <>
-        {playing && !reduced
-          ? <video className="t__media" src={clipFor(r)} poster={stillFor(r)} autoPlay muted loop playsInline preload="auto" />
-          : <img className="t__media" src={stillFor(r)} alt="" draggable={false} />}
-        <span className="t__plate">
-          <span className="t__n">{r.order + 1}</span>
-          <span className="t__name">{r.name}</span>
-          <span className="t__claim">{r.claim}</span>
-        </span>
-      </>
-    );
-  } else if (kind === 'paper') {
-    body = (
-      <span className="t__in">
-        <span className="t__n">{r.n}</span>
-        <span className="t__title">{r.short}</span>
-        <span className="t__found">{r.found}</span>
-        <span className="t__meta">{r.journal} · {r.year}</span>
+  return (
+    <a className={`card card--film${big ? ' card--big' : ''}`} href={urlFor(k)} onClick={(e) => { e.preventDefault(); onPick(k); }} data-id={k}>
+      <span className="card__media">
+        {big && !reduced
+          ? <video src={clipFor(r)} poster={stillFor(r)} autoPlay muted loop playsInline preload="auto" />
+          : <img src={stillFor(r)} alt="" draggable={false} />}
       </span>
-    );
-  } else if (kind === 'head') {
-    const count = world.guidance.filter((g) => g.phase === head.phase).length;
-    body = (
-      <span className="t__in">
-        <span className="t__n">{head.step}</span>
-        <span className="t__title">{head.name}</span>
-        <span className="t__meta">{count} pages</span>
+      <span className="card__cap">
+        <span className="card__eyebrow">Film {r.order + 1} of 6</span>
+        <strong>{r.name}</strong>
+        {big && !quiet && <span className="card__line">{r.claim}</span>}
       </span>
-    );
-  } else {
-    body = (
-      <span className="t__in">
-        {r.number ? <span className="t__n">{r.number}</span> : null}
-        <span className="t__title">{r.id === '' ? 'Welcome to the toolbox' : r.title}</span>
-        {r.excerpt && <span className="t__ex">{r.excerpt}</span>}
-      </span>
-    );
-  }
-  const style = { transform: `translate3d(${rect.x}px, ${rect.y}px, 0)`, width: rect.w, height: rect.h };
-  const Tag = head ? 'button' : 'a';
-  return (
-    <Tag
-      className={`e e--${kind}`}
-      style={style}
-      href={head ? undefined : urlFor(id)}
-      type={head ? 'button' : undefined}
-      data-id={id}
-      data-numbered={kind === 'guidance' && !r.number ? undefined : ''}
-      data-anchor={anchor ? '' : undefined}
-      data-visited={visited ? '' : undefined}
-      draggable={false}
-      onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); onPick(id); }}
-      aria-label={head ? `${head.name}: this step of the loop` : labelOf(id)}
-    >
-      {body}
-    </Tag>
+    </a>
   );
 }
 
-const Measured = React.forwardRef(function Measured({ rect, width, className, children, ...rest }, ref) {
-  const style = rect ? { transform: `translate3d(${rect.x}px, ${rect.y}px, 0)`, width: rect.w, height: rect.h } : { visibility: 'hidden', width };
+function Paper({ k, big, onPick }) {
+  const r = catalog.get(k);
   return (
-    <section className={`e e--measured ${className || ''}`} style={style} {...rest}>
-      <div className="e__scroll">
-        <div className="e__content" ref={ref} style={{ width: Math.max(0, width - PAD * 2) }}>{children}</div>
-      </div>
-    </section>
-  );
-});
-
-/* ── the voice: the words for this page ────────────────────────────────── */
-
-function StopVoice({ node, resume, onResume }) {
-  const s = node.stop;
-  const chapter = CHAPTERS.find((c) => c.id === s.chapter);
-  return (
-    <div className="v__story">
-      <p className="v__where">
-        {chapter ? <><b>{CHAPTERS.indexOf(chapter) + 1}</b>{chapter.name}</> : <><b>{node.index === 0 ? 'N' : '■'}</b>{node.index === 0 ? 'Neoflix, Leiden' : 'The end of the story'}</>}
-      </p>
-      <h1 className={`v__title${node.index === 0 ? ' v__title--big' : ''}`}>{node.index === 0 ? TAGLINE : s.title}</h1>
-      <p className="v__text">{node.index === 0 ? `${s.title} ${s.text}` : s.text}</p>
-      {resume && <p className="v__back">Welcome back. <a href={urlFor(resume.key || '')} onClick={(e) => { e.preventDefault(); onResume(); }}>Carry on with {resume.label} →</a></p>}
-    </div>
+    <a className={`card card--paper${big ? ' card--big' : ''}`} href={urlFor(k)} onClick={(e) => { e.preventDefault(); onPick(k); }} data-id={k}>
+      <span className="card__stat">{r.n}</span>
+      <span className="card__eyebrow">{big ? `${r.journal} · ${r.year}` : r.year}</span>
+      <strong className="card__title">{r.short}</strong>
+      <span className="card__line">{r.found}</span>
+    </a>
   );
 }
 
-function StepVoice({ node }) {
-  const pages = catalog.list('guidance').filter((g) => g.phase === node.phase && !g.divider);
+function Guide({ k, big, ordinal, onPick }) {
+  const r = catalog.get(k);
   return (
-    <div className="v__rest">
-      <p className="v__where"><b>{node.num}</b>Step {node.num} of the loop</p>
-      <h1 className="v__title">{node.label}</h1>
-      <p className="v__text">{pages.length} pages of the toolbox. Its chapters are to the right, in the order you’ll need them.</p>
-    </div>
+    <a className={`card card--guide${big ? ' card--big' : ''}`} href={urlFor(k)} onClick={(e) => { e.preventDefault(); onPick(k); }} data-id={k}>
+      <span className="card__eyebrow">{ordinal ? `Step ${ordinal}` : loopName(r.phase) || 'The toolbox'}</span>
+      <strong className="card__title">{r.number && <em>{r.number}</em>}{r.id === '' ? 'Welcome to the toolbox' : r.title}</strong>
+      {r.excerpt && <span className="card__line">{r.excerpt}</span>}
+    </a>
   );
 }
 
-function PathVoice({ node }) {
-  const p = catalog.path(node.pathId);
+function Step({ phase, onPick }) {
+  const i = LOOP.findIndex((l) => l.id === phase);
+  const n = catalog.list('guidance').filter((g) => g.phase === phase && !g.divider).length;
   return (
-    <div className="v__rest">
-      <p className="v__where"><b>→</b>A path, {p.steps.length} steps</p>
-      <h1 className="v__title">{p.name}</h1>
-      <p className="v__text">{p.blurb}</p>
-    </div>
+    <button type="button" className="card card--step" onClick={() => onPick(`head:${phase}`)}>
+      <span className="card__stat">{i + 1}</span>
+      <strong className="card__title">{LOOP[i].name}</strong>
+      <span className="card__eyebrow">{n} pages</span>
+    </button>
   );
 }
 
-function RecordVoice({ record }) {
+function Thing({ k, big, ordinal, onPick }) {
+  if (k.startsWith('step:')) return <Step phase={k.slice(5)} onPick={onPick} />;
+  const kind = k.slice(0, k.indexOf(':'));
+  if (kind === 'film') return <Film k={k} big={big} onPick={onPick} />;
+  if (kind === 'paper') return <Paper k={k} big={big} onPick={onPick} />;
+  return <Guide k={k} big={big} ordinal={ordinal} onPick={onPick} />;
+}
+
+/** What the reader could want: small, one line each, to one side. */
+function Wants({ want, onPick, onPath, title = 'You might also want' }) {
+  if (!want.length) return null;
+  return (
+    <aside className="wants" aria-label={title}>
+      <p className="wants__h">{title}</p>
+      {want.map((w) => (
+        <a
+          key={w.key}
+          className="want"
+          href={w.path ? `/paths/${w.path}` : urlFor(w.key)}
+          data-id={w.key}
+          onClick={(e) => { e.preventDefault(); if (w.path) onPath(w.path); else onPick(w.key); }}
+        >
+          <span className="want__why">{w.why}</span>
+          <strong>{w.title}</strong>
+          {w.line && <span className="want__line">{w.line}</span>}
+          <i aria-hidden="true">→</i>
+        </a>
+      ))}
+    </aside>
+  );
+}
+
+/* ── the running head ─────────────────────────────────────────────────── */
+
+function Head({ num, title, meta }) {
+  return (
+    <header className="phead">
+      {num != null && <span className="phead__num">{String(num).padStart(2, '0')}</span>}
+      <h2>{title}</h2>
+      {meta && <span className="phead__meta">{meta}</span>}
+    </header>
+  );
+}
+
+/* ── a record's title block ───────────────────────────────────────────── */
+
+function RecordWords({ record }) {
   const pins = usePins();
   const pinned = pins.includes(record.key);
-  let where;
+  const [copied, setCopied] = useState(false);
+  const cite = record.kind === 'paper'
+    ? `${shortAuthors(record)} (${record.year}). ${record.title}. ${record.journal}.${record.doi ? ` https://doi.org/${record.doi}` : ''}`
+    : `Neoflix toolbox. ${record.title}. Department of Neonatology, Leiden University Medical Center. ${canonicalUrl(urlFor(record.key))}`;
+  let eyebrow;
   let sub = null;
   let title = record.title;
   if (record.key === 'guidance:') {
-    where = <><b>T</b>The toolbox</>;
+    eyebrow = 'The toolbox';
     title = 'Video review for neonatal teams, step by step';
   } else if (record.kind === 'guidance') {
-    where = <><b>{record.number || LOOP.findIndex((l) => l.id === record.phase) + 1 || 'T'}</b>{loopName(record.phase) || 'The toolbox'}</>;
-    sub = record.excerpt && <p className="v__text">{record.excerpt}</p>;
+    eyebrow = [loopName(record.phase), record.number].filter(Boolean).join(' · ') || 'The toolbox';
+    sub = record.excerpt && <p className="prose prose--lead">{record.excerpt}</p>;
   } else if (record.kind === 'paper') {
     const pdf = publicationPdfs[record.id];
-    where = <><b>{record.n}</b>{record.journal}, {record.year}</>;
+    eyebrow = `Paper ${record.n} · ${record.journal}, ${record.year}`;
     sub = (
-      <p className="v__meta">
+      <p className="prose prose--meta">
         {shortAuthors(record)}
         {record.doi && <><br /><a href={doiUrl(record)} target="_blank" rel="noopener noreferrer">doi.org/{record.doi}</a></>}
         {pdf && <><br /><a href={assetUrl(pdf.src)} download>Author PDF, {pdf.pages} pages</a></>}
       </p>
     );
   } else {
-    where = <><b>{record.order + 1}</b>Film · {record.name}</>;
+    eyebrow = `Film ${record.order + 1} of 6`;
+    title = record.claim;
     sub = (
       <>
-        <p className="v__text">{record.caption}</p>
+        <p className="prose prose--lead">{record.caption}</p>
         <SessionFilmButton at={record.at} />
       </>
     );
   }
   return (
-    <div className="v__record">
-      <p className="v__where">{where}</p>
-      <h1 className={`v__title${title.length > 90 ? ' v__title--long' : ''}`}>{title}</h1>
+    <div className="words">
+      <p className="eyebrow">{eyebrow}</p>
+      <h1 className={`title${title.length > 80 ? ' title--long' : ''}`}>{title}</h1>
       {sub}
-      <div className="v__actions">
+      <div className="actions">
         <button type="button" data-on={pinned ? '' : undefined} onClick={() => togglePin(record.key)}>{pinned ? '✓ In your pack' : '+ Pack'}</button>
+        {record.kind !== 'film' && <button type="button" onClick={() => { navigator.clipboard?.writeText(cite); setCopied(true); setTimeout(() => setCopied(false), 1400); }}>{copied ? 'Citation copied' : 'Cite'}</button>}
       </div>
     </div>
   );
@@ -216,97 +193,119 @@ function RecordVoice({ record }) {
 /* ── the page ──────────────────────────────────────────────────────────── */
 
 /**
- * `node` is an atlas node, or { kind: 'search', hits, query, … } for a
- * search. `bounds` is the room inside the page area.
+ * `node` is an atlas node, or { kind: 'search', hits } for a search.
+ * `search` is the search form, when searching; `resume` a "carry on"
+ * offer for the first page.
  */
-export default function Page({ node, world, bounds, f, phone, visited, voiceSlot, onPick, onProbe }) {
+export default function Page({ node, onPick, onPath, onProbe, search, resume, onResume }) {
+  const page = useMemo(() => ONTOLOGY.pageOf(node), [node]);
   const record = node.kind === 'record' ? catalog.get(node.key) : null;
-  const plans = useMemo(() => (record ? plansOf(record, null) : []), [record]);
-  const vw = Math.min(bounds.w, Math.round((record ? 380 : 400) * Math.max(0.9, f)));
-  const modW = (id) => Math.min(bounds.w, Math.max(280, Math.round((MOD_W[id] || 360) * f)));
+  const plans = useMemo(() => {
+    if (!record) return [];
+    const all = planRecord(record, {}, lib);
+    return page.modules.map((id) => all.find((p) => p.id === id)).filter(Boolean);
+  }, [record, page]);
 
-  const refs = useRef(new Map());
-  const refOf = (id) => (el) => { if (el) refs.current.set(id, el); else refs.current.delete(id); };
-  const [heights, setHeights] = useState({});
-  useLayoutEffect(() => {
-    const next = {};
-    let changed = false;
-    refs.current.forEach((el, id) => {
-      const h = Math.ceil(el.offsetHeight + PAD * 2);
-      next[id] = h;
-      if (Math.abs((heights[id] || 0) - h) > 3) changed = true;
-    });
-    if (changed) setHeights((o) => ({ ...o, ...next }));
-  });
-
-  const { items, rects } = useMemo(() => {
-    const cap = phone ? 2000 : bounds.h;
-    const voice = { w: vw, h: Math.min(cap, heights.voice || 360) };
-    let ctx;
-    if (node.kind === 'stop') ctx = { mode: 'tour', ...stopState(node.stop) };
-    else if (node.kind === 'step') ctx = { mode: 'step', lens: `column:${node.phase}` };
-    else if (node.kind === 'path') ctx = { mode: 'search', hits: node.kids.map((k) => k.key) };
-    else if (node.kind === 'search') ctx = { mode: 'search', hits: node.hits };
-    else {
-      const modules = plans.map((p) => ({
-        id: `mod:${p.id}`,
-        w: modW(p.id),
-        h: Math.min(phone ? 2000 : p.id === 'text' ? bounds.h : Math.round(460 * Math.max(0.9, f)), heights[`mod:${p.id}`] || 240),
-        scalable: false,
-        squeeze: phone ? 0 : 170,
-      }));
-      ctx = { mode: 'read', anchor: node.key, modules, everyModule: phone };
-    }
-    const list = itemsFor(world, { ...ctx, voice }, graph, f);
-    return { items: list, rects: assemble(list, { bounds, gap: GAP, top: phone }).rects };
-  }, [node, plans, heights, bounds, f, phone, vw, world]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const anchor = node.kind === 'record' ? node.key : node.kind === 'stop' && typeof node.stop.at === 'string' ? node.stop.at : null;
+  // Links inside a record's text light the card they lead to, if it's here.
   const probe = (e) => {
     const a = e.target.closest?.('a[href]');
     if (!a) return;
     const href = a.getAttribute('href') || '';
     if (!href.startsWith('/')) return;
     const key = keyForPath(href.split('?')[0], { resolveSlug });
-    if (key && key !== anchor && catalog.has(key)) onProbe(key);
+    if (key && catalog.has(key)) onProbe(key);
   };
 
-  let voiceBody;
-  if (node.kind === 'stop') voiceBody = <StopVoice node={node} resume={voiceSlot?.resume} onResume={voiceSlot?.onResume} />;
-  else if (node.kind === 'step') voiceBody = <StepVoice node={node} />;
-  else if (node.kind === 'path') voiceBody = <PathVoice node={node} />;
-  else if (node.kind === 'search') voiceBody = voiceSlot?.search;
-  else voiceBody = <RecordVoice record={record} />;
+  // The running head and the words.
+  let head;
+  let words;
+  if (node.kind === 'search') {
+    head = <Head title="Search" />;
+    words = <div className="words">{search}</div>;
+  } else if (node.kind === 'stop') {
+    const s = node.stop;
+    const ch = CHAPTERS.find((c) => c.id === s.chapter);
+    const cover = node.index === 0;
+    head = <Head num={node.index + 1} title={ch ? ch.name : cover ? 'Neoflix' : 'Where next'} meta={`${node.index + 1} / 17`} />;
+    words = (
+      <div className="words">
+        <p className="eyebrow">{cover ? 'Neoflix, Leiden' : ch ? s.short : 'The end of the story'}</p>
+        <h1 className={`title${cover ? ' title--hero' : ''}`}>{cover ? TAGLINE : s.title}</h1>
+        <p className="prose prose--lead">{cover ? `${s.title} ${s.text}` : s.text.replace('{pages}', catalog.list('guidance').filter((g) => !g.divider).length)}</p>
+        {cover && resume && <p className="prose">Welcome back. <a href={urlFor(resume.key || '')} onClick={(e) => { e.preventDefault(); onResume(); }}>Carry on with {resume.label} →</a></p>}
+        {cover && <p className="hint">↓ Scroll for the story · → go deeper wherever you like</p>}
+      </div>
+    );
+  } else if (node.kind === 'step') {
+    head = <Head num={node.num} title={`Step ${node.num} of the loop`} />;
+    words = (
+      <div className="words">
+        <p className="eyebrow">The toolbox</p>
+        <h1 className="title">{node.label}</h1>
+        <p className="prose prose--lead">Its chapters, in the order you’ll need them. Each opens to the right.</p>
+      </div>
+    );
+  } else if (node.kind === 'path') {
+    const p = catalog.path(node.pathId);
+    head = <Head title="A path" meta={`${p.steps.length} steps`} />;
+    words = (
+      <div className="words">
+        <p className="eyebrow">A path</p>
+        <h1 className="title">{p.name}</h1>
+        <p className="prose prose--lead">{p.blurb}</p>
+      </div>
+    );
+  } else {
+    const kindName = record.kind === 'film' ? 'Film' : record.kind === 'paper' ? 'The evidence' : 'The toolbox';
+    head = <Head num={record.kind === 'paper' ? record.n : record.kind === 'film' ? record.order + 1 : null} title={kindName} meta={record.kind === 'guidance' ? loopName(record.phase) : null} />;
+    words = <RecordWords record={record} />;
+  }
 
-  const height = phone ? Math.max(0, ...[...rects.values()].map((r) => r.y + r.h)) + 24 : undefined;
+  const want = <Wants want={page.want} onPick={onPick} onPath={onPath} title={page.layout === 'cover' ? 'Or take a path' : 'You might also want'} />;
 
-  return (
-    <div className="pg" style={height ? { height } : undefined} onMouseOver={probe} onMouseOut={(e) => e.target.closest?.('a[href]') && onProbe(null)}>
-      {items.map((it) => {
-        const rect = rects.get(it.id);
-        if (it.id === 'voice') return <Measured key="voice" rect={rect} width={vw} ref={refOf('voice')} className="e--voice">{voiceBody}</Measured>;
-        if (it.kind === 'module') return null;
-        if (!rect) return null;
-        return <RecordEl key={it.id} id={it.id} kind={it.kind} rect={rect} world={world} anchor={it.id === anchor} visited={visited.has(it.id)} playing={it.kind === 'film' && it.id === anchor} onPick={onPick} />;
-      })}
-      {record && (
+  let main = null;
+  if (page.layout === 'list') {
+    const n = page.list.length;
+    main = (
+      <div className={`set set--${n <= 3 ? 'few' : n <= 6 ? 'some' : 'many'}`} data-ordered={page.ordered ? '' : undefined}>
+        {page.list.map((k, i) => <Thing key={k} k={k} ordinal={page.ordered ? i + 1 : null} onPick={onPick} />)}
+      </div>
+    );
+  } else if (page.layout === 'read') {
+    main = (
+      <div className="reading" onMouseOver={probe} onMouseOut={(e) => e.target.closest?.('a[href]') && onProbe(null)}>
+        {page.figure && <Film k={page.figure} big quiet onPick={() => {}} />}
         <Here.Provider value={{ current: record.key, path: null }}>
           <FrontContext.Provider value={{ route: null, setRoute: () => {}, trail: [] }}>
-            {plans.map((plan, i) => {
+            {plans.map((plan) => {
               const Cmp = MODULES[plan.id];
-              const id = `mod:${plan.id}`;
               return (
-                <Measured key={id} rect={rects.get(id)} width={modW(plan.id)} ref={refOf(id)} className={`e--module mod--${plan.id}`} data-emph={plan.emph ? '' : undefined} title={`Here because ${plan.reason}`}>
+                <section key={plan.id} className={`card card--module mod--${plan.id}`}>
                   <div className="sys">
-                    <h2 className="t__modname"><b>{i + 1}</b>{MODULE_NAMES[plan.id]}</h2>
+                    {MODULE_TITLE[plan.id] && <p className="eyebrow">{MODULE_TITLE[plan.id]}</p>}
                     {Cmp ? <Cmp record={record} plan={plan} /> : null}
                   </div>
-                </Measured>
+                </section>
               );
             })}
           </FrontContext.Provider>
         </Here.Provider>
-      )}
+      </div>
+    );
+  } else if (page.figure) {
+    main = <div className="figure"><Thing k={page.figure} big onPick={onPick} /></div>;
+  }
+
+  return (
+    <div className={`pg pg--${page.layout}`}>
+      {head}
+      <div className="pg__body">
+        <div className="pg__words">
+          {words}
+          {want}
+        </div>
+        <div className="pg__main">{main}</div>
+      </div>
     </div>
   );
 }

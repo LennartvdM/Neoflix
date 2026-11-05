@@ -7,9 +7,9 @@ guided sequences through the records. A **trail** and **session pack** keep
 the reader's own route.
 
 **The composition (`website/composition/`) draws these records now.** Each
-route below renders it: the record is a page of the atlas, its modules
-(planned here, in `modules/plans.js`) out as elements clamped round its
-main one. Only `/pack` is
+route below renders it: the record is a page of the atlas, showing the
+modules its ontology says it needs (`composition/ontology.js`, drawing
+on the plans here in `modules/plans.js`). Only `/pack` is
 still a page here.
 
 Routes:

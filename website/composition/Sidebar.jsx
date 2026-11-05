@@ -1,113 +1,117 @@
 /**
- * The sidebar: the reader's anchor. It is the atlas (atlas.js), drawn as
- * the one thing that never leaves the screen.
+ * The sidebar: the reader's anchor, after the Talent naar de Top deck's
+ * (a frosted card, quiet rows, the current one marked).
  *
- * On the story (the first level) it is the whole story, chapter by
- * chapter, the page you're on marked. Go right, into what a page rests
- * on, and it branches: the page you came from opens into a list of its
- * own, joined to it by a line, and the rest of the story folds up to its
- * chapter names to make room. Go deeper and it branches again; the
- * sidebar itself widens a step for every level, so depth is something
- * you can see. Go back out and the branch folds shut.
- *
- * Every entry is a way there; an entry that opens onto more says how
- * many pages lie to its right.
+ * It says where you are without being the whole index:
+ *   - the story by chapter, but only your chapter opens to its stops;
+ *     the others are one line each (a click goes to their first page);
+ *   - when you go right, the stop you came from branches: the trail you
+ *     took, one row per level, and at each level a short window of the
+ *     pages beside yours (two each way), the rest counted, not listed;
+ *   - go back and the branch folds shut.
  */
 import React from 'react';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const EASE = [0.32, 0.72, 0, 1];
-const T = { duration: 0.42, ease: EASE };
+const T = { duration: 0.38, ease: EASE };
+const WIN = 2;
 
-function Entry({ node, addr, cur, depth, onGo }) {
-  const here = cur.length === addr.length && cur.every((v, i) => v === addr[i]);
-  const onPath = !here && addr.every((v, i) => cur[i] === v) && cur.length > addr.length;
-  const open = onPath;
+const nameOf = (n) => (n.kind === 'stop' ? n.short : n.label);
+
+/** One level of the branch: a window of siblings round the one you're on. */
+function Level({ siblings, at, addr, cur, onGo, children }) {
+  const lo = Math.max(0, at - WIN);
+  const hi = Math.min(siblings.length - 1, at + WIN);
+  const base = addr.slice(0, -1);
   return (
-    <motion.li layout="position" transition={T} className="sb__li" data-depth={depth}>
-      <button
-        type="button"
-        className="sb__item"
-        data-here={here ? '' : undefined}
-        data-path={onPath ? '' : undefined}
-        onClick={() => onGo(addr)}
-      >
-        <b>{node.num || '·'}</b>
-        <span>{node.kind === 'stop' ? node.short : node.label}</span>
-        {node.kids.length > 0 && <i aria-label={`${node.kids.length} pages to the right`}>→{node.kids.length}</i>}
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.ul
-            key="kids"
-            className="sb__branch"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={T}
-          >
-            {node.kids.map((k, i) => <Entry key={k.id} node={k} addr={[...addr, i]} cur={cur} depth={depth + 1} onGo={onGo} />)}
-          </motion.ul>
-        )}
-      </AnimatePresence>
-    </motion.li>
+    <motion.ul className="sb__branch" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={T}>
+      {lo > 0 && (
+        <li><button type="button" className="sb__more" onClick={() => onGo([...base, lo - 1])}>↑ {lo} more</button></li>
+      )}
+      {siblings.slice(lo, hi + 1).map((n, j) => {
+        const i = lo + j;
+        const a = [...base, i];
+        const here = i === at && cur.length === addr.length;
+        const through = i === at && !here;
+        return (
+          <li key={n.id}>
+            <button type="button" className="sb__item" data-here={here ? '' : undefined} data-path={through ? '' : undefined} onClick={() => onGo(a)}>
+              {n.num && <b>{n.num}</b>}
+              <span>{nameOf(n)}</span>
+              {n.kids.length > 0 && <i aria-hidden="true">›</i>}
+            </button>
+            {i === at && children}
+          </li>
+        );
+      })}
+      {hi < siblings.length - 1 && (
+        <li><button type="button" className="sb__more" onClick={() => onGo([...base, hi + 1])}>↓ {siblings.length - 1 - hi} more</button></li>
+      )}
+    </motion.ul>
   );
 }
 
-export default function Sidebar({ atlas, cur, onGo, searching, query, width }) {
-  const deep = cur.length > 1;
-  const stop = atlas.spine[cur[0]];
-  // The story, in its chapters; the first and last stops stand alone.
+export default function Sidebar({ atlas, cur, onGo, searching, query }) {
+  // The branch below the stop: one Level per level of depth, nested.
+  const branch = (d) => {
+    if (d >= cur.length) return null;
+    const parent = atlas.at(cur.slice(0, d));
+    return (
+      <Level key={`lvl${d}`} siblings={parent.kids} at={cur[d]} addr={cur.slice(0, d + 1)} cur={cur} onGo={onGo}>
+        <AnimatePresence initial={false}>{branch(d + 1)}</AnimatePresence>
+      </Level>
+    );
+  };
+
   const groups = [];
   atlas.spine.forEach((n, i) => {
     const g = groups[groups.length - 1];
     if (n.chapter && g && g.chapter === n.chapter) g.items.push([n, i]);
     else groups.push({ chapter: n.chapter, items: [[n, i]] });
   });
+
   return (
-    <motion.nav className="sb" aria-label="Where you are" animate={{ width }} transition={T}>
-      <LayoutGroup>
-        <ol className="sb__story">
-          {groups.map((g) => {
-            const ch = atlas.chapters.find((c) => c.id === g.chapter);
-            const mine = g.items.some(([, i]) => i === cur[0]);
-            // Deeper in, the rest of the story folds to its chapter names.
-            const folded = deep && !mine && ch;
+    <nav className="sb" aria-label="Where you are">
+      <ul className="sb__nav">
+        {groups.map((g) => {
+          const ch = atlas.chapters.find((c) => c.id === g.chapter);
+          const mine = g.items.some(([, i]) => i === cur[0]);
+          if (ch && !mine) {
             return (
-              <motion.li layout="position" transition={T} key={g.chapter || g.items[0][0].id} className="sb__group" data-mine={mine ? '' : undefined}>
-                {ch && (
-                  <button type="button" className="sb__chapter" onClick={() => onGo([g.items[0][1]])}>
-                    {ch.name}
-                    {folded && <i>{g.items.length}</i>}
-                  </button>
-                )}
-                <AnimatePresence initial={false}>
-                  {!folded && (
-                    <motion.ul
-                      key="items"
-                      className="sb__items"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={T}
-                    >
-                      {g.items.map(([n, i]) => <Entry key={n.id} node={n} addr={[i]} cur={cur} depth={0} onGo={onGo} />)}
-                    </motion.ul>
-                  )}
-                </AnimatePresence>
-              </motion.li>
+              <li key={g.chapter}>
+                <button type="button" className="sb__item sb__item--chapter" onClick={() => onGo([g.items[0][1]])}>
+                  <span>{ch.name}</span><i aria-hidden="true">{g.items.length}</i>
+                </button>
+              </li>
             );
-          })}
-        </ol>
-      </LayoutGroup>
+          }
+          return (
+            <li key={g.chapter || g.items[0][0].id} className={ch ? 'sb__open' : undefined}>
+              {ch && <p className="sb__chapter">{ch.name}</p>}
+              <ul>
+                {g.items.map(([n, i]) => {
+                  const here = i === cur[0] && cur.length === 1;
+                  const through = i === cur[0] && cur.length > 1;
+                  return (
+                    <li key={n.id}>
+                      <button type="button" className="sb__item" data-here={here ? '' : undefined} data-path={through ? '' : undefined} onClick={() => onGo([i])}>
+                        <span>{n.short}</span>
+                        {n.kids.length > 0 && <i aria-hidden="true">›</i>}
+                      </button>
+                      <AnimatePresence initial={false}>{i === cur[0] && branch(1)}</AnimatePresence>
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+          );
+        })}
+      </ul>
       <div className="sb__foot">
-        {searching ? (
-          <p><b>Search</b>{query ? `“${query}”` : 'type to search'}</p>
-        ) : (
-          <p><b>{cur[0] + 1}</b>of {atlas.spine.length}{deep ? <>, {cur.length - 1} deep in <em>{stop.short}</em></> : null}</p>
-        )}
-        <p className="sb__keys">↑↓ the story · → deeper · ← back</p>
+        {searching ? <p>Search{query ? `: “${query}”` : ''}</p> : <p>{cur[0] + 1} of {atlas.spine.length}{cur.length > 1 ? ` · ${cur.length - 1} deeper` : ''}</p>}
+        <p className="sb__keys">↑ ↓ the story · → deeper · ← back</p>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

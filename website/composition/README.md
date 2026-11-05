@@ -23,9 +23,25 @@ The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
   the story folds to its chapter names; it widens a step for every level.
   Go back and the branch folds shut. Every entry is a way there, and says
   how many pages lie to its right.
-- **Each page is still self-assembling**: its elements (records, the
-  voice, an open record's modules) are their own objects with their own
-  sizes, clamped to each other by the magnet (`magnet.js`, `contexts.js`).
+- **Each page gives what's needed, a little of what you could want, and
+  nothing else** (`ontology.js`; the owner, 2026-11: "always give the user
+  the information they need, the information they could want (without
+  competing for what they need) and without overwhelming it with showing
+  the entire index"). Three tiers:
+  - *need*: what the page is about, in full and biggest (the story's
+    words and the one film, paper or page they're about; a record's own
+    content: a film's "in the unit", a paper's finding and summary, a
+    toolbox page's text). A page about a set shows the set (the six
+    papers, the five steps, a step's chapters, a path's steps).
+  - *want*: at most three things, small, beside the words, each with its
+    reason and the content's own line ("The evidence · Paper 5 · In one
+    of our studies, 8 of 20 infants…"). Chosen from what the record rests
+    on, in the order a reader needs it.
+  - *rest*: not on the page. Reachable (the sidebar, down, right), never
+    listed. Citations and the like are actions in a record's title block.
+- **The sidebar isn't the index either**: only your chapter opens; the
+  others are one line each; a branch shows the trail you took and two
+  pages either side of yours, the rest counted.
 
 A record's page has the record's own URL; which branch you reached it by
 rides in the history state (back and forward return to the same place).
@@ -38,26 +54,25 @@ its stop. Other pages are `/?at=3.1`.
 | | |
 |---|---|
 | `atlas.js` | The tree of pages: the story's stops and what each opens onto; `move(addr, dir)` for one page in a direction; each record's home. Node-safe. |
+| `ontology.js` | What each page gives: its need, its wants (≤ 3, with reasons), its layout. Node-safe. |
 | `Composition.jsx` | Where you are (from the URL), the pager (wheel, keys), the page slide, the ways on at the page's edges, search, bookkeeping. |
-| `Sidebar.jsx` | The anchor: the atlas as a branching outline. |
-| `Page.jsx` | One page: its elements assembled and drawn, the voice (the words for the page), an open record's modules (measured, then assembled). |
-| `contexts.js` | What is out on each kind of page, how big, and what clamps to what. Node-safe. |
-| `magnet.js` | The assembler: every element docks flush onto an edge of what it belongs to, chosen by attraction; sizes shrink (and blocks of text give up height, scrolling inside) only when they must. Node-safe. |
+| `Sidebar.jsx` | The anchor: where you are, without the whole index. |
+| `Page.jsx` | One page, drawn from the ontology: the running head, the words, the wants, the need. |
 | `tour.js` | The story: its stops, their words, their short names in the sidebar. Node-safe. |
 | `composition.css` | The look. |
 
 ## The look
 
-- **Objects, not boxes.** Every element has its own fill; nothing has an
-  outline or a shadow.
-- **Hierarchy is size**; numbers carry the structure (light, wide
-  numerals: paper 3, chapter 11.2, step 4) instead of labels in tracked
-  capitals.
-- **The words follow the shape**: records are size containers (cq units,
-  `@container`); titles narrow in tall elements and widen in wide ones
-  (Archivo, self-hosted, width axis 62–125%).
-- **Cold**: the pale blue-grey of a hospital, no cream, no pure white.
-  The films are the dark; the loop's steps deep blue; teal is where you are.
+Adopted from the owner's Talent naar de Top deck (Vragenlijst-Executive-
+Search, `factsheet-deck/shell/base.css`) "for now", as the owner asked:
+Space Grotesk 500 for display (titles, the running head, big numbers),
+Inter for reading and UI (both self-hosted, `shared/fonts.css`); indigo
+inks (`--brand #1c1c6e`, `--accent #3b5bdb`) on the deck's pale cool
+gradient; white cards with a soft lift (radius 22); small spaced
+capitals for eyebrows; a running head of a numbered pill and the
+chapter; the frosted sidebar card; pill buttons. The films are the dark
+tiles. If the deck's language changes, change the tokens at the top of
+`composition.css` to match.
 
 ## Traps
 
@@ -65,13 +80,11 @@ its stop. Other pages are `/?at=3.1`.
   (until the wheel is quiet for 200 ms, and at least 560 ms after a
   move). A text that scrolls inside its element keeps the wheel until it
   reaches its end; only then does the page move.
-- **Measured elements are measured at their width**, before paint
-  (`.e__content` has its width set explicitly), then assembled.
-- **cq units in a container's own padding measure its parent.** Record
-  content sits in `.t__in` for that reason.
+- **A page longer than the screen scrolls first**: the pager lets any
+  scrolling element (the page, a long text) keep the wheel until it
+  reaches its end.
 - **`scripts/system-check.mjs` walks the atlas**: every record must have
-  a page, every move from every page must land, and every page must
-  assemble without overlaps, elements off the page, or a needed element
-  with nowhere to clamp.
+  a page, every move from every page must land, and every page must have
+  its need and no more than three wants, each real and with its reason.
 - **Phones** get a bar with ← ↑ ↓ → instead of the sidebar, and pages
   that scroll; kept from breaking, not designed for (CLAUDE.md).

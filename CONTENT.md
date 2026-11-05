@@ -19,8 +19,9 @@ library's content files (next sections); these are its own.
 |---|---|
 | The story, page by page ("Some babies are born before they can breathe on their own."…), its chapters, and each stop's name in the sidebar (`short`) | `composition/tour.js` |
 | What each stop opens onto to the right | `composition/atlas.js` (`kidsOfStop`) |
-| The first page's big line (it is `TAGLINE`, below) and "Welcome back" | `composition/Page.jsx` (`StopVoice`) |
-| The words on a step of the loop's page, a path's page, an open record's title block | `composition/Page.jsx` (`StepVoice`, `PathVoice`, `RecordVoice`) |
+| The first page's big line (it is `TAGLINE`, below), "Welcome back", the words on a step's page and a path's page | `composition/Page.jsx` (the page, near the end) |
+| An open record's title block (eyebrow, title, Pack, Cite) | `composition/Page.jsx` (`RecordWords`) |
+| "You might also want": which things are offered on each page, and their labels ("The evidence", "How to do it", "On film") | `composition/ontology.js` (the line under each is the content's own: a film's finding, a page's excerpt, a film's claim) |
 | A film element's name and sentence | `name` and `claim` in `system/content/films.js` |
 | A paper element's short name and finding | `short` and `found` in `system/content/papers.js` |
 | A path's name and blurb | `system/content/paths.js` |

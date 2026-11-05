@@ -38,11 +38,12 @@ working in; they're short, and GitHub renders them when browsing too.
   page, and pages slide in whole (pagination, "to break up the prezi
   feel"). The sidebar (`composition/Sidebar.jsx`) is the reader's anchor:
   the story as an outline that branches as you go deeper and folds as you
-  come back. Each page is self-assembling: its elements clamp to each
-  other by context (`composition/contexts.js`, `composition/magnet.js`).
-  Its look is deliberately not the generic one: no outlines, no shadows,
-  no small tracked capitals, no pills or glass; hierarchy is size, the
-  type is Archivo with its width axis. It renders outside the navbar and
+  come back, without ever being the whole index. What a page shows is the
+  ontology (`composition/ontology.js`): what the reader needs, biggest;
+  at most three things they could want, small, each with its reason;
+  nothing else. The look is adopted from the owner's Talent naar de Top
+  deck (Vragenlijst-Executive-Search) for now: Space Grotesk + Inter,
+  indigo inks, white cards, the frosted sidebar. It renders outside the navbar and
   `RouteSlider` (`App.jsx`, `SPACE_ROUTES`). `website/space/` (the
   zoomable plane before it) and the old homepage (`pages/home/`) are kept
   in the tree, unrouted; their rules below apply only if they return.

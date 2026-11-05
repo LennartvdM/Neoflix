@@ -5,8 +5,9 @@
  * Down is the story (the tour's stops), right is depth (what a page
  * rests on), left is back out (atlas.js). Every move is one page: a
  * wheel notch, a swipe, an arrow key, a click. The new page slides in
- * from the direction you moved, whole, its elements already clamped
- * where they belong (Page.jsx, magnet.js): pagination, not a canvas.
+ * from the direction you moved, whole (pagination, not a canvas). What
+ * a page shows is decided by the ontology (ontology.js): what the reader
+ * needs, at most three things they could want, nothing else (Page.jsx).
  * The sidebar (Sidebar.jsx) is the atlas drawn as an outline that
  * branches as you go deeper and folds as you come back.
  *
@@ -23,17 +24,15 @@ import { catalog, graph, lib } from '../system/library';
 import { parseKey } from '../system/catalog';
 import { urlFor, keyForPath } from '../system/urls';
 import { searchLibrary } from '../system/search';
-import { useTrail, visit } from '../system/state';
+import { visit } from '../system/state';
 import { noteIntroDone, noteSeen, noteLibrary } from '../system/ripeness';
 import { resolveSlug } from '../pages/toolbox/docsIndex';
-import { buildWorld } from './contexts';
 import { buildAtlas } from './atlas';
 import Page, { labelOf } from './Page';
 import Sidebar from './Sidebar';
 import '../system/system.css';
 import './composition.css';
 
-const WORLD = buildWorld(catalog);
 const ATLAS = buildAtlas(catalog, graph);
 const clamp = (lo, v, hi) => Math.max(lo, Math.min(hi, v));
 const EASE = [0.32, 0.72, 0, 1];
@@ -89,12 +88,9 @@ function directionOf(a, b) {
 
 function roomFor(W, H, depth) {
   const phone = W < 760;
-  const side = phone ? 0 : Math.round(clamp(270, W * 0.2, 310) + Math.min(depth, 3) * 34);
-  const areaW = W - side;
-  // Room for the page's own edges: the way on, the way down.
-  const bounds = phone ? { x: 10, y: 10, w: areaW - 20, h: Math.max(H * 8, 6000) } : { x: 20, y: 20, w: areaW - 92, h: H - 92 };
-  const f = clamp(0.62, Math.min(areaW / 1180, H / 900), 1.25);
-  return { W, H, phone, side, areaW, bounds, f };
+  // The sidebar widens a step for every level you're in.
+  const side = phone ? 0 : Math.round(clamp(272, W * 0.19, 300) + Math.min(depth, 3) * 26);
+  return { W, H, phone, side, areaW: W - side };
 }
 
 const SLIDE = {
@@ -109,8 +105,6 @@ export default function Composition() {
   const { pathname, search } = location;
   const cur = useMemo(() => addrOf(pathname, search, location.state), [pathname, search, location.state]);
   const node = ATLAS.at(cur);
-  const trail = useTrail();
-  const visited = useMemo(() => new Set(trail), [trail]);
 
   const [size, setSize] = useState(() => ({ W: window.innerWidth, H: window.innerHeight }));
   useEffect(() => {
@@ -190,11 +184,13 @@ export default function Composition() {
   const gesture = useRef({ acc: [0, 0], fired: false, quietT: 0, at: 0 });
   useEffect(() => {
     if (room.phone) return undefined;
+    // Anything that scrolls (a long page, a long text) keeps the wheel
+    // until it reaches its end.
     const canScroll = (el, dy) => {
       for (let n = el; n && n !== document.body; n = n.parentElement) {
-        if (n.classList?.contains('e__scroll') || n.classList?.contains('sb')) {
-          const { scrollTop, scrollHeight, clientHeight } = n;
-          if (scrollHeight > clientHeight + 1 && ((dy > 0 && scrollTop + clientHeight < scrollHeight - 1) || (dy < 0 && scrollTop > 0))) return true;
+        const { scrollTop, scrollHeight, clientHeight } = n;
+        if (scrollHeight > clientHeight + 1 && /(auto|scroll)/.test(getComputedStyle(n).overflowY)) {
+          if ((dy > 0 && scrollTop + clientHeight < scrollHeight - 1) || (dy < 0 && scrollTop > 0)) return true;
         }
       }
       return false;
@@ -252,7 +248,7 @@ export default function Composition() {
     const el = root.current;
     if (!el) return;
     el.querySelectorAll('[data-probe]').forEach((x) => x.removeAttribute('data-probe'));
-    if (key) el.querySelector(`.pg .e[data-id="${CSS.escape(key)}"]`)?.setAttribute('data-probe', '');
+    if (key) el.querySelector(`.pg [data-id="${CSS.escape(key)}"]`)?.setAttribute('data-probe', '');
   }, []);
 
   // ── the ways on, at the page's edges ────────────────────────────────────
@@ -262,17 +258,18 @@ export default function Composition() {
   }, [cur]);
   const nameOf = (n) => (n.kind === 'stop' ? n.short : n.kind === 'record' ? labelOf(n.key) : n.label);
 
-  const searchNode = searching ? { kind: 'search', id: 'search', hits: (result?.hits || []).slice(0, 14).map((h) => h.key) } : null;
+  const searchNode = searching ? { kind: 'search', id: 'search', hits: (result?.hits || []).slice(0, 9).map((h) => h.key) } : null;
   const shown = searchNode || node;
   const pageKey = searching ? 'search' : cur.join('.');
 
   const searchVoice = (
-    <div className="v__search">
+    <div className="search">
+      <p className="eyebrow">Search the library</p>
       <form onSubmit={(e) => { e.preventDefault(); const top = result?.hits[0]; if (top) { const h = ATLAS.home.get(top.key); if (h) go(h); } }}>
         <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Type to search" aria-label="Search the library" />
         <button type="button" onClick={() => { setSearching(false); setQuery(''); }} aria-label="Close search">✕</button>
       </form>
-      <p className="v__count">{result ? (result.hits.length ? `${result.hits.length} match${result.hits.length === 1 ? '' : 'es'}. Enter opens the first.` : 'Nothing in the library uses those words.') : 'Every film, paper and page, by what it says.'}</p>
+      <p className="prose">{result ? (result.hits.length ? `${result.hits.length} match${result.hits.length === 1 ? '' : 'es'}. Enter opens the first.` : 'Nothing in the library uses those words.') : 'Every film, paper and page, by what it says.'}</p>
     </div>
   );
 
@@ -288,7 +285,7 @@ export default function Composition() {
               <a href="/contact" onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>Contact</a>
             </nav>
           </header>
-          <Sidebar atlas={ATLAS} cur={cur} onGo={go} searching={searching} query={query} width={room.side - 20} />
+          <Sidebar atlas={ATLAS} cur={cur} onGo={go} searching={searching} query={query} />
         </aside>
       )}
 
@@ -306,14 +303,12 @@ export default function Composition() {
           >
             <Page
               node={shown}
-              world={WORLD}
-              bounds={room.bounds}
-              f={room.f}
-              phone={room.phone}
-              visited={visited}
               onPick={pick}
+              onPath={(id) => go(ATLAS.homeOfPath.get(id))}
               onProbe={onProbe}
-              voiceSlot={{ search: searchVoice, resume: node.index === 0 && cur.length === 1 ? resume : null, onResume: () => resume && go(resume.addr) }}
+              search={searchVoice}
+              resume={node.index === 0 && cur.length === 1 ? resume : null}
+              onResume={() => resume && go(resume.addr)}
             />
           </motion.div>
         </AnimatePresence>
