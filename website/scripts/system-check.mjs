@@ -21,6 +21,7 @@ import { planRecord } from '../system/modules/plans.js';
 import { assemble, rowsOf, COLUMNS } from '../system/assemble.js';
 import { searchLibrary } from '../system/search.js';
 import { buildWorld, itemsFor } from '../composition/contexts.js';
+import { buildAtlas } from '../composition/atlas.js';
 import { assemble as magnetAssemble } from '../composition/magnet.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -100,34 +101,52 @@ check('search finds what it should', () => {
   }
 });
 
-// The composition assembles itself: elements clamp to each other by
-// context, and nobody looks at most of what it makes. Assemble every
-// tour stop, every record open (with rough module sizes), the resting
-// screen with each film in front and every step of the loop, at desktop
-// size, and fail if elements overlap, leave the screen, or something a
-// context can't do without has nowhere to go.
-check('the composition assembles every context', () => {
+// The site is an atlas of pages (composition/atlas.js): the story down,
+// depth to the right. Every record must have a page somewhere in it, and
+// every move from every page must land on a page.
+check('every record has a page in the atlas, and every move lands', () => {
+  const atlas = buildAtlas(catalog, graph);
+  for (const k of catalog.records.keys()) if (!atlas.home.has(k)) fail(`atlas: no page for ${k}`);
+  const walk = (n, addr) => {
+    for (const d of ['down', 'up', 'right', 'left']) {
+      const to = atlas.move(addr, d, new Map());
+      if (to && !atlas.at(to)) fail(`atlas: ${d} from ${addr.join('.')} lands nowhere`);
+    }
+    n.kids.forEach((k, i) => walk(k, [...addr, i]));
+  };
+  atlas.spine.forEach((n, i) => walk(n, [i]));
+});
+
+// Every page is assembled by the magnet (composition/magnet.js), and
+// nobody looks at most of them. Assemble every page of the atlas at
+// desktop size (rough module sizes) and fail if elements overlap, leave
+// the page, or something a page can't do without has nowhere to clamp.
+check('every page of the atlas assembles', () => {
   const world = buildWorld(catalog);
-  const bounds = { x: 20, y: 70, w: 1400, h: 812 };
-  const voice = { w: 400, h: 520 };
+  const atlas = buildAtlas(catalog, graph);
+  const bounds = { x: 20, y: 20, w: 1040, h: 808 };
+  const voice = { w: 400, h: 420 };
   const at = (s) => (s.at === 'everything' ? { lens: 'everything' } : Array.isArray(s.at) || /^(column|region):/.test(s.at) ? { lens: s.at } : { anchor: s.at });
-  const cases = [
-    ...TOUR.map((s) => [`tour stop ${s.id}`, { mode: 'tour', ...at(s), voice, controls: { w: 400, h: 100 } }]),
-    ...catalog.list('film').map((f) => [`resting on ${f.key}`, { mode: 'rest', feature: f.key, voice: { w: 400, h: 600 } }]),
-    ...LOOP.map((l) => [`step ${l.id}`, { mode: 'step', lens: `column:${l.id}`, voice: { w: 400, h: 300 } }]),
-    ...[...catalog.records.keys()].filter((k) => !catalog.get(k).divider).map((k) => {
-      const modules = planRecord(catalog.get(k), {}, lib).filter((p) => !['map', 'loop', 'loopbrowse', 'paperlist', 'player'].includes(p.id))
-        .map((p) => ({ id: `mod:${p.id}`, w: p.id === 'text' ? 560 : 360, h: p.id === 'text' ? 700 : 260, scalable: false }));
-      return [`reading ${k}`, { mode: 'read', anchor: k, modules, voice: { w: 380, h: 420 } }];
-    }),
-  ];
+  const cases = [];
+  const walk = (n, addr) => {
+    if (n.kind === 'stop') cases.push([`stop ${n.stop.id}`, { mode: 'tour', ...at(n.stop), voice }]);
+    else if (n.kind === 'step') cases.push([`step ${n.phase}`, { mode: 'step', lens: `column:${n.phase}`, voice }]);
+    else if (n.kind === 'path') cases.push([`path ${n.pathId}`, { mode: 'search', hits: n.kids.map((k) => k.key), voice }]);
+    else if (!cases.some((c) => c[0] === `record ${n.key}`)) {
+      const modules = planRecord(catalog.get(n.key), {}, lib).filter((p) => !['map', 'loop', 'loopbrowse', 'paperlist', 'player', 'sequence', 'paths'].includes(p.id))
+        .map((p) => ({ id: `mod:${p.id}`, w: p.id === 'text' ? 560 : 360, h: p.id === 'text' ? 700 : 260, scalable: false, squeeze: 170 }));
+      cases.push([`record ${n.key}`, { mode: 'read', anchor: n.key, modules, voice: { w: 380, h: 380 } }]);
+    }
+    n.kids.forEach((k, i) => walk(k, [...addr, i]));
+  };
+  atlas.spine.forEach((n, i) => walk(n, [i]));
   for (const [name, ctx] of cases) {
-    const items = itemsFor(world, ctx, graph, 1);
+    const items = itemsFor(world, ctx, graph, 0.95);
     const { rects, dropped } = magnetAssemble(items, { bounds, gap: 10 });
     for (const id of dropped) if (items.find((i) => i.id === id)?.must) fail(`${name}: ${id} has nowhere to clamp`);
     const vis = [...rects.entries()];
     for (const [id, q] of vis) {
-      if (q.x < bounds.x - 1 || q.y < bounds.y - 1 || q.x + q.w > bounds.x + bounds.w + 1 || q.y + q.h > bounds.y + bounds.h + 1) fail(`${name}: ${id} leaves the screen`);
+      if (q.x < bounds.x - 1 || q.y < bounds.y - 1 || q.x + q.w > bounds.x + bounds.w + 1 || q.y + q.h > bounds.y + bounds.h + 1) fail(`${name}: ${id} leaves the page`);
     }
     for (let i = 0; i < vis.length; i += 1) {
       for (let j = i + 1; j < vis.length; j += 1) {

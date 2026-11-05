@@ -20,7 +20,7 @@
  * whenever they move faster than the story), and a reader who leaves
  * mid-tour picks it up where they left it.
  *
- * `at` is a record key, a list of keys (framed together), 'everything',
+ * `short` is the stop's name in the sidebar. `at` is a record key, a list of keys (framed together), 'everything',
  * 'column:<loop id>' or 'region:<id>'. Figures are from system/content
  * (checked against the papers). Node-safe; system-check.mjs fails the
  * build when a stop points at a record that doesn't exist.
@@ -35,14 +35,16 @@ export const CHAPTERS = [
 export const TOUR = [
   {
     id: 'cover',
+    short: 'Start',
     at: 'everything',
     depth: 'core',
     title: 'Recording care, and watching it back together.',
-    text: 'This is all of Neoflix, on one screen: six short films, the six papers behind them, and a toolbox for doing it in your own unit. Scroll, and the screen rearranges itself around each part of the story.',
+    text: 'Six short films, the six papers behind them, and a toolbox for doing it in your own unit. Scroll down and the story goes on, a page at a time; go right wherever you want to know more, and left to come back.',
     doors: true,
   },
   {
     id: 'urgency',
+    short: 'Urgency',
     chapter: 'moment',
     at: 'film:urgency',
     depth: 'core',
@@ -51,6 +53,7 @@ export const TOUR = [
   },
   {
     id: 'coordination',
+    short: 'Coordination',
     chapter: 'moment',
     at: 'film:coordination',
     depth: 'core',
@@ -59,6 +62,7 @@ export const TOUR = [
   },
   {
     id: 'focus',
+    short: 'Focus',
     chapter: 'moment',
     at: 'film:focus',
     depth: 'core',
@@ -67,6 +71,7 @@ export const TOUR = [
   },
   {
     id: 'skills',
+    short: 'Skills',
     chapter: 'back',
     at: 'film:skills',
     depth: 'core',
@@ -75,6 +80,7 @@ export const TOUR = [
   },
   {
     id: 'team',
+    short: 'Team',
     chapter: 'back',
     at: 'film:team',
     depth: 'core',
@@ -83,6 +89,7 @@ export const TOUR = [
   },
   {
     id: 'perspectives',
+    short: 'Perspectives',
     chapter: 'back',
     at: 'film:perspectives',
     depth: 'core',
@@ -91,6 +98,7 @@ export const TOUR = [
   },
   {
     id: 'papers',
+    short: 'The six papers',
     chapter: 'evidence',
     at: ['paper:narrative', 'paper:providers', 'paper:recordreflectrefine', 'paper:practicalguidance', 'paper:drivingresearch', 'paper:internationalcollab'],
     depth: 'skim',
@@ -100,6 +108,7 @@ export const TOUR = [
   },
   {
     id: 'cords',
+    short: 'The vocal cords',
     chapter: 'evidence',
     at: 'paper:drivingresearch',
     depth: 'core',
@@ -109,6 +118,7 @@ export const TOUR = [
   },
   {
     id: 'toolbox',
+    short: 'The toolbox',
     chapter: 'practice',
     at: 'region:practice',
     depth: 'skim',
@@ -118,6 +128,7 @@ export const TOUR = [
   },
   {
     id: 'before',
+    short: 'Before you record',
     chapter: 'practice',
     at: 'column:before',
     depth: 'skim',
@@ -127,6 +138,7 @@ export const TOUR = [
   },
   {
     id: 'record',
+    short: 'Record',
     chapter: 'practice',
     at: 'column:record',
     depth: 'skim',
@@ -136,6 +148,7 @@ export const TOUR = [
   },
   {
     id: 'reflect',
+    short: 'Reflect',
     chapter: 'practice',
     at: 'column:reflect',
     depth: 'skim',
@@ -145,6 +158,7 @@ export const TOUR = [
   },
   {
     id: 'safe',
+    short: 'Feeling safe',
     chapter: 'practice',
     at: 'guidance:level-2-in-action/11.-lets-neoflix/11.2-a-safe-learning-environment',
     depth: 'core',
@@ -154,6 +168,7 @@ export const TOUR = [
   },
   {
     id: 'refine',
+    short: 'Refine',
     chapter: 'practice',
     at: 'column:refine',
     depth: 'skim',
@@ -163,6 +178,7 @@ export const TOUR = [
   },
   {
     id: 'keep',
+    short: 'Keep going',
     chapter: 'practice',
     at: 'column:keep',
     depth: 'skim',
@@ -172,10 +188,11 @@ export const TOUR = [
   },
   {
     id: 'end',
+    short: 'Where next',
     at: 'everything',
     depth: 'core',
     title: 'That’s the whole of it.',
-    text: 'Films in the middle, the evidence above, the practice below. Nothing is ever off screen: open anything, and the rest makes room for it. What you have opened is marked in gold.',
+    text: 'That’s the story. Everything it rests on is to the right of where it came up: the films, the papers, the toolbox page by page. The sidebar keeps your place; what you have opened is marked in gold.',
     doors: true,
   },
 ];

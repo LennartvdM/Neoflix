@@ -11,22 +11,23 @@ the phone version, that page's words and that page's styles, side by side.
 
 ## The composition (the homepage, and every record) — `website/composition/`
 
-The homepage is one surface of elements that clamp to each other: every
-film, paper and toolbox page is its own element, and what the reader is
-doing decides which are out, how big, and what they clamp to. Its words mostly come from the library's content files
-(next sections); these are its own.
+The homepage is an atlas of pages: the story down, depth to the right,
+with a sidebar that keeps your place. Its words mostly come from the
+library's content files (next sections); these are its own.
 
 | What you see | Where it lives |
 |---|---|
-| The tour's words, stop by stop ("Some babies are born before they can breathe on their own."…), its chapters and the "go straight to" doors | `composition/tour.js` |
-| The words at rest: the big line (it is `TAGLINE`, below), the paragraph under it, "Take the tour", the path buttons, "Welcome back" | `composition/Composition.jsx` (`Rest`) |
-| On the tour: "A tour, in a few minutes", Play, "Leave the tour" | `composition/Composition.jsx` (`NarrationBody`, `Controls`) |
-| The title block of an open record (title, meta, Pack, Close, walking a path) | `composition/Composition.jsx` (`RecordVoice`) |
+| The story, page by page ("Some babies are born before they can breathe on their own."…), its chapters, and each stop's name in the sidebar (`short`) | `composition/tour.js` |
+| What each stop opens onto to the right | `composition/atlas.js` (`kidsOfStop`) |
+| The first page's big line (it is `TAGLINE`, below) and "Welcome back" | `composition/Page.jsx` (`StopVoice`) |
+| The words on a step of the loop's page, a path's page, an open record's title block | `composition/Page.jsx` (`StepVoice`, `PathVoice`, `RecordVoice`) |
 | A film element's name and sentence | `name` and `claim` in `system/content/films.js` |
 | A paper element's short name and finding | `short` and `found` in `system/content/papers.js` |
+| A path's name and blurb | `system/content/paths.js` |
 | A loop step's name ("Before you record"…) | `LOOP` in `system/catalog.js` |
-| The modules of an open record (their names, what's in them) | `system/modules/` (`MODULE_NAMES`, `plans.js`) |
-| Neoflix, Search, The long read, Contact (top left, the one thing that doesn't move) | `composition/Composition.jsx` (near the end) |
+| The modules of an open record | `system/modules/` (`MODULE_NAMES`, `plans.js`) |
+| The sidebar's foot ("↑↓ the story · → deeper · ← back"), the ways on at the page's edges ("3 pages deeper", "Back to the story") | `composition/Sidebar.jsx`, `composition/Composition.jsx` |
+| Neoflix, Search, The long read, Contact (top of the sidebar) | `composition/Composition.jsx` |
 
 ## The old homepage — `pages/home/` (not routed at the moment)
 

@@ -1,51 +1,55 @@
-# website/composition/ — the site as elements that clamp to each other
+# website/composition/ — the site as pages in two directions
 
 The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
-`/publications/<slug>`, `/paths/*`, `/search`) render one surface. On it,
-every film, paper and toolbox page is **its own element**, with its own
-size and shape (films wide, papers tall, a page squarish, a block of text
-as tall as its text). Nothing divides the screen. Depending on the
-context, elements come out, and **clamp to each other**: whatever is in
-focus is put down first, and everything that belongs with it docks onto
-its edges, flush, one gutter away, the way a magnet clacks onto a plate.
-When the context changes, they let go and re-clamp somewhere else.
+`/publications/<slug>`, `/paths/*`, `/search`) render one atlas of pages
+(`atlas.js`), with a sidebar as the reader's anchor.
 
-The owner's words (2026-11): "In a modern site these are all their own
-elements that magnetically clamp to each other depending on the context,
-that's a self-assembling interface." Bento is a reference for the balance
-of sizes and orientations (a few big, more small; wide next to tall), not
-for a grid. (A first version cut the whole screen into a treemap; that
-is still a grid, and was replaced.)
+- **Down is the story**: the tour's 17 stops (`tour.js`), one page each.
+- **Right is depth**: from any page you can go into what it rests on. A
+  film's stop opens onto the film, then the papers behind it, then the
+  toolbox pages that put it into practice; a paper onto its practice; a
+  step of the loop onto its chapters, a chapter onto its pages; a path
+  onto its steps. **Left** is back out.
+- Going down past the last page of a branch carries on with the story.
+- **Pagination, not a canvas** (the owner, 2026-11: "pagination to break
+  up the prezi feel"). One gesture is one page: a wheel or trackpad
+  gesture moves exactly one page in its main axis and its momentum is
+  swallowed (after the beat pager of the Talent naar de Top deck in
+  Vragenlijst-Executive-Search). The new page slides in whole from the
+  direction you moved; nothing zooms or flies.
+- **The sidebar is the anchor** (`Sidebar.jsx`). On the story it is the
+  whole story by chapter. Go right and it branches: the page you came
+  from opens into a list of its own, joined by a line, while the rest of
+  the story folds to its chapter names; it widens a step for every level.
+  Go back and the branch folds shut. Every entry is a way there, and says
+  how many pages lie to its right.
+- **Each page is still self-assembling**: its elements (records, the
+  voice, an open record's modules) are their own objects with their own
+  sizes, clamped to each other by the magnet (`magnet.js`, `contexts.js`).
 
-## What clamps to what
-
-| Context | What is out |
-|---|---|
-| At rest | The words (the way in); the films in two runs (the moment, watching it back), the one with the floor big; each paper clamped over the film it supports; the five steps of the loop clamped under the films. The films take turns at having the floor (every 9 s; never while a hand is over the elements; never with reduced motion) |
-| A record open | Its modules (the library's own, `system/modules`) clamped round its main one, its title block beside them; a film opens as itself, big, playing. The records it links to clamp to the module that mentions them (papers to the evidence, films to the film module, guidance to "how to do it") |
-| A step of the loop | Its head, big; its chapters in a run; each chapter's pages clamped under it; the other steps in reach |
-| A search | The matches, clamped to the search, best first and biggest |
-| The tour | Each stop is a context (`tour.js` `at`): the subject big, the narration beside it, the controls under the narration, what it connects to clamped round. Scrolling moves everything from one stop's places to the next |
-
-Any element can be **picked up** and dropped; it clamps to the nearest
-free edge where it lands, and stays until the context changes.
+A record's page has the record's own URL; which branch you reached it by
+rides in the history state (back and forward return to the same place).
+A record reached by its URL alone opens at its natural home: a toolbox
+page under its step of the loop, a paper under the six papers, a film at
+its stop. Other pages are `/?at=3.1`.
 
 ## The pieces
 
 | | |
 |---|---|
-| `magnet.js` | The assembler. Puts elements down in order; each docks onto an edge of something already down, choosing among every flush spot by attraction: near what it belongs to, on the side it prefers, edges lined up with the edges around it, touching as much as it can, the whole kept to the screen's proportions. Tries a few sizes and keeps the best (an element on the wrong side, or left out, costs more than being smaller). `dockNear` finds where a dropped element clamps. Node-safe. |
-| `contexts.js` | What is out in each context, how big (a few sizes per kind), and what clamps to what with which preferred sides. The site's old geography survives as preference: papers above, guidance below, the next film to the right. Node-safe. |
-| `engine.js` | Springs: every element moves to its place a little under critical damping, so it overshoots by a hair and settles (the clack). A newcomer comes out of what it clamps to. Writes styles directly, no React render per frame. Holds elements the reader dropped. |
-| `story.js` | The tour's clock (scroll position along the stops, holds, snapping, play). |
-| `tour.js` | The tour's script. Node-safe. |
-| `Composition.jsx` | The elements, the voice (the words for what you're looking at), the modules, measuring, search, keys, dragging, URLs. |
+| `atlas.js` | The tree of pages: the story's stops and what each opens onto; `move(addr, dir)` for one page in a direction; each record's home. Node-safe. |
+| `Composition.jsx` | Where you are (from the URL), the pager (wheel, keys), the page slide, the ways on at the page's edges, search, bookkeeping. |
+| `Sidebar.jsx` | The anchor: the atlas as a branching outline. |
+| `Page.jsx` | One page: its elements assembled and drawn, the voice (the words for the page), an open record's modules (measured, then assembled). |
+| `contexts.js` | What is out on each kind of page, how big, and what clamps to what. Node-safe. |
+| `magnet.js` | The assembler: every element docks flush onto an edge of what it belongs to, chosen by attraction; sizes shrink (and blocks of text give up height, scrolling inside) only when they must. Node-safe. |
+| `tour.js` | The story: its stops, their words, their short names in the sidebar. Node-safe. |
 | `composition.css` | The look. |
 
 ## The look
 
 - **Objects, not boxes.** Every element has its own fill; nothing has an
-  outline. The only shadow is under an element you are holding.
+  outline or a shadow.
 - **Hierarchy is size**; numbers carry the structure (light, wide
   numerals: paper 3, chapter 11.2, step 4) instead of labels in tracked
   capitals.
@@ -57,21 +61,17 @@ free edge where it lands, and stays until the context changes.
 
 ## Traps
 
-- **Measured elements are measured at their target width**, not their
-  animated one (`.e__content` has its width set explicitly). Measure the
-  animated width and the height changes mid-spring, which re-assembles,
-  which changes the width again.
+- **One gesture, one page.** The pager swallows the rest of a gesture
+  (until the wheel is quiet for 200 ms, and at least 560 ms after a
+  move). A text that scrolls inside its element keeps the wheel until it
+  reaches its end; only then does the page move.
+- **Measured elements are measured at their width**, before paint
+  (`.e__content` has its width set explicitly), then assembled.
 - **cq units in a container's own padding measure its parent.** Record
   content sits in `.t__in` for that reason.
-- **The tour's narration is measured for every stop, hidden**
-  (`.cmp__measure`), so each stop's assembly is known before it is shown.
-- **Assembly cost** is a few to ~70 ms per context (the resting screen is
-  the heaviest). It runs on context changes, not per frame; the tour's
-  stops are assembled once and cached. Don't call it in a frame loop.
-- **`scripts/system-check.mjs` assembles every context** (every tour
-  stop, every record open, every resting state, every step) at desktop
-  size and fails on overlaps, elements off screen, or anything a context
-  can't do without (`must`) having nowhere to clamp.
-- **Phones** get a tall plate that scrolls (the assembly runs from the
-  top in a narrow, very tall room), so nothing is left out. Kept from
-  breaking, not designed for (CLAUDE.md).
+- **`scripts/system-check.mjs` walks the atlas**: every record must have
+  a page, every move from every page must land, and every page must
+  assemble without overlaps, elements off the page, or a needed element
+  with nowhere to clamp.
+- **Phones** get a bar with ← ↑ ↓ → instead of the sidebar, and pages
+  that scroll; kept from breaking, not designed for (CLAUDE.md).

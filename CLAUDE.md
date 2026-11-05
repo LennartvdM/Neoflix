@@ -30,27 +30,24 @@ working in; they're short, and GitHub renders them when browsing too.
   the motion system); `lib/` holds hooks and helpers. See `CONTENT.md`
   for the per-page table. Toolbox content → `docs-content/` markdown (but see the mirror rule).
 - **The composition** → `website/composition/` (read its README). **The
-  homepage and every record's address are one surface of elements that
-  clamp to each other** (2026-11, the owner's direction: "all their own
-  elements that magnetically clamp to each other depending on the
-  context"; bento is a reference for the balance of sizes and
-  orientations, not a grid). Every film, paper and toolbox page is its own
-  element with its own size; the context (`composition/contexts.js`) says
-  what is out and what clamps to what; the magnet (`composition/magnet.js`)
-  docks each element flush onto an edge of what it belongs to; springs
-  (`composition/engine.js`) move them there, with a small overshoot. An
-  open record's modules clamp round its main one, with the records it
-  links to clamped to the module that mentions them; elements can be
-  picked up and dropped, and clamp where they land. The tour
-  (`composition/tour.js`, `story.js`) is a sequence of contexts. Its look
-  is deliberately not the generic one: no outlines, no shadows (except
-  under an element being held), no small tracked capitals, no pills or
-  glass; hierarchy is size, the type is Archivo with its width axis. It
-  renders outside the navbar and `RouteSlider` (`App.jsx`,
-  `SPACE_ROUTES`). `website/space/` (the zoomable plane before it) and the
-  old homepage (`pages/home/`) are kept in the tree, unrouted; their rules
-  below apply only if they return. This is a playground: early rules in
-  this file that protect the old pages are not reasons to hold it back.
+  homepage and every record's address are one atlas of pages in two
+  directions** (2026-11, the owner's direction): down is the story (the
+  tour's stops, `composition/tour.js`), right is depth (what a page rests
+  on: a film's papers and practice, a step's chapters, a chapter's
+  pages), left is back out (`composition/atlas.js`). One gesture is one
+  page, and pages slide in whole (pagination, "to break up the prezi
+  feel"). The sidebar (`composition/Sidebar.jsx`) is the reader's anchor:
+  the story as an outline that branches as you go deeper and folds as you
+  come back. Each page is self-assembling: its elements clamp to each
+  other by context (`composition/contexts.js`, `composition/magnet.js`).
+  Its look is deliberately not the generic one: no outlines, no shadows,
+  no small tracked capitals, no pills or glass; hierarchy is size, the
+  type is Archivo with its width axis. It renders outside the navbar and
+  `RouteSlider` (`App.jsx`, `SPACE_ROUTES`). `website/space/` (the
+  zoomable plane before it) and the old homepage (`pages/home/`) are kept
+  in the tree, unrouted; their rules below apply only if they return.
+  This is a playground: early rules in this file that protect the old
+  pages are not reasons to hold it back.
 - **The library** → `website/system/` (read its README). Every toolbox
   page, paper and film is a record, assembled from modules by rules in
   `system/modules/plans.js`; films, papers and guidance are linked once,

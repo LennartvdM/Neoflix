@@ -88,7 +88,8 @@ function placeAll(items, { bounds, gap, scale }) {
   for (const it of items) {
     const s = it.scalable ? scale : 1;
     const w = Math.round(it.w * s);
-    const h = Math.round(it.h * s);
+    // A block of text can give up height (it scrolls inside) but not width.
+    const h = it.squeeze ? Math.round(Math.max(Math.min(it.h, it.squeeze), it.h * scale)) : Math.round(it.h * s);
     if (!list.length) {
       const r = { x: 0, y: 0, w, h };
       placed.set(it.id, r);
@@ -159,7 +160,7 @@ export function assemble(items, { bounds, gap = 10, top = false } = {}) {
   const must = new Set(items.filter((i) => i.must).map((i) => i.id));
   let res = null;
   let scale = 1;
-  for (const s of [1, 0.9, 0.8, 0.7, 0.6]) {
+  for (const s of [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4]) {
     const r = placeAll(items, { bounds, gap, scale: s });
     r.cost = r.dropped.reduce((a, id) => a + (must.has(id) ? 100 : 2), 0) + r.offside * 2.5 + (1 - s) * 6;
     if (!res || r.cost < res.cost) { res = r; scale = s; }
