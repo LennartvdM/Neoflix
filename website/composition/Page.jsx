@@ -28,8 +28,10 @@ import { motion } from 'framer-motion';
 import { buildOntology } from './ontology';
 import { entry } from '../system/content/ontology';
 import { CHAPTERS } from './tour';
+import Reading from './Reading';
+import { readings } from '../system/readings';
 
-const ONTOLOGY = buildOntology({ catalog, graph });
+const ONTOLOGY = buildOntology({ catalog, graph, readings });
 
 export const labelOf = (key) => {
   const r = catalog.get(key);
@@ -348,7 +350,7 @@ function Under({ items, mainRef, onPick }) {
           >
             <span className="under__tab" aria-hidden="true"><b>{r.n}</b>{r.short}</span>
             <strong className="under__title"><b>{r.n}</b>{r.short}</strong>
-            <span className="under__line">{u.line}</span>
+            <span className="under__line" data-quoted={u.quoted ? '' : undefined}>{u.quoted ? <>“{u.line}”</> : u.line}</span>
             <small>Paper {r.n} · {r.journal}, {r.year} →</small>
           </a>
         );
@@ -450,7 +452,7 @@ function Head({ num, title, meta }) {
 
 /* ── a record's title block ───────────────────────────────────────────── */
 
-function RecordWords({ record }) {
+function RecordWords({ record, onDeeper }) {
   const pins = usePins();
   const pinned = pins.includes(record.key);
   const [copied, setCopied] = useState(false);
@@ -494,6 +496,11 @@ function RecordWords({ record }) {
       <div className="actions">
         <button type="button" data-on={pinned ? '' : undefined} onClick={() => togglePin(record.key)}>{pinned ? '✓ In your pack' : '+ Pack'}</button>
         {record.kind !== 'film' && <button type="button" onClick={() => { navigator.clipboard?.writeText(cite); setCopied(true); setTimeout(() => setCopied(false), 1400); }}>{copied ? 'Citation copied' : 'Cite'}</button>}
+        {record.kind === 'paper' && readings[record.id] && onDeeper && (
+          <button type="button" className="actions__read" onClick={onDeeper}>
+            {readings[record.id].kind === 'reading' ? 'Read it, in its own words →' : 'Read our notes on it →'}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -506,7 +513,7 @@ function RecordWords({ record }) {
  * `search` is the search form, when searching; `resume` a "carry on"
  * offer for the first page.
  */
-export default function Page({ node, came, onPick, onPath, onProbe, search, resume, onResume }) {
+export default function Page({ node, came, onPick, onPath, onProbe, onDeeper, search, resume, onResume }) {
   const page = useMemo(() => ONTOLOGY.pageOf(node), [node]);
   const bodyRef = useRef(null);
   const mainRef = useRef(null);
@@ -545,6 +552,7 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
       </div>
     );
   }
+  if (node.kind === 'section' || node.kind === 'synopsis') return <Reading node={node} onPick={onPick} />;
   if (node.kind === 'search') {
     head = <Head title="Search" />;
     words = <div className="words">{search}</div>;
@@ -584,7 +592,7 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
   } else {
     const kindName = record.kind === 'film' ? 'Film' : record.kind === 'paper' ? 'The evidence' : 'The toolbox';
     head = <Head num={record.kind === 'paper' ? record.n : record.kind === 'film' ? record.order + 1 : null} title={kindName} meta={record.kind === 'guidance' ? loopName(record.phase) : null} />;
-    words = <RecordWords record={record} />;
+    words = <RecordWords record={record} onDeeper={onDeeper} />;
   }
 
   const want = <Wants want={page.want} onPick={onPick} onPath={onPath} refOf={refOf} follow={follow} setFollow={setFollow} title={page.layout === 'cover' ? 'Or take a path' : 'You might also want'} />;

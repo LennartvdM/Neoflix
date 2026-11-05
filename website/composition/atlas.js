@@ -24,7 +24,7 @@ const kindOf = (key) => key.slice(0, key.indexOf(':'));
 const depth = (slug) => (slug ? slug.split('/').length : 1);
 const isLevel = (g) => /^level\s+\d/i.test(g.title);
 
-export function buildAtlas(catalog, graph) {
+export function buildAtlas(catalog, graph, readings = {}) {
   const guidance = catalog.list('guidance').filter((g) => !g.divider && !isLevel(g));
   const chapterOf = (g) => (depth(g.id) >= 3 ? guidance.find((c) => depth(c.id) === 2 && g.id.startsWith(`${c.id}/`)) || null : null);
   const pagesUnder = (key) => guidance.filter((g) => chapterOf(g)?.key === key);
@@ -43,7 +43,25 @@ export function buildAtlas(catalog, graph) {
     return r.number || null;
   };
 
-  // A record's page; a toolbox chapter opens onto its pages.
+  // A paper opens onto itself as a reading (its own words, a page per
+  // section, with intermissions where its notes call for them) or, under
+  // a publisher's licence, onto our notes on it (one page).
+  const readingOf = (key) => {
+    const r = readings[key.slice(6)];
+    if (!r) return [];
+    if (r.kind === 'synopsis') return [{ id: `notes:${r.id}`, kind: 'synopsis', paper: r.id, key: null, label: 'Notes on this paper', num: null, kids: [] }];
+    const out = [];
+    r.sections.forEach((s, i) => {
+      out.push({ id: `read:${r.id}:${s.id}`, kind: 'section', paper: r.id, section: s.id, key: null, label: s.title, num: String(i + 1), kids: [] });
+      for (const im of r.intermissions.filter((x) => x.after === s.id)) {
+        const name = entry(`concept:${im.concept}`)?.name || im.concept;
+        out.push({ id: `pause:${r.id}:${im.concept}`, kind: 'pause', concept: im.concept, key: null, label: name, short: name, num: null, kids: [] });
+      }
+    });
+    return out;
+  };
+  // A record's page; a toolbox chapter opens onto its pages, a paper onto
+  // its reading.
   const record = (key) => ({
     id: `rec:${key}`,
     kind: 'record',
@@ -51,7 +69,7 @@ export function buildAtlas(catalog, graph) {
     label: label(key),
     num: num(key),
     rkind: kindOf(key),
-    kids: kindOf(key) === 'guidance' ? pagesUnder(key).map((g) => record(g.key)) : [],
+    kids: kindOf(key) === 'guidance' ? pagesUnder(key).map((g) => record(g.key)) : kindOf(key) === 'paper' ? readingOf(key) : [],
   });
   const uniq = (keys) => [...new Set(keys)].filter((k) => catalog.has(k));
   const records = (keys) => uniq(keys).map(record);

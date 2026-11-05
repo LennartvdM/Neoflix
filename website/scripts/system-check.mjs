@@ -29,6 +29,7 @@ const manifest = JSON.parse(await fs.readFile(path.join(__dirname, '../generated
 const catalog = buildCatalog(manifest);
 const graph = buildGraph(catalog);
 const lib = { catalog, graph };
+const readingsIndex = JSON.parse(await fs.readFile(path.join(__dirname, '../generated/readings-index.json'), 'utf8').catch(() => '{}'));
 
 let failures = 0;
 const fail = (msg) => { failures += 1; console.error(`FAIL  ${msg}`); };
@@ -109,7 +110,7 @@ check('search finds what it should', () => {
 // depth to the right. Every record must have a page somewhere in it, and
 // every move from every page must land on a page.
 check('every record has a page in the atlas, and every move lands', () => {
-  const atlas = buildAtlas(catalog, graph);
+  const atlas = buildAtlas(catalog, graph, readingsIndex);
   for (const k of catalog.records.keys()) if (!atlas.home.has(k)) fail(`atlas: no page for ${k}`);
   const walk = (n, addr) => {
     for (const d of ['down', 'up', 'right', 'left']) {
@@ -127,8 +128,8 @@ check('every record has a page in the atlas, and every move lands', () => {
 // own modules exist for it, a set isn't empty), the wants are few and
 // real, and none of them is the page itself.
 check('every page gives what is needed, and no more than three wants', () => {
-  const atlas = buildAtlas(catalog, graph);
-  const { pageOf } = buildOntology({ catalog, graph });
+  const atlas = buildAtlas(catalog, graph, readingsIndex);
+  const { pageOf } = buildOntology({ catalog, graph, readings: readingsIndex });
   const walk = (n, addr) => {
     const name = `${addr.join('.')} (${n.key || n.id})`;
     const page = pageOf(n);
@@ -160,6 +161,40 @@ check('the ontology holds together', () => {
   for (const p of PRACTICES) if (!LOOP.some((l) => l.id === p.step)) fail(`ontology: practice:${p.id} in an unknown step "${p.step}"`);
   for (const f of catalog.list('film')) if (!CLAIMS.some((c) => c.film === f.key)) fail(`ontology: ${f.key} illustrates no claim`);
 });
+
+// The papers as readings (system/content/readings): an open-licence
+// paper's passages are its own words (checked against the PDF by
+// tooling when written; see the readings README); here, everything we
+// layered on must hold: notes and morsels sit on passages that exist,
+// a morsel is an exact substring of its passage, every link lands, and
+// an intermission names a concept that exists.
+{
+  const dir = path.join(__dirname, '../system/content/readings');
+  const files = (await fs.readdir(dir).catch(() => [])).filter((f) => f.endsWith('.json'));
+  const before = failures;
+  for (const f of files) {
+    const r = JSON.parse(await fs.readFile(path.join(dir, f), 'utf8'));
+    const name = `reading ${r.id}`;
+    if (!catalog.has(`paper:${r.id}`)) fail(`${name}: no such paper`);
+    const passages = new Map(r.sections.flatMap((s) => s.passages.map((p) => [p.id, p])));
+    for (const n of r.notes || []) {
+      if (!passages.has(n.at)) fail(`${name}: a note on unknown passage ${n.at}`);
+      for (const k of n.links || []) if (!catalog.has(k) && !entry(k)) fail(`${name}: note links to unknown ${k}`);
+    }
+    for (const m of r.morsels || []) {
+      const p = passages.get(m.at);
+      if (!p) fail(`${name}: a morsel on unknown passage ${m.at}`);
+      else if (!p.text.includes(m.quote)) fail(`${name}: morsel isn't an exact substring of ${m.at}`);
+      for (const k of m.tags || []) if (!catalog.has(k) && !entry(k)) fail(`${name}: morsel tagged with unknown ${k}`);
+    }
+    for (const im of r.intermissions || []) {
+      if (!entry(`concept:${im.concept}`)) fail(`${name}: intermission with unknown concept ${im.concept}`);
+      if (!r.sections.some((s) => s.id === im.after)) fail(`${name}: intermission after unknown section ${im.after}`);
+    }
+    if (r.kind === 'reading' && !r.licence) fail(`${name}: a verbatim reading needs an open licence`);
+  }
+  if (failures === before) console.log(`  ok  the readings hold together (${files.length})`);
+}
 
 check('kinds are the three the site knows', () => {
   for (const key of catalog.records.keys()) if (!['guidance', 'paper', 'film'].includes(parseKey(key).kind)) fail(`odd key ${key}`);

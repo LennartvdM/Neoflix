@@ -31,6 +31,7 @@ function Level({ siblings, at, addr, cur, onGo, children }) {
       )}
       {siblings.slice(lo, hi + 1).map((n, j) => {
         const i = lo + j;
+        if (n.kind === 'pause' && i !== at) return null;
         const a = [...base, i];
         const here = i === at && cur.length === addr.length;
         const through = i === at && !here;

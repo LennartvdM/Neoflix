@@ -9,7 +9,7 @@
     "build": "vite build",
     "postbuild": "node scripts/build-route-html.mjs",
     "preview": "vite preview",
-    "build:docs": "node scripts/build-docs.mjs",
+    "build:docs": "node scripts/build-docs.mjs && node scripts/build-readings.mjs",
     "build:publications-zip": "node scripts/build-publications-zip.mjs"
   },
   "dependencies": {

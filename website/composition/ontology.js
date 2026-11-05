@@ -48,7 +48,17 @@ const cap = (list, n) => {
   return list.filter((w) => w && !seen.has(w.key) && seen.add(w.key)).slice(0, n);
 };
 
-export function buildOntology({ catalog, graph }) {
+import { claimOfFilm } from '../system/content/ontology.js';
+
+export function buildOntology({ catalog, graph, readings = {} }) {
+  // The paper's own sentence that best fits a subject, when its reading
+  // has one (a verbatim morsel tagged with the subject or its claim).
+  const quoteFor = (paperKey, subject) => {
+    const r = readings[paperKey.slice(6)];
+    if (!r || r.kind !== 'reading') return null;
+    const want = new Set([subject, claimOfFilm(subject) && `claim:${claimOfFilm(subject).id}`].filter(Boolean));
+    return r.morsels.find((m) => (m.tags || []).some((t) => want.has(t))) || null;
+  };
   // A want: a record, why it's offered, and its own line.
   const evidence = (key, about) => {
     const f = graph.findingsOf(about).find((x) => `paper:${x.paper}` === key);
@@ -71,7 +81,13 @@ export function buildOntology({ catalog, graph }) {
    */
   const underOf = (key) => {
     if (kindOf(key) === 'paper') return [];
-    return graph.papersOf(key).slice(0, 3).map((p) => evidence(p.key, key));
+    // Where the paper has a sentence of its own for this, it's quoted
+    // word for word (from its reading) instead of our paraphrase.
+    return graph.papersOf(key).slice(0, 3).map((p) => {
+      const e = evidence(p.key, key);
+      const q = quoteFor(p.key, key);
+      return q ? { ...e, line: q.quote, quoted: true } : e;
+    });
   };
 
   /**
@@ -140,6 +156,9 @@ export function buildOntology({ catalog, graph }) {
     if (node.kind === 'step') return { layout: 'list', list: node.kids.map((k) => k.key), want: [] };
     // An intermission: the explainer alone, edge to edge. Nothing else.
     if (node.kind === 'pause') return { layout: 'pause', concept: node.concept, want: [] };
+    // A paper as a reading (its own words) or as our notes on it.
+    if (node.kind === 'section') return { layout: 'paper', paper: node.paper, section: node.section, want: [] };
+    if (node.kind === 'synopsis') return { layout: 'synopsis', paper: node.paper, want: [] };
     if (node.kind === 'record') {
       const r = catalog.get(node.key);
       if (!r) return { layout: 'read', modules: [], want: [] };

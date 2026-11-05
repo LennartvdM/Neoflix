@@ -28,6 +28,7 @@ import { visit } from '../system/state';
 import { noteIntroDone, noteSeen, noteLibrary } from '../system/ripeness';
 import { resolveSlug } from '../pages/toolbox/docsIndex';
 import { buildAtlas } from './atlas';
+import { readings } from '../system/readings';
 import Page, { labelOf } from './Page';
 import Sidebar from './Sidebar';
 import LibraryMap from './LibraryMap';
@@ -35,7 +36,7 @@ import Intermission from './Intermission';
 import '../system/system.css';
 import './composition.css';
 
-const ATLAS = buildAtlas(catalog, graph);
+const ATLAS = buildAtlas(catalog, graph, readings);
 const TOUR_LENGTH = ATLAS.spine.filter((n) => n.kind === 'stop').length;
 const clamp = (lo, v, hi) => Math.max(lo, Math.min(hi, v));
 const EASE = [0.32, 0.72, 0, 1];
@@ -316,6 +317,7 @@ export default function Composition() {
               came={searching || cur.length < 2 ? null : (() => { const p = ATLAS.at(cur.slice(0, -1)); return p.key || (p.kind === 'stop' && typeof p.stop.at === 'string' && catalog.has(p.stop.at) ? p.stop.at : null); })()}
               onPick={pick}
               onPath={(id) => go(ATLAS.homeOfPath.get(id))}
+              onDeeper={() => step('right')}
               onProbe={onProbe}
               search={searchVoice}
               resume={node.index === 0 && cur.length === 1 ? resume : null}

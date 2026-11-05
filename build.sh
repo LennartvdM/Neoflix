@@ -16,6 +16,8 @@ cd website
 npm ci --prefer-offline
 # Transform docs-content/ (GitBook mirror) → compiled AST JSON + assets
 node scripts/build-docs.mjs
+# The papers as readings / synopses → generated/readings-index.json
+node scripts/build-readings.mjs
 # The library's integrity: links, paths, addresses, layouts (fails fast,
 # naming what broke — e.g. a toolbox page renamed in GitBook)
 node scripts/system-check.mjs
