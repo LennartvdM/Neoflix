@@ -24,6 +24,7 @@ import { resolveSlug } from '../pages/toolbox/docsIndex';
 import { assetUrl } from '../lib/utils/assetUrl';
 import { prefersReducedMedia } from '../lib/utils/reducedMedia';
 import { canonicalUrl } from '../shared/routeMeta';
+import { motion } from 'framer-motion';
 import { buildOntology } from './ontology';
 import { CHAPTERS } from './tour';
 
@@ -197,6 +198,99 @@ function Wires({ bodyRef, mainRef, wantRefs, want, follow }) {
         </g>
       ))}
     </svg>
+  );
+}
+
+/**
+ * What lies beside the subject, percolating out of it: a few neighbours
+ * seep out from behind the figure and settle at its edges (a row above,
+ * one larger one below and off the edge), then drift a little, as if
+ * the material went on past the page. Small and quiet until pointed at.
+ */
+const SLOTS = {
+  // relative to the figure: [x, y, w, h], x/y as fractions or px offsets
+  big: (f) => ({ x: f.x + f.w - 128, y: f.y + f.h + 12, w: 244, h: 204 }),
+  top: (f, i, n) => {
+    const w = [156, 162, 154][i % 3];
+    const h = [100, 104, 98][i % 3];
+    const step = Math.min(186, (f.w - 20) / Math.max(n, 1));
+    return { x: f.x + 8 + i * step + (i % 2) * 6, y: f.y - h - 12 + (i % 2 ? -4 : 2), w, h };
+  },
+};
+
+function Bit({ k }) {
+  const r = catalog.get(k);
+  if (r.kind === 'film') {
+    return (
+      <>
+        <img src={stillFor(r)} alt="" draggable={false} />
+        <span className="perc__cap"><b>{r.order + 1}</b>{r.name}</span>
+      </>
+    );
+  }
+  if (r.kind === 'paper') {
+    return (
+      <span className="perc__slip">
+        <b>{r.n}</b>
+        <strong>{r.short}</strong>
+        <small>{r.year}</small>
+      </span>
+    );
+  }
+  return (
+    <span className="perc__slip perc__slip--guide">
+      {r.number && <b>{r.number}</b>}
+      <strong>{r.title}</strong>
+    </span>
+  );
+}
+
+function Percolate({ keys, mainRef, big, onPick }) {
+  const [box, setBox] = useState(null);
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main || !keys.length) { setBox(null); return undefined; }
+    const measure = () => {
+      const fig = main.firstElementChild?.firstElementChild || main.firstElementChild;
+      if (!fig || fig.classList.contains('perc')) return;
+      const m = main.getBoundingClientRect();
+      const r = fig.getBoundingClientRect();
+      setBox({ x: r.left - m.left, y: r.top - m.top, w: r.width, h: r.height });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(main);
+    return () => ro.disconnect();
+  }, [mainRef, keys]);
+  if (!box || !keys.length) return null;
+  const withBig = big && keys.length > 1;
+  const tops = withBig ? keys.slice(1, 4) : keys.slice(0, 3);
+  const items = [
+    ...(withBig ? [{ k: keys[0], s: SLOTS.big(box), big: true }] : []),
+    ...tops.map((k, i) => ({ k, s: SLOTS.top(box, i, tops.length) })),
+  ];
+  const cx = box.x + box.w / 2;
+  const cy = box.y + box.h / 2;
+  return (
+    <div className="perc" aria-label="Beside this">
+      {items.map(({ k, s, big: b }, i) => (
+        <motion.a
+          key={k}
+          href={urlFor(k)}
+          data-id={k}
+          className={`perc__bit perc__bit--${catalog.get(k).kind}${b ? ' perc__bit--big' : ''}`}
+          style={{ left: s.x, top: s.y, width: s.w, height: s.h, '--i': i }}
+          initial={{ x: cx - (s.x + s.w / 2), y: cy - (s.y + s.h / 2), scale: 0.4, opacity: 0 }}
+          animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 120, damping: 17, delay: 0.35 + i * 0.13 }}
+          onClick={(e) => { e.preventDefault(); onPick(k); }}
+          aria-label={labelOf(k)}
+          title={labelOf(k)}
+        >
+          <span className="perc__drift"><Bit k={k} /></span>
+        </motion.a>
+      ))}
+    </div>
   );
 }
 
@@ -391,7 +485,10 @@ export default function Page({ node, came, onPick, onPath, onProbe, search, resu
           {words}
           {want}
         </div>
-        <div className="pg__main" ref={mainRef}>{main}</div>
+        <div className="pg__main" ref={mainRef}>
+          {main}
+          {page.adjacent?.length > 0 && <Percolate keys={page.adjacent} mainRef={mainRef} big={page.layout !== 'read'} onPick={onPick} />}
+        </div>
       </div>
     </div>
   );

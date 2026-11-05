@@ -10,6 +10,12 @@
  *          they need: at most three things, each with one line saying
  *          why ("the evidence: 8 of 20 infants weren't breathing at
  *          birth"). Small, to one side, never another index.
+ *   adjacent  what lies right beside the subject, percolating out of it:
+ *          a few neighbours (the films either side, the films that share
+ *          its evidence, its papers, the pages beside it), small, at the
+ *          subject's edges, quiet until pointed at. Not a list and not
+ *          a want: the sense that the thing you're looking at sits in a
+ *          body of material, and the nearest of it is one click away.
  *   rest   everything else in the library. Not on the page. It is
  *          reachable (the sidebar, down, right) but the page doesn't
  *          spend the reader's attention listing it.
@@ -61,6 +67,38 @@ export function buildOntology({ catalog, graph }) {
     return cap([papers[0] && evidence(papers[0], key), films[0] && onFilm(films[0])], 2);
   };
 
+  /**
+   * What lies beside a record, percolating out of it (≤ 4), not counting
+   * what the page already offers. Films first: they're the pictures.
+   */
+  const films = catalog.list('film');
+  const percolateOf = (key, taken = []) => {
+    const skip = new Set([key, ...taken]);
+    const k = kindOf(key);
+    const out = [];
+    const add = (x) => { if (x && catalog.has(x) && !skip.has(x)) { skip.add(x); out.push(x); } };
+    if (k === 'film') {
+      const i = films.findIndex((f) => f.key === key);
+      add(films[i + 1]?.key);
+      add(films[i - 1]?.key);
+      // Films that rest on the same evidence.
+      const mine = new Set(graph.papersOf(key).map((p) => p.key));
+      films.filter((f) => graph.papersOf(f.key).some((p) => mine.has(p.key))).forEach((f) => add(f.key));
+      graph.papersOf(key).forEach((p) => add(p.key));
+    } else if (k === 'paper') {
+      graph.filmsOf(key).forEach((f) => add(f.key));
+      const r = catalog.get(key);
+      catalog.list('paper').filter((p) => p.year === r.year).forEach((p) => add(p.key));
+    } else {
+      graph.filmsOf(key).forEach((f) => add(f.key));
+      const list = catalog.list('guidance').filter((g) => !g.divider && g.phase === catalog.get(key).phase);
+      const i = list.findIndex((g) => g.key === key);
+      add(list[i + 1]?.key);
+      add(list[i - 1]?.key);
+    }
+    return out.slice(0, 4);
+  };
+
   // A record's own content: which of the library's modules (system/
   // modules) are its need. The rest (citations, abstracts, the loop map,
   // "read on") are actions in its title block or are the atlas itself.
@@ -79,18 +117,22 @@ export function buildOntology({ catalog, graph }) {
     if (node.kind === 'record') {
       const r = catalog.get(node.key);
       if (!r) return { layout: 'read', modules: [], want: [] };
-      return { layout: 'read', figure: r.kind === 'film' ? r.key : null, modules: NEED[r.kind] || [], want: wantsOf(node.key) };
+      const want = wantsOf(node.key);
+      return { layout: 'read', figure: r.kind === 'film' ? r.key : null, modules: NEED[r.kind] || [], want, adjacent: percolateOf(node.key, want.map((w) => w.key)) };
     }
     // A stop of the story.
     const s = node.stop;
     const paths = catalog.paths.map((p) => ({ path: p.id, key: `path:${p.id}`, type: 'path', why: 'A path', title: p.name, line: p.blurb }));
-    if (s.doors) return { layout: 'cover', figure: node.index === 0 ? 'film:team' : null, want: cap(paths, 3) };
+    if (s.doors) return { layout: 'cover', figure: node.index === 0 ? 'film:team' : null, want: cap(paths, 3), adjacent: node.index === 0 ? percolateOf('film:team') : [] };
     if (Array.isArray(s.at)) return { layout: 'list', list: s.at, want: [] };
     if (s.at === 'region:practice') return { layout: 'list', list: node.kids.map((k) => `step:${k.phase}`), want: [] };
     if (/^column:/.test(s.at)) return { layout: 'list', list: node.kids.map((k) => k.key), want: [] };
-    if (catalog.has(s.at)) return { layout: 'figure', figure: s.at, want: wantsOf(s.at) };
+    if (catalog.has(s.at)) {
+      const want = wantsOf(s.at);
+      return { layout: 'figure', figure: s.at, want, adjacent: percolateOf(s.at, want.map((w) => w.key)) };
+    }
     return { layout: 'figure', want: [] };
   }
 
-  return { pageOf, wantsOf };
+  return { pageOf, wantsOf, percolateOf };
 }

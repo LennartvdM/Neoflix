@@ -41,7 +41,8 @@ working in; they're short, and GitHub renders them when browsing too.
   come back, without ever being the whole index. What a page shows is the
   ontology (`composition/ontology.js`): what the reader needs, biggest;
   at most three things they could want, small, each with its reason;
-  nothing else. The graph is visible: each want is tied to the page's
+  a few neighbours percolating out of the subject's edges (small, quiet,
+  a click away); nothing else. The graph is visible: each want is tied to the page's
   subject by a drawn edge, a followed link opens with the edge you came in
   on, and "Map" shows the whole library as one graph on demand
   (`composition/LibraryMap.jsx`). The look is adopted from the owner's Talent naar de Top

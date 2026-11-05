@@ -37,6 +37,16 @@ The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
     reason and the content's own line ("The evidence · Paper 5 · In one
     of our studies, 8 of 20 infants…"). Chosen from what the record rests
     on, in the order a reader needs it.
+  - *adjacent*: what lies right beside the subject **percolates out of
+    it** (the owner, 2026-11: "every item has adjacent / related content
+    percolating from it"): up to four neighbours (the films either side,
+    films resting on the same evidence, its papers, the pages beside it;
+    `percolateOf` in `ontology.js`, never repeating a want) seep out
+    from behind the subject on a spring and settle at its edges: a row
+    above, one larger below and off the page's edge. They drift a little,
+    are quiet (faded, no captions) until pointed at, and are a click
+    away. Not a list: the sense that the thing sits in a body of
+    material (`Percolate` in `Page.jsx`).
   - *rest*: not on the page. Reachable (the sidebar, down, right), never
     listed. Citations and the like are actions in a record's title block.
 - **The graph is visible, in three places**, drawn like marker on a

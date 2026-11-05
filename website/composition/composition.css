@@ -382,3 +382,64 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
   .wires circle { animation: none; opacity: 1; }
   .map__node[data-here]::before { animation: none; }
 }
+
+/* ── adjacent content, percolating out of the subject ──────────────── */
+.pg { overflow-x: hidden; }
+.figure, .reading > :first-child { position: relative; z-index: 2; }
+.perc { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.perc__bit {
+  position: absolute;
+  display: block;
+  pointer-events: auto;
+  border-radius: 12px;
+  transition: filter 0.3s var(--ease);
+  filter: saturate(0.85) brightness(1.02);
+}
+.perc__drift {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  box-shadow: 0 1px 2px rgba(20, 20, 58, 0.05), 0 10px 26px rgba(20, 20, 58, 0.1);
+  opacity: 0.82;
+  animation: perc-drift calc(11s + var(--i) * 2.3s) calc(var(--i) * -1.7s) ease-in-out infinite alternate;
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+@keyframes perc-drift {
+  0% { translate: 0 0; }
+  50% { translate: calc(3px + var(--i) * 1px) -4px; }
+  100% { translate: -3px 3px; }
+}
+.perc__bit:hover { z-index: 3; filter: none; }
+.perc__bit:hover .perc__drift { opacity: 1; transform: scale(1.05); box-shadow: var(--tile-shadow-hi); animation-play-state: paused; }
+.perc__drift img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.perc__cap {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 10px 6px;
+  border-top-right-radius: 10px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.perc__cap b { font-family: var(--display); font-weight: 500; color: #9fb6f5; }
+.perc__bit:hover .perc__cap, .perc__bit--big .perc__cap { opacity: 1; transform: none; }
+.perc__slip { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 3px; padding: 10px 13px; background: #fff; }
+.perc__slip b { font-family: var(--display); font-size: 22px; font-weight: 500; line-height: 0.9; color: var(--brand); }
+.perc__slip strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-family: var(--display); font-size: 13.5px; font-weight: 500; line-height: 1.18; color: var(--brand); }
+.perc__slip small { margin-top: auto; font-size: 11px; color: var(--ink-mute); }
+.perc__slip--guide { background: rgba(255, 255, 255, 0.72); }
+.perc__slip--guide b { font-size: 20px; color: var(--accent); }
+.perc__bit--big .perc__slip b { font-size: 44px; }
+.perc__bit--big .perc__slip strong { font-size: 18px; -webkit-line-clamp: 3; }
+@media (max-width: 759px) { .perc { display: none; } }
+@media (prefers-reduced-motion: reduce) { .perc__drift { animation: none; } }
