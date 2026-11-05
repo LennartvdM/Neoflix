@@ -1,0 +1,59 @@
+{
+  "id": "providers",
+  "kind": "synopsis",
+  "licence": null,
+  "pdf": "providers-perspective-adc-fetal-neonatal-2024.pdf",
+  "disclaimer": "Notes written for this site in our own words. Not the paper's text; read the paper itself for its exact findings.",
+  "sections": [
+    { "id": "question", "title": "The question", "passages": [
+      { "id": "question-1", "kind": "paragraph", "text": "Being filmed and then shown to colleagues asks a lot. Embarrassment and fear of criticism are known reasons why units hold back. In 2021 the Leiden NICU widened the video review of births it had run since 2014: sound and a view of the whole room were added in the delivery room, procedures on the unit itself were filmed through eye-tracking glasses, and nurses were drawn into sessions once attended mostly by doctors. This study asked the staff what that was like." }
+    ] },
+    { "id": "how", "title": "How they found out", "passages": [
+      { "id": "how-1", "kind": "paragraph", "text": "The set-up was built around choice. Staff switched the cameras on themselves, agreed before anything was filmed, previewed the footage and decided whether it would be shown. Every two weeks a 30-minute session, called Neoflix, was led by one of five trained chairs from the medical and nursing staff, working to three ground rules: stay concrete, describe rather than judge, and talk about actions, not people." },
+      { "id": "how-2", "kind": "paragraph", "text": "Between December 2021 and September 2022, eighteen sessions were held, six on each of three procedures: stabilisation at birth, line insertion, and intubation with surfactant. A researcher who was herself on the review team interviewed 28 staff, chosen for a spread of roles and experience. Twenty-one had been filmed; seven had only attended. The transcripts were coded into themes." }
+    ] },
+    { "id": "found", "title": "What they found", "passages": [
+      { "id": "found-1", "kind": "paragraph", "text": "Everyone interviewed valued the sessions. The footage showed people things they had done without realising, how they acted towards each other, and how long things really took. Seeing colleagues do the same task differently taught them something, and some used a tip straight away. Having nurses and doctors in one room stood out: each group learned why the other works the way it does." },
+      { "id": "found-2", "kind": "paragraph", "text": "Being filmed affected people differently. Some were nervous at first, but all said they forgot the camera once the work began. Trust within the team made consent easier, and nobody raised legal or privacy worries. Nurses in particular trusted the process more after sitting in on a few sessions before being filmed. Consultants worried about filming residents; residents saw it as one more chance to learn." },
+      { "id": "found-3", "kind": "paragraph", "text": "On how sessions ran, people valued the preview, the right to say no, and having those filmed present to explain what happened. They saw the chair's first job as keeping the talk respectful: holding to the rules, drawing in quieter colleagues and stepping in when the tone slipped. Joining online made it hard to take part. Filming was often skipped for lack of time, forgetfulness or unfamiliar equipment; the glasses had to be fetched, the delivery-room cameras only switched on." }
+    ] },
+    { "id": "means", "title": "What it means for a unit", "passages": [
+      { "id": "means-1", "kind": "paragraph", "text": "From these views the authors drew up a plan for other units (the paper's figure 2): let people sit in on sessions before asking them to be filmed; make consent genuine at both steps, filming and showing; prepare each session with the people in the video; train chairs and give them rules to enforce; and keep to a fixed time." },
+      { "id": "means-2", "kind": "paragraph", "text": "Staff suggested extending it to chest drains and lumbar punctures, the nurse's point of view, teaching, and parents' views. Small tips can go out in a newsletter or on a poster; real changes to practice should first be agreed in a staff meeting. And the longer review runs, the more deliberately safety needs watching." }
+    ] },
+    { "id": "limits", "title": "What it can't tell you", "passages": [
+      { "id": "limits-1", "kind": "paragraph", "text": "This is one unit, interviewed by someone from its own review team, and its staff had used video review since 2014 without legal trouble, so they may have been readier than most. The study asked about experience; it did not measure care. Preparing each session with the filmed staff also took extra time. The authors say whether their approach works in other units still needs testing." }
+    ] }
+  ],
+  "keyFacts": [
+    { "figure": "28", "text": "doctors and nurses interviewed, across six roles" },
+    { "figure": "21 / 28", "text": "of those interviewed had themselves been filmed" },
+    { "figure": "18", "text": "review sessions, December 2021 to September 2022" },
+    { "figure": "101 / 125", "text": "of the unit's staff attended at least one session" },
+    { "figure": "30 min", "text": "per session, every two weeks" },
+    { "figure": "5", "text": "trained chairs, from both medical and nursing staff" },
+    { "figure": "0", "text": "legal or privacy concerns raised in the interviews" }
+  ],
+  "notes": [
+    { "at": "question-1", "type": "gloss", "text": "Eye-tracking glasses are worn by the person doing the procedure; here they served simply as a head-mounted camera with sound, showing the work from the operator's point of view.", "links": ["guidance:level-2-in-action/6.-recording-equipment/6.3-wearable-cameras"] },
+    { "at": "how-1", "type": "link", "text": "The toolbox describes the same preparation step by step: consent first, then a private look at the footage with those filmed.", "links": ["practice:consent", "practice:preview", "guidance:level-2-in-action/5.-preparation-and-consent/5.1-obtain-consent"] },
+    { "at": "how-2", "type": "context", "text": "The same eighteen sessions are the ones analysed for improvement points in the companion paper, Record, reflect, refine.", "links": ["paper:recordreflectrefine", "finding:120-things"] },
+    { "at": "found-1", "type": "link", "text": "This is the site's argument about watching together: doctors and nurses seeing one recording instead of two memories.", "links": ["film:team", "claim:team", "concept:shared-picture"] },
+    { "at": "found-2", "type": "guide", "text": "If staff are wary, invite them to a few sessions as viewers first. Nobody needs to be filmed to take part.", "links": ["practice:find-pioneers", "guidance:level-1-fundamentals/2.-planning-your-initiative/2.2-gaining-team-buy-in", "role:clinician"] },
+    { "at": "found-3", "type": "link", "text": "What the chair does, and the rules that keep a session safe, are set out in the toolbox.", "links": ["practice:chair", "guidance:level-2-in-action/11.-lets-neoflix/11.3-tasks-of-the-chair", "guidance:level-2-in-action/11.-lets-neoflix/11.2-a-safe-learning-environment"] },
+    { "at": "means-1", "type": "guide", "text": "A unit starting out can use this as a checklist before its first session, and keep the first procedures small.", "links": ["practice:start-small", "guidance:level-1-fundamentals/3.-safe-simple-and-small"] },
+    { "at": "means-2", "type": "link", "text": "How tips and real changes are told apart and acted on is the subject of the companion paper.", "links": ["practice:act-on-a-finding", "paper:recordreflectrefine", "practice:make-it-routine"] },
+    { "at": "limits-1", "type": "context", "text": "A second unit's experience is in the paper on joint sessions with Vienna.", "links": ["paper:internationalcollab", "unit:vienna", "practice:review-across-units"] }
+  ],
+  "intermissions": [
+    { "after": "found", "concept": "safe-to-look" }
+  ],
+  "morsels": [
+    { "at": "found-2", "quote": "Some were nervous at first, but all said they forgot the camera once the work began.", "tags": ["role:clinician", "practice:record"], "why": "Answers the commonest worry about being filmed." },
+    { "at": "found-2", "quote": "Nurses in particular trusted the process more after sitting in on a few sessions before being filmed.", "tags": ["practice:find-pioneers", "concept:safe-to-look"], "why": "A concrete, cheap way to build trust." },
+    { "at": "found-1", "quote": "Having nurses and doctors in one room stood out: each group learned why the other works the way it does.", "tags": ["claim:team", "concept:shared-picture"], "why": "The value of reviewing across professions." },
+    { "at": "found-3", "quote": "They saw the chair's first job as keeping the talk respectful: holding to the rules, drawing in quieter colleagues and stepping in when the tone slipped.", "tags": ["practice:chair", "concept:safe-to-look"], "why": "The chair's role in one line." },
+    { "at": "how-1", "quote": "The set-up was built around choice.", "tags": ["practice:consent", "concept:consent", "finding:felt-safe"], "why": "Why people felt safe enough to take part." },
+    { "at": "means-2", "quote": "And the longer review runs, the more deliberately safety needs watching.", "tags": ["practice:make-it-routine", "concept:safe-to-look"], "why": "Safety is not settled once." }
+  ]
+}
