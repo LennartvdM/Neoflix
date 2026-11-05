@@ -1,0 +1,62 @@
+{
+  "id": "recordreflectrefine",
+  "kind": "synopsis",
+  "licence": null,
+  "pdf": "record-reflect-refine-pediatric-research-2024.pdf",
+  "disclaimer": "Notes written for this site in our own words. Not the paper's text; read the paper itself for its exact findings.",
+  "sections": [
+    { "id": "question", "title": "The question", "passages": [
+      { "id": "question-1", "kind": "paragraph", "text": "Debriefs depend on memory, and memory is unreliable. Video lets a team look at what actually happened, but what a review session teaches is easily lost unless someone turns it into change. Much neonatal care also happens where guidelines run out and clinicians use judgement, so the same procedure gets done in different ways. The Leiden team asked whether regular video review could drive a structured improvement process: spotting what could be better, then acting on it." }
+    ] },
+    { "id": "how", "title": "How they found out", "passages": [
+      { "id": "how-1", "kind": "paragraph", "text": "From December 2021 to September 2022 the NICU filmed three procedures that doctors and nurses do together: stabilisation at birth, intubation or minimally invasive surfactant therapy (MIST), and sterile line insertion. Each month covered one procedure, and the three-month round ran three times, so any change could be checked when its procedure came round again. Staff volunteered to film, consented to each use and previewed footage with the chair. Thirty-minute sessions every two weeks were open to all hands-on staff, in person or online." },
+      { "id": "how-2", "kind": "paragraph", "text": "After each session a small study group drawn from every discipline went through the researcher's notes and an anonymous questionnaire on what people had learned, which gave quieter staff a voice. Each point was sent down one of four routes: change a protocol or piece of equipment; take a question to research or an expert; share it as a tip, because it is legitimate variation; or build training material. Later sessions showed whether the action had worked; if not, the point went round again." }
+    ] },
+    { "id": "found", "title": "What they found", "passages": [
+      { "id": "found-1", "kind": "paragraph", "text": "Eighteen sessions drew 17 staff on average, nurses and doctors in similar numbers, and by the end 101 of the unit's 125 hands-on staff had come at least once. Of 48 procedures recorded, all were previewed with those filmed, and nobody refused to let theirs be used. The group logged 120 points for improvement; nearly half came from line insertions." },
+      { "id": "found-2", "kind": "paragraph", "text": "Most of them (84, or 70%) were colleagues doing the same thing differently, handled by sharing tips. Twenty led to training or teaching material, ten to a protocol or equipment change, and six to a research question or expert advice. The recurring themes were sterility, technique and equipment, setting up the sterile table, communication, teamwork, the parents' experience and ventilation." },
+      { "id": "found-3", "kind": "paragraph", "text": "Twenty-five points came back after a first action and needed another round. A rule against laying sterile gloves by the sink was only followed after a newsletter reminder. When intubation commands turned out to mean different things to different people, a short film showing each one became a training tool. Persistent trouble with clear spoken instructions grew, over several rounds, into a pre-procedure time-out checklist, tested on camera before it became routine; that took up to six months." }
+    ] },
+    { "id": "means", "title": "What it means for a unit", "passages": [
+      { "id": "means-1", "kind": "paragraph", "text": "Regular review gives a unit a steady supply of small, concrete improvements, most of them from colleagues seeing each other work. The gain is in the follow-through: give a standing group the job of sorting what a session raises by the kind of action it needs, take protocol changes to a wider staff meeting because only part of the team attends any session, and check later recordings to see whether the change has held." }
+    ] },
+    { "id": "limits", "title": "What it can't tell you", "passages": [
+      { "id": "limits-1", "kind": "paragraph", "text": "The study counted points raised and actions taken; it did not measure whether procedures went better or babies did better. The study group decided which discussion points became actions, and judging from later videos and discussion whether a change had stuck is open to bias. Repeated cycles take time in a busy unit. It is a single centre, and the authors call for testing elsewhere and for measuring effects over the long term." }
+    ] }
+  ],
+  "keyFacts": [
+    { "figure": "18", "text": "review sessions over nine months, six per procedure" },
+    { "figure": "17", "text": "staff at an average session" },
+    { "figure": "101 / 125", "text": "of the unit's hands-on staff attended at least once" },
+    { "figure": "48", "text": "procedures recorded; no one declined to have theirs used" },
+    { "figure": "120", "text": "points for improvement identified and acted on" },
+    { "figure": "84 / 120", "text": "were variation between colleagues, shared as tips" },
+    { "figure": "25", "text": "points needed more than one round" },
+    { "figure": "6 months", "text": "to bring in the time-out checklist" }
+  ],
+  "notes": [
+    { "at": "question-1", "type": "link", "text": "Why memory is a poor record of a fast procedure is the starting point of the site's argument.", "links": ["finding:recall", "concept:memory-vs-recording", "film:focus"] },
+    { "at": "question-1", "type": "gloss", "text": "The paper calls this design action research: the people doing the work help decide what to change, try it, and check it, in repeated cycles.", "links": ["practice:research"] },
+    { "at": "how-1", "type": "gloss", "text": "MIST: surfactant given through a thin catheter in the windpipe while the baby keeps breathing on its own, instead of through a breathing tube.", "links": [] },
+    { "at": "how-1", "type": "context", "text": "These are the same eighteen sessions whose participants were interviewed in the companion paper on what being filmed felt like.", "links": ["paper:providers", "finding:felt-safe"] },
+    { "at": "how-2", "type": "link", "text": "The toolbox has a page for each of the four routes.", "links": ["guidance:level-2-in-action/13.1-the-neoflix-approach/13.1-protocol-or-equipment-adjustment", "guidance:level-2-in-action/13.1-the-neoflix-approach/13.2-input-for-research", "guidance:level-2-in-action/13.1-the-neoflix-approach/13.3-learning-from-variety-or-best-practices", "guidance:level-2-in-action/13.1-the-neoflix-approach/13.4-development-of-training-programs-or-educational-material"] },
+    { "at": "found-1", "type": "context", "text": "Only part of the team is at any one session, which is why agreed changes still went through staff meetings, newsletters or posters.", "links": ["finding:attendance", "practice:make-it-routine"] },
+    { "at": "found-2", "type": "link", "text": "Most of what review turns up is not error but difference, visible only when two people's work is seen side by side.", "links": ["finding:84-of-120", "concept:variation", "film:perspectives"] },
+    { "at": "found-3", "type": "link", "text": "The commands film is one of the site's findings.", "links": ["finding:commands", "film:coordination"] },
+    { "at": "found-3", "type": "gloss", "text": "A time-out is a short pause before starting, in which the team confirms roles, preparation and equipment.", "links": [] },
+    { "at": "means-1", "type": "guide", "text": "A unit can copy the four routes as they are; the key decision is who owns each point after the session ends.", "links": ["practice:act-on-a-finding", "guidance:level-2-in-action/12.-improving-care-through-the-neoflix-approach", "role:chair"] },
+    { "at": "limits-1", "type": "context", "text": "For measurements taken from recordings, rather than points raised in discussion, see the series' study of the vocal cords at birth.", "links": ["paper:drivingresearch", "finding:cords-closed"] }
+  ],
+  "intermissions": [
+    { "after": "how", "concept": "the-loop" },
+    { "after": "found", "concept": "variation" }
+  ],
+  "morsels": [
+    { "at": "question-1", "quote": "Video lets a team look at what actually happened, but what a review session teaches is easily lost unless someone turns it into change.", "tags": ["claim:skills", "practice:act-on-a-finding", "concept:pdca"], "why": "Why review needs follow-through." },
+    { "at": "found-2", "quote": "Most of them (84, or 70%) were colleagues doing the same thing differently, handled by sharing tips.", "tags": ["finding:84-of-120", "concept:variation", "claim:perspectives"], "why": "The headline number, plainly." },
+    { "at": "found-3", "quote": "When intubation commands turned out to mean different things to different people, a short film showing each one became a training tool.", "tags": ["finding:commands", "claim:coordination"], "why": "A finding becoming a fix." },
+    { "at": "found-3", "quote": "A rule against laying sterile gloves by the sink was only followed after a newsletter reminder.", "tags": ["concept:pdca", "concept:the-loop"], "why": "Changes need checking, not just announcing." },
+    { "at": "how-1", "quote": "Each month covered one procedure, and the three-month round ran three times, so any change could be checked when its procedure came round again.", "tags": ["concept:the-loop", "practice:make-it-routine"], "why": "How the loop was built into the calendar." },
+    { "at": "means-1", "quote": "Regular review gives a unit a steady supply of small, concrete improvements, most of them from colleagues seeing each other work.", "tags": ["finding:120-things", "practice:make-it-routine", "claim:perspectives"], "why": "The case for making it routine." }
+  ]
+}

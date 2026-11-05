@@ -58,10 +58,28 @@ function Marked({ text, quotes }) {
   return parts;
 }
 
+/**
+ * Passages as they're shown: a paragraph the PDF's columns broke in two
+ * is stored as two passages (the second `continues`), so each still
+ * matches the PDF word for word; on the page they're one paragraph again.
+ */
+function joined(passages) {
+  const out = [];
+  for (const p of passages) {
+    const prev = out[out.length - 1];
+    if (p.continues && prev) {
+      prev.parts.push(p);
+      prev.ids.push(p.id);
+      prev.text = `${prev.text} ${p.text}`;
+    } else out.push({ ...p, ids: [p.id], parts: [p] });
+  }
+  return out;
+}
+
 function Passage({ p, notes, quotes, onPick }) {
   let body;
   if (p.kind === 'heading') body = <h3 className="rd__h">{p.text}</h3>;
-  else if (p.kind === 'caption') body = <p className="rd__caption"><Marked text={p.text} quotes={quotes} /></p>;
+  else if (p.kind === 'caption') body = <p className="rd__caption">{p.label && <b>{p.label}</b>}<Marked text={p.text} quotes={quotes} /></p>;
   else if (p.kind === 'list-item') body = <p className="rd__p rd__li"><Marked text={p.text} quotes={quotes} /></p>;
   else body = <p className="rd__p"><Marked text={p.text} quotes={quotes} /></p>;
   return (
@@ -112,8 +130,8 @@ export default function Reading({ node, onPick }) {
   if (!r) {
     return <div className="pg pg--paper">{head}<div className="rd"><p className="prose">Opening the paper…</p></div></div>;
   }
-  const notesAt = (id) => (r.notes || []).filter((n) => n.at === id);
-  const quotesAt = (id) => (synopsis ? [] : (r.morsels || []).filter((m) => m.at === id).map((m) => m.quote));
+  const notesAt = (ids) => (r.notes || []).filter((n) => ids.includes(n.at));
+  const quotesAt = (ids) => (synopsis ? [] : (r.morsels || []).filter((m) => ids.includes(m.at)).map((m) => m.quote));
 
   if (synopsis) {
     return (
@@ -132,7 +150,7 @@ export default function Reading({ node, onPick }) {
           {r.sections.map((s) => (
             <section key={s.id} className="rd__section">
               <h3 className="rd__h">{s.title}</h3>
-              {s.passages.map((p) => <Passage key={p.id} p={p} notes={notesAt(p.id)} quotes={[]} onPick={onPick} />)}
+              {joined(s.passages).map((p) => <Passage key={p.id} p={p} notes={notesAt(p.ids)} quotes={[]} onPick={onPick} />)}
             </section>
           ))}
         </div>
@@ -154,7 +172,7 @@ export default function Reading({ node, onPick }) {
         )}
         <h2 className="rd__title">{sec.title}</h2>
         {sIndex !== 0 && source}
-        {sec.passages.map((p) => <Passage key={p.id} p={p} notes={notesAt(p.id)} quotes={quotesAt(p.id)} onPick={onPick} />)}
+        {joined(sec.passages).map((p) => <Passage key={p.id} p={p} notes={notesAt(p.ids)} quotes={quotesAt(p.ids)} onPick={onPick} />)}
       </div>
     </div>
   );
