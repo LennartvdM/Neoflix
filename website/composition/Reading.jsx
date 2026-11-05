@@ -60,7 +60,7 @@ function Marked({ text, quotes }) {
 
 /**
  * Passages as they're shown: a paragraph the PDF's columns broke in two
- * is stored as two passages (the second `continues`), so each still
+ * is stored as two passages (the second has `continues: true`), so each still
  * matches the PDF word for word; on the page they're one paragraph again.
  */
 function joined(passages) {
@@ -70,7 +70,9 @@ function joined(passages) {
     if (p.continues && prev) {
       prev.parts.push(p);
       prev.ids.push(p.id);
-      prev.text = `${prev.text} ${p.text}`;
+      // A word hyphenated across the break ("re-" + "flected") is one
+      // word again; that hyphen was the PDF's, not the author's.
+      prev.text = /[a-z]-$/.test(prev.text) && /^[a-z]/.test(p.text) ? prev.text.slice(0, -1) + p.text : `${prev.text} ${p.text}`;
     } else out.push({ ...p, ids: [p.id], parts: [p] });
   }
   return out;

@@ -1,0 +1,648 @@
+{
+  "id": "internationalcollab",
+  "kind": "reading",
+  "licence": "CC BY",
+  "pdf": "international-collaboration-children-2026.pdf",
+  "sections": [
+    {
+      "id": "highlights",
+      "title": "Highlights",
+      "passages": [
+        {
+          "id": "highlights-1",
+          "kind": "heading",
+          "text": "What are the main findings?"
+        },
+        {
+          "id": "highlights-2",
+          "kind": "paragraph",
+          "text": "Multicenter video review identifies critical procedural variations and facilitates international, interprofessional dialogue between neonatal centers."
+        },
+        {
+          "id": "highlights-3",
+          "kind": "paragraph",
+          "text": "Collaborative video review generates novel clinical perspectives on care, informing possible refinement and adaptation of local guidelines at both institutions participating in multicenter video review."
+        },
+        {
+          "id": "highlights-4",
+          "kind": "heading",
+          "text": "What are the implications of the main findings?"
+        },
+        {
+          "id": "highlights-5",
+          "kind": "paragraph",
+          "text": "Expanding video review from a local to a multicenter framework uncovers hidden clinical disparities that standard guideline comparisons overlook."
+        },
+        {
+          "id": "highlights-6",
+          "kind": "paragraph",
+          "text": "The provided implementation roadmap offers a strategy to foster international knowledge exchange and could potentially enhance patient safety on a broader scale."
+        }
+      ]
+    },
+    {
+      "id": "abstract",
+      "title": "Abstract",
+      "passages": [
+        {
+          "id": "abstract-1",
+          "kind": "paragraph",
+          "text": "Background/Objectives: The Leiden University Medical Center (LUMC) and the Medical University of Vienna (MUV) both implemented video recording and review in their neonatal intensive care unit (NICU). The two centers initiated collaborative, multicenter video review sessions to facilitate international knowledge exchange."
+        },
+        {
+          "id": "abstract-2",
+          "kind": "paragraph",
+          "text": "Methods: In this exploratory, descriptive study, collaborative video review sessions were organized with the interprofessional NICU staff of the LUMC and the MUV. We aimed to describe our experience with organizing these sessions and to report procedural variations, and document lessons learned that led to new perspectives on care."
+        },
+        {
+          "id": "abstract-3",
+          "kind": "paragraph",
+          "text": "Results: We conducted five sessions using recordings of different patients undergoing intubation, less invasive surfactant administration, umbilical, central-catheter insertion and physiologically based cord clamping after birth. The videos were selected to ensure technical and clinical comparability. Sessions were attended by a mean of eight providers per center. A total of 19 relevant differences were described, of which seven (37%) prompted changes in practice or new insights for one or both centers. Finally, we developed a roadmap for organizing multicenter video review sessions."
+        },
+        {
+          "id": "abstract-4",
+          "kind": "paragraph",
+          "text": "Conclusions: This study shows that multicenter video review may represent a feasible and innovative educational approach for identifying practice variations and fostering cross-institutional clinical refinement."
+        }
+      ]
+    },
+    {
+      "id": "introduction",
+      "title": "Introduction",
+      "passages": [
+        {
+          "id": "introduction-1",
+          "kind": "paragraph",
+          "text": "Video recording of real-time medical procedures has become a valuable tool for reflection in medical care. It provides an objective perspective on care delivery, facilitating interprofessional learning and quality improvement initiatives [1–4]. In the neonatal intensive care unit (NICU), video review has been applied to procedures such as endotracheal intubation, surfactant administration, umbilical catheter insertion, and neonatal resuscitation [5,6]. Both the Leiden University Medical Center (LUMC) and the Medical University of Vienna (MUV) have successfully integrated video recording and reviewing into their NICU practices [7,8]."
+        },
+        {
+          "id": "introduction-2",
+          "kind": "paragraph",
+          "text": "Despite international neonatal procedural guidelines, variations in care persist, highlighting the need for ongoing analysis and refinement of practice [9–13]. Video recordings offer an effective means to observe these variations objectively. Previous research has demonstrated that video recordings can be used to identify significant differences in delivery room management across neonatal centers [14]. While traditional multicenter observational studies typically quantify such disparities retroactively, multicenter video review—whereby clinicians from different institutions collaboratively and dynamically analyze live-action recordings—could help providers gain new perspectives on their clinical practice. This enables centers to learn from one another and improve their respective practices. The aim of this study was to describe our experience with multicenter video review, report lessons learned from conducting multicenter review sessions on neonatal procedures and delineate the subsequent changes implemented in practice. To explicitly guide this evaluation, our secondary objectives were to assess the feasibility of this collaborative approach and to develop a roadmap for other institutions seeking to implement multicenter video review."
+        }
+      ]
+    },
+    {
+      "id": "methods",
+      "title": "Materials and Methods",
+      "passages": [
+        {
+          "id": "methods-1",
+          "kind": "paragraph",
+          "text": "For this exploratory, descriptive multicenter video review study, we planned and conducted five collaborative video review sessions with neonatal care providers working in the NICUs of the LUMC (Leiden, the Netherlands) and the MUV, (Vienna, Austria). Both institutions are tertiary level perinatal centers that record interventions in the NICU using eye-tracking glasses and static video systems. Video review sessions were implemented in both centers several years prior and are part of the weekly clinical routine within the departments."
+        },
+        {
+          "id": "methods-2",
+          "kind": "paragraph",
+          "text": "Both the LUMC and MUV utilized eye-tracking glasses: the LUMC used the Tobii Pro Glasses 3 (Tobii, Stockholm, Sweden), while the MUV also used the VPS 19 (ViewPoint System, Vienna, Austria) to record the visual field of the healthcare providers and provide a point-of-view recording [5]. Additionally, both centers used a stationary camera, either a GoPro (GoPro Inc, San Mateo CA, USA) or a Microsoft LifeCam Cinema (Microsoft Ireland Operations Ltd., Dublin, Ireland), to capture a wide-angle view of the patient’s bed or stabilization room. Video laryngoscopy (Acutronic, Hirzel, Switzerland or Verathon GlideScope, Bothell, WA, USA) recordings were integrated with the point-of-view recording where possible."
+        },
+        {
+          "id": "methods-3",
+          "kind": "paragraph",
+          "text": "For this study, five collaborative, multicenter video review sessions were conducted, focusing on each of five different procedures: (1) endotracheal intubation; (2) minimally invasive surfactant therapy or less invasive surfactant administration (MIST/LISA); (3) umbilical venous catheter (UVC) insertion; (4) peripherally inserted central venous catheter"
+        },
+        {
+          "id": "methods-4",
+          "kind": "paragraph",
+          "text": "(PICC) insertion; and (5) physiologically based cord clamping (PBCC) during stabilization at birth. These specific target topics were selected because they represent the most frequently performed and routinely recorded critical care interventions within both NICUs and were identified a priori as procedures where collaborative video review would yield the highest clinical and educational value. Each multicenter session included one video from each center. Two study coordinators (VH and HS) independently screened the local databases, which at the time contained a total pool of approximately one hundred recordings in total, of all eligible interventions, across both institutions. Both centers selected a representative video of the specific intervention from their respective databases based on technical comparability, recentness to reflect current standard practice, and consent from parents and caregivers. Videos were excluded if they had poor audio–visual quality or incomplete procedural documentation. Proceduralists, defined as the recorded providers involved in hands-on care, who either wore eye-tracking glasses or were present in the room during the recording of the procedure, gave oral consent for the educational and research use of the recording in multicenter video review. This clinician consent was video-specific; prior to each multicenter session, providers were explicitly informed which video would be reviewed and were given the option to opt out without any consequences. Parental consent protocols differed between institutions: at the MUV, prospective parental consent was obtained prior to video recording, whereas in the LUMC, only the unidentifiable recordings in the stabilization room were part of standard clinical care for quality assurance purposes, and therefore exempt from patient consent under local institution guidelines. However, identifiable recordings made with the eye-tracking glasses or the GoPro camera were not part of standard clinical care, and therefore consent was obtained prior to video recording and for use of a video in multicenter video review. In addition, to prevent re-identification, all recordings were de-identified before review by digitally blurring visible patient features or editing the video to eliminate identifying data. The videos were not transferred, emailed, or exchanged as raw data files. Instead, the video data remained hosted on the native institution’s server and were shared only via real-time screen sharing during online meetings.",
+          "continues": true
+        },
+        {
+          "id": "methods-5",
+          "kind": "paragraph",
+          "text": "Audio was recorded, although due to language barriers not all conversations could be understood. Consequently, during the online meetings, a representative from each center introduced their case and provided contextual information, followed by a structured discussion to address cross-institutional questions. Furthermore, during the live online sessions, the respective native-speaking study coordinator provided immediate contextual translation and standardization of terminology to ensure accurate cross-institutional interpretation. Two researchers, one from each center (VH and HS), prepared and chaired each video review session. A variation in practice was classified as relevant if it was explicitly flagged by the participants during the collaborative review as having a potential clinical or educational impact during the (online) discussion. To ensure reproducibility and minimize subjective bias, these variations were discussed, verified, and agreed upon by consensus between the attending providers of care from both centers who participated in multicenter video review. In this context, consensus was defined a priori as a unanimous agreement among all session participants that a variation was relevant to discuss and if so, whether it would lead to a modification of practice in a center; if an objection was raised, this subject was debated further until agreement was reached."
+        },
+        {
+          "id": "methods-6",
+          "kind": "paragraph",
+          "text": "To evaluate the multicenter video review process, three outcome measures were predefined:"
+        },
+        {
+          "id": "methods-7",
+          "kind": "paragraph",
+          "text": "(1). Roadmap development: Essential operational and technical requirements for conducting cross-border multicenter reviews were identified during the sessions and synthesized to develop a structured implementation roadmap."
+        },
+        {
+          "id": "methods-8",
+          "kind": "paragraph",
+          "text": "(2). Procedural variations: The number of relevant variations in neonatal procedural practices between the two centers was identified and documented before the video review sessions and adjusted afterwards."
+        },
+        {
+          "id": "methods-9",
+          "kind": "paragraph",
+          "text": "(3). Practice modifications: Insights informing potential modifications of existing clinical approaches were documented, based on their subsequent institutional impact."
+        }
+      ]
+    },
+    {
+      "id": "results",
+      "title": "Results",
+      "passages": [
+        {
+          "id": "results-1",
+          "kind": "paragraph",
+          "text": "Five multicenter video review sessions were conducted between December 2022 and March 2024. The reviewed procedures included endotracheal intubation, MIST/LISA, UVC insertion, PICC insertion, and PBCC during stabilization following birth."
+        },
+        {
+          "id": "results-2",
+          "kind": "heading",
+          "text": "3.1. Roadmap Development"
+        },
+        {
+          "id": "results-3",
+          "kind": "paragraph",
+          "text": "Based on our experience, a roadmap for conducting multicenter video review sessions was developed (Figure 1). This roadmap delineates the sequential steps required to establish and execute cross-border collaborative reviews."
+        },
+        {
+          "id": "results-4",
+          "kind": "caption",
+          "text": "Figure 1. Roadmap for organizing multicenter video review sessions."
+        },
+        {
+          "id": "results-5",
+          "kind": "paragraph",
+          "n": 1,
+          "text": "Two centers that had independently established local video recording and review programs initiated a collaboration to organize multicenter video review and collaboratively review recordings of neonatal procedures. Importantly, both NICUs managed"
+        },
+        {
+          "id": "results-6",
+          "kind": "paragraph",
+          "text": "a similar patient population, ensuring that the evaluated neonatal procedures were clinically comparable.",
+          "continues": true
+        },
+        {
+          "id": "results-7",
+          "kind": "paragraph",
+          "n": 2,
+          "text": "Prior to each session, a specific procedure was selected and technically comparable recordings were identified. To guide the dialogue, a comparison checklist was created, based on the local guidelines of each center and distributed among attending staff members prior to the video review session (Appendix A). This checklist incorporated critical clinical and contextual characteristics, such as gestational age, birthweight and indication for the intervention. The protection of patient data was upheld through the anonymization of patient data in the videos, alongside the utilization of a sharing-only format for the online review sessions."
+        },
+        {
+          "id": "results-8",
+          "kind": "paragraph",
+          "n": 3,
+          "text": "Providers from both centers, comprising both medical and nursing staff, were invited to collaboratively evaluate the procedure in an online meeting. Across the five sessions, attendance varied between 2 and 20 participants per session from each center, with a mean attendance of eight neonatal providers per session. On average, five neonatal care providers from the MUV and eleven from the LUMC attended the sessions. Sessions lasted between 30 and 60 min and were hosted via online video conferencing platforms (Cisco Systems, Inc., San Jose, CA, USA) or Microsoft Teams (Microsoft, Redmond, Washington, DC, USA)."
+        },
+        {
+          "id": "results-9",
+          "kind": "paragraph",
+          "n": 4,
+          "text": "Sessions were co-chaired by the researchers from both centers (VH and HS) to moderate the online session, monitor the time and maintain a safe learning environment. Following a brief introduction of the clinical case, providers viewed the recordings from both centers and engaged in open discussions and addressed cross-institutional queries. During the sessions, the baseline checklists were iteratively updated to integrate immediate lessons learned from the discussion (Appendix A). Throughout the study period, the researchers deliberated these lessons learned within their respective departments and documented subsequent practice modifications based on the multicenter sessions."
+        },
+        {
+          "id": "results-10",
+          "kind": "heading",
+          "text": "3.2. Procedural Variations"
+        },
+        {
+          "id": "results-11",
+          "kind": "paragraph",
+          "text": "During the sessions, providers discussed the recorded procedures and iteratively refined the comparison checklists, resulting in the identification of 19 relevant procedural variations (Figure 2). In Table 1, these variations are described in more detail. Given the multiplicity of acceptable clinical strategies within the neonatal field, not all observed disparities between the two centers were deemed relevant through consensus between attending providers of care who participated in multicenter video review."
+        },
+        {
+          "id": "results-12",
+          "kind": "caption",
+          "text": "Table 1. Relevant identified variations and lessons learned from multicenter video review sessions that informed practice modifications."
+        },
+        {
+          "id": "results-13",
+          "kind": "heading",
+          "text": "3.3. Practice Modifications"
+        },
+        {
+          "id": "results-14",
+          "kind": "paragraph",
+          "text": "Of the 19 identified variations, 7 (37%) provided novel clinical insights that potentially warranted a modification of practice in one or both centers. The critical variations leading to these practice modifications are also described in Table 1. The five collaborative video review sessions yielded distinct procedural insights and drove targeted practice modifications across both institutions, spanning airway management, vascular access, and delivery room stabilization:"
+        },
+        {
+          "id": "results-15",
+          "kind": "paragraph",
+          "text": "Session 1 (Intubation): Dialogue focused on pre-medication, tube fixation, and sedation depth indicators. Following the session, the MUV increased its use of colorimetric CO2 detectors for faster tube verification, while the LUMC adopted the MUV’s face mask models."
+        },
+        {
+          "id": "results-16",
+          "kind": "paragraph",
+          "text": "Session 2 (MIST/LISA): Discussions centered on sedation thresholds. Observing the MUV’s success with non-pharmacological positioning and sucrose prompted the LUMC to launch a targeted staff training program to optimize infant comfort and reduce sedative reliance."
+        },
+        {
+          "id": "results-17",
+          "kind": "paragraph",
+          "text": "Session 3 (UVC): Focus areas included sterility and line localization. To improve sterility, the LUMC adopted a novel cord-cutting technique and the MUV updated its clamp-draping checklists. Additionally, the LUMC’s routine use of ultrasound for tip localization motivated the MUV to initiate junior faculty ultrasound training and establish new clinical guidelines."
+        },
+        {
+          "id": "results-18",
+          "kind": "paragraph",
+          "text": "Session 4 (PICC): Variations were identified in sterile field preparation and anatomical depth measurements. The session fostered a cross-institutional dialogue on team training requirements for implementing operator-dependent ultrasonography for line verification."
+        },
+        {
+          "id": "results-19",
+          "kind": "paragraph",
+          "text": "Session 5 (PBCC): Review of this new technique highlighted logistical challenges in trolley positioning, infant placement, and clamping times. These insights led the LUMC to integrate the MUV’s room configuration into its implementation strategy, while both centers used the session to optimize nursing roles and equipment access."
+        },
+        {
+          "id": "results-20",
+          "kind": "caption",
+          "text": "Figure 2. Description of the relevant differences in neonatal procedures identified during multicenter video review."
+        }
+      ]
+    },
+    {
+      "id": "discussion",
+      "title": "Discussion",
+      "passages": [
+        {
+          "id": "discussion-1",
+          "kind": "paragraph",
+          "text": "Previous experience in conducting local video review prompted our institutions, the MUV and the LUMC, to organize multicenter video review sessions to elevate reflection on clinical practice [7,8]. In this study, neonatal care providers identified 19 relevant procedural variations and fostered international knowledge exchange. Interprofessional discussions and real-time visualization of these variations provided healthcare providers with alternative perspectives on their performance, prompting a re-evaluation of care and discussions regarding the modification of established aspects of neonatal procedures in 37% (7/19) of the identified variations. While previous cross-center video comparisons have typically been limited to researcher-driven analysis, this exploratory study describes an international, collaborative approach utilizing transparent, interprofessional evaluation [14]. Our experience suggests that multicenter video review has the potential to serve as a useful tool for shared learning and collaborative practice reflection across participating centers, confirming the implications of research on video review in other specialties. Garcia et al. shows that video review has the potential to optimize team dynamics and enhance safety during emergent endotracheal intubations [15]."
+        },
+        {
+          "id": "discussion-2",
+          "kind": "paragraph",
+          "text": "Neonatal care is often compared internationally by evaluating local guidelines using surveys or chart reviews [16–21]. However, retrospective documentation can be limited by recall bias, and guidelines may lack clinical realism or strict adherence [4,22]. Real-time recording of medical care provides a more objective view of actual practice, enabling providers to discuss procedural nuances and “grey areas” not captured in written protocols [3,10,23]. Our findings support this, as we identified interhospital variations that had not been detected during a preliminary review of local guidelines, such as the varying focus on non-pharmacological comfort measures during MIST/LISA. Furthermore, differences in analgesia used for intubation reflect existing gaps in the literature regarding the risks and benefits of specific sedative medications [10]. Although consensus on a single best approach was not reached, these variations present an opportunity to further study the relative effectiveness of different methods [24]."
+        },
+        {
+          "id": "discussion-3",
+          "kind": "paragraph",
+          "text": "The collaborative sessions also served as a platform to discuss the introduction of new techniques. For example, both centers shared experiences regarding the ongoing implementation of point-of-care ultrasonography (POCUS) for central line localization, a modality that can, in certain clinical scenarios, reduce reliance on standard X-ray imaging [25,26]. Similarly, discussions regarding physiologically based cord clamping (PBCC) highlighted minor variations in infant wrapping, table placement, and minimum clamping times. Reviewing these variations allowed clinicians to share logistical solutions derived from their respective environments (the delivery room versus the operating room), illustrating how multicenter dialogue may streamline the future introduction of novel equipment or techniques."
+        },
+        {
+          "id": "discussion-4",
+          "kind": "paragraph",
+          "text": "While the real-time visualization utilized in this study shares conceptual elements with telemedicine, our approach focused strictly on collaborative reflection to allow for a thorough evaluation of completed procedures [27–29]. In the future, multicenter video review might theoretically reinforce active telemedicine networks by providing a framework to debrief past clinical exchanges, or help bridge knowledge gaps in lower-resource settings where camera equipment is available. However, these broader applications remain speculative and require formal evaluation."
+        },
+        {
+          "id": "discussion-5",
+          "kind": "paragraph",
+          "text": "Several limitations must be acknowledged. First, because centers selected representative videos from their own databases, a degree of selection bias is inherent, as the recordings may overrepresent optimal performances rather than baseline practice. However, this bias was likely mitigated by the dynamic, interprofessional discussions; participants frequently provided verbal context during the sessions regarding whether the recorded actions re-"
+        },
+        {
+          "id": "discussion-6",
+          "kind": "paragraph",
+          "text": "flected standard routine or exceptional circumstances. Second, some providers were already professionally acquainted, which may have facilitated an environment of mutual understanding. On the other hand, potential interpretive bias and circularity must be acknowledged, as the study coordinators (VH, HS) functioned as both session moderators and the primary evaluators responsible for documenting lessons learned. To minimize this bias, the analysis relied strictly on consensus-driven validation; lessons learned and practice modifications were only documented if they were explicitly raised and corroborated by the active clinical participants during the interprofessional discussions, rather than being retroactively deduced by the moderators. Furthermore, the use of a pre-established, standardized checklist ensured a structured evaluation process. Crucially, both centers were already highly experienced in local video review and accustomed to a safe, non-punitive feedback culture; consequently, these findings may not generalize to novice centers where video review is less established. Third, although sessions were conducted in English, potential language barriers may have subtly affected the comprehension of subtle audio nuances during the recorded procedures. Fourth, due to the exploratory, observational nature of this study across five distinct procedures, the lessons learned cannot be broadly generalized, and this study did not assess whether the discussed practice modifications were successfully sustained over time. Finally, organizing international sessions was highly time-consuming, resulting in a limited number of meetings and lower nursing staff attendance from the MUV due to scheduling constraints. Future research should include a wider array of procedures, utilize continuous checklist adaptations, and objectively measure the long-term clinical outcomes of video-driven practice modifications.",
+          "continues": true
+        }
+      ]
+    },
+    {
+      "id": "conclusions",
+      "title": "Conclusions",
+      "passages": [
+        {
+          "id": "conclusions-1",
+          "kind": "paragraph",
+          "text": "We described our experience with using real-time recordings of neonatal procedures for conducting multicenter video review to learn from international differences between NICUs. Our findings demonstrate that cross-border, interprofessional video review is a useful methodology that successfully identified critical procedural variations, informing adaptation of local guidelines in both centers. By providing a structured implementation roadmap, this study underscores the novelty and scalability of collaborative video analysis as a potential tool for global medical education and quality improvement initiatives. Ultimately, establishing such international networks opens new avenues for multicenter research and may contribute to patient-safety-oriented learning in neonatal intensive care."
+        }
+      ]
+    }
+  ],
+  "omitted": [
+    "front matter (title, authors, affiliations, correspondence, editor and dates box, copyright/licence box, DOI and running headers)",
+    "keywords",
+    "Table 1 body (19 variations and their practice modifications, as prose in table cells; caption kept, the modifications are summarised in section 3.3)",
+    "Table 1 footnote",
+    "Figure 1 and Figure 2 graphics (captions kept)",
+    "author contributions, funding, institutional review board statement, informed consent statement, data availability statement, conflicts of interest",
+    "abbreviations list",
+    "Appendix A: comparison checklists, Tables A1–A5 (data)",
+    "references",
+    "publisher's disclaimer"
+  ],
+  "notes": [
+    {
+      "at": "abstract-1",
+      "type": "context",
+      "text": "The other Leiden papers build video review inside one unit. This one tests it between two units in two countries, each of which already ran its own weekly sessions.",
+      "links": [
+        "paper:recordreflectrefine",
+        "unit:leiden",
+        "unit:vienna"
+      ]
+    },
+    {
+      "at": "abstract-3",
+      "type": "gloss",
+      "text": "Less invasive surfactant administration (LISA, also called MIST): surfactant given through a thin catheter passed between the vocal cords while the baby keeps breathing on CPAP, instead of through an endotracheal tube."
+    },
+    {
+      "at": "abstract-3",
+      "type": "link",
+      "text": "These two numbers are the site's finding for this paper; the practice page describes how a unit sets up sessions with another unit.",
+      "links": [
+        "finding:19-differences",
+        "practice:review-across-units"
+      ]
+    },
+    {
+      "at": "introduction-2",
+      "type": "link",
+      "text": "This is the idea behind the Perspectives film: watching someone do the same procedure differently is what makes your own routine visible.",
+      "links": [
+        "film:perspectives",
+        "claim:perspectives",
+        "concept:variation"
+      ]
+    },
+    {
+      "at": "methods-1",
+      "type": "gloss",
+      "text": "Eye-tracking glasses are worn by the person doing the procedure. They film what that person sees, giving a first-person view to set beside the fixed camera's overview.",
+      "links": [
+        "guidance:level-2-in-action/6.-recording-equipment/6.3-wearable-cameras"
+      ]
+    },
+    {
+      "at": "methods-2",
+      "type": "guide",
+      "text": "You do not need matching equipment to compare: the two units used different glasses and cameras. What mattered was that each recording showed the whole procedure clearly.",
+      "links": [
+        "guidance:level-2-in-action/6.-recording-equipment"
+      ]
+    },
+    {
+      "at": "methods-4",
+      "type": "gloss",
+      "text": "UVC: a line through the umbilical vein in the first days of life. PICC: a fine line threaded from a limb vein to a central vein. PBCC: stabilising the newborn before the cord is clamped."
+    },
+    {
+      "at": "methods-4",
+      "type": "link",
+      "text": "Consent works on two levels here: parents for the recording, and every clinician on screen for this specific video in this specific session, with a real option to say no.",
+      "links": [
+        "practice:consent",
+        "concept:consent",
+        "guidance:level-2-in-action/5.-preparation-and-consent/5.1-obtain-consent"
+      ]
+    },
+    {
+      "at": "methods-4",
+      "type": "guide",
+      "text": "Sharing by live screen only, from your own server, avoids most data-transfer agreements between hospitals. It is the simplest arrangement to propose to a privacy officer.",
+      "links": [
+        "guidance:level-2-in-action/5.-preparation-and-consent/5.3-privacy-considerations"
+      ]
+    },
+    {
+      "at": "methods-5",
+      "type": "guide",
+      "text": "One chair per unit, each translating terms for their own colleagues, is what made the language gap workable. The toolbox describes the chair's tasks in a single-unit session.",
+      "links": [
+        "practice:chair",
+        "role:chair",
+        "guidance:level-2-in-action/11.-lets-neoflix/11.3-tasks-of-the-chair"
+      ]
+    },
+    {
+      "at": "results-4",
+      "type": "guide",
+      "text": "The roadmap is the most reusable part of the paper. The figure itself is in the PDF; its four steps follow here in the authors' words.",
+      "links": [
+        "practice:review-across-units"
+      ]
+    },
+    {
+      "at": "results-7",
+      "type": "gloss",
+      "text": "Comparison checklist: a side-by-side table of how each unit does the procedure, filled in from both local guidelines beforehand and amended during the session. All five are in the paper's Appendix A."
+    },
+    {
+      "at": "results-9",
+      "type": "link",
+      "text": "A safe learning environment is the condition Leiden's own staff named as essential in interviews. Across two units, two chairs have to hold it at once.",
+      "links": [
+        "finding:felt-safe",
+        "concept:safe-to-look",
+        "guidance:level-2-in-action/11.-lets-neoflix/11.2-a-safe-learning-environment"
+      ]
+    },
+    {
+      "at": "results-11",
+      "type": "link",
+      "text": "In Leiden's own sessions, most findings were also colleagues doing the same thing differently. The same pattern appears here between units.",
+      "links": [
+        "finding:84-of-120",
+        "concept:variation"
+      ]
+    },
+    {
+      "at": "results-15",
+      "type": "gloss",
+      "text": "A colorimetric CO2 detector (here the Pedi-Cap) changes colour when exhaled carbon dioxide passes through it, confirming within breaths that the tube is in the airway."
+    },
+    {
+      "at": "results-15",
+      "type": "context",
+      "text": "Table 1 of the paper says the reverse about the masks: Vienna took up the models used in Leiden. The two passages disagree; check the PDF before quoting who changed."
+    },
+    {
+      "at": "results-16",
+      "type": "gloss",
+      "text": "Facilitated tucking: gently holding the baby's arms and legs flexed close to the body. Like oral sucrose, it is a comfort measure that needs no sedative drug."
+    },
+    {
+      "at": "results-17",
+      "type": "context",
+      "text": "The problem behind this change: the plastic cord clamp cannot reliably be kept sterile, yet it sits where the line goes in. Both units found it hard; each solved it differently.",
+      "links": [
+        "practice:act-on-a-finding"
+      ]
+    },
+    {
+      "at": "results-19",
+      "type": "link",
+      "text": "Trolley position, monitor visibility and the nurse's room to move are things a guideline rarely specifies and a recording shows at once.",
+      "links": [
+        "concept:first-minutes",
+        "film:coordination",
+        "claim:coordination"
+      ]
+    },
+    {
+      "at": "discussion-2",
+      "type": "link",
+      "text": "Recall bias is the same limit the narrative review found in ordinary debriefs. Here it is surveys and written guidelines that miss what the recordings show.",
+      "links": [
+        "finding:recall",
+        "concept:memory-vs-recording",
+        "paper:narrative",
+        "film:skills"
+      ]
+    },
+    {
+      "at": "discussion-3",
+      "type": "gloss",
+      "text": "POCUS: point-of-care ultrasound, done at the bedside by the treating clinician rather than in radiology. It depends on the operator's skill, which is why training came up."
+    },
+    {
+      "at": "discussion-6",
+      "type": "guide",
+      "text": "If your unit has no local video review yet, start there. Both units here had years of their own sessions and a non-punitive culture before trying it across borders.",
+      "links": [
+        "practice:start-small",
+        "practice:make-it-routine",
+        "guidance:level-1-fundamentals/3.-safe-simple-and-small"
+      ]
+    },
+    {
+      "at": "discussion-6",
+      "type": "context",
+      "text": "Nobody measured whether the changes lasted or improved outcomes. Read the seven changes as evidence that the method prompts action, not as proven improvements in care."
+    },
+    {
+      "at": "conclusions-1",
+      "type": "link",
+      "text": "To find a partner unit, start with the toolbox's network chapter and the Vienna success story.",
+      "links": [
+        "guidance:level-3-growth/18.-expanding-your-video-program/18.1-revolutionize-reflection-in-medical-care-join-the-network",
+        "guidance:level-1-fundamentals/4.-learning-from-success-stories/nicu-in-vienna-austria",
+        "practice:review-across-units"
+      ]
+    }
+  ],
+  "intermissions": [
+    {
+      "after": "results",
+      "concept": "variation"
+    },
+    {
+      "after": "discussion",
+      "concept": "memory-vs-recording"
+    }
+  ],
+  "morsels": [
+    {
+      "at": "highlights-5",
+      "quote": "Expanding video review from a local to a multicenter framework uncovers hidden clinical disparities that standard guideline comparisons overlook.",
+      "tags": [
+        "claim:perspectives",
+        "concept:variation",
+        "practice:review-across-units"
+      ],
+      "why": "The paper's case in one sentence."
+    },
+    {
+      "at": "abstract-3",
+      "quote": "A total of 19 relevant differences were described, of which seven (37%) prompted changes in practice or new insights for one or both centers.",
+      "tags": [
+        "finding:19-differences",
+        "practice:review-across-units",
+        "unit:leiden",
+        "unit:vienna"
+      ],
+      "why": "The headline numbers, in the authors' words."
+    },
+    {
+      "at": "introduction-2",
+      "quote": "Video recordings offer an effective means to observe these variations objectively.",
+      "tags": [
+        "claim:skills",
+        "concept:variation"
+      ],
+      "why": "Why video, not surveys."
+    },
+    {
+      "at": "methods-4",
+      "quote": "This clinician consent was video-specific; prior to each multicenter session, providers were explicitly informed which video would be reviewed and were given the option to opt out without any consequences.",
+      "tags": [
+        "practice:consent",
+        "concept:consent",
+        "finding:felt-safe"
+      ],
+      "why": "What real consent looks like for clinicians on screen."
+    },
+    {
+      "at": "methods-4",
+      "quote": "The videos were not transferred, emailed, or exchanged as raw data files. Instead, the video data remained hosted on the native institution’s server and were shared only via real-time screen sharing during online meetings.",
+      "tags": [
+        "practice:review-across-units",
+        "guidance:level-2-in-action/5.-preparation-and-consent/5.3-privacy-considerations"
+      ],
+      "why": "A privacy arrangement another unit can copy."
+    },
+    {
+      "at": "results-9",
+      "quote": "Sessions were co-chaired by the researchers from both centers (VH and HS) to moderate the online session, monitor the time and maintain a safe learning environment.",
+      "tags": [
+        "practice:chair",
+        "role:chair",
+        "concept:safe-to-look"
+      ],
+      "why": "The chair's job, across two units."
+    },
+    {
+      "at": "results-11",
+      "quote": "Given the multiplicity of acceptable clinical strategies within the neonatal field, not all observed disparities between the two centers were deemed relevant through consensus between attending providers of care who participated in multicenter video review.",
+      "tags": [
+        "concept:variation"
+      ],
+      "why": "Difference is not the same as error."
+    },
+    {
+      "at": "results-16",
+      "quote": "Observing the MUV’s success with non-pharmacological positioning and sucrose prompted the LUMC to launch a targeted staff training program to optimize infant comfort and reduce sedative reliance.",
+      "tags": [
+        "practice:act-on-a-finding",
+        "claim:perspectives",
+        "unit:leiden",
+        "unit:vienna"
+      ],
+      "why": "A concrete change that came from watching another unit."
+    },
+    {
+      "at": "discussion-1",
+      "quote": "Interprofessional discussions and real-time visualization of these variations provided healthcare providers with alternative perspectives on their performance, prompting a re-evaluation of care and discussions regarding the modification of established aspects of neonatal procedures in 37% (7/19) of the identified variations.",
+      "tags": [
+        "claim:perspectives",
+        "finding:19-differences",
+        "film:perspectives"
+      ],
+      "why": "Seeing it is what prompted the re-evaluation."
+    },
+    {
+      "at": "discussion-2",
+      "quote": "However, retrospective documentation can be limited by recall bias, and guidelines may lack clinical realism or strict adherence [4,22].",
+      "tags": [
+        "finding:recall",
+        "concept:memory-vs-recording"
+      ],
+      "why": "What guidelines and notes cannot show."
+    },
+    {
+      "at": "discussion-2",
+      "quote": "Real-time recording of medical care provides a more objective view of actual practice, enabling providers to discuss procedural nuances and “grey areas” not captured in written protocols [3,10,23].",
+      "tags": [
+        "concept:memory-vs-recording",
+        "claim:skills"
+      ],
+      "why": "The grey areas between protocol and practice."
+    },
+    {
+      "at": "discussion-3",
+      "quote": "Reviewing these variations allowed clinicians to share logistical solutions derived from their respective environments (the delivery room versus the operating room), illustrating how multicenter dialogue may streamline the future introduction of novel equipment or techniques.",
+      "tags": [
+        "practice:review-across-units",
+        "practice:act-on-a-finding",
+        "concept:first-minutes"
+      ],
+      "why": "Another unit's setup as a shortcut when introducing something new."
+    },
+    {
+      "at": "discussion-6",
+      "quote": "Crucially, both centers were already highly experienced in local video review and accustomed to a safe, non-punitive feedback culture; consequently, these findings may not generalize to novice centers where video review is less established.",
+      "tags": [
+        "practice:start-small",
+        "practice:make-it-routine",
+        "concept:safe-to-look"
+      ],
+      "why": "Local first, then across units."
+    },
+    {
+      "at": "conclusions-1",
+      "quote": "Our findings demonstrate that cross-border, interprofessional video review is a useful methodology that successfully identified critical procedural variations, informing adaptation of local guidelines in both centers.",
+      "tags": [
+        "practice:review-across-units",
+        "claim:perspectives",
+        "finding:19-differences"
+      ],
+      "why": "The conclusion, quotable as is."
+    }
+  ]
+}
