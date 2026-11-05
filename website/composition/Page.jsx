@@ -271,8 +271,38 @@ function Percolate({ keys, mainRef, big, onPick }) {
   ];
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h / 2;
+  // Each neighbour is tethered outward, to the rest of the material it
+  // belongs to, beyond the page: a line from behind it, away from the
+  // subject, off the edge. Never inward: the subject has its own edges.
+  const tethers = items.map(({ k, s }, i) => {
+    const bx = s.x + s.w / 2;
+    const by = s.y + s.h / 2;
+    let dx = bx - cx;
+    let dy = by - cy;
+    const len = Math.hypot(dx, dy) || 1;
+    dx /= len;
+    dy /= len;
+    const far = 1400;
+    const ex = bx + dx * far;
+    const ey = by + dy * far;
+    // a slight bend, alternating, so they read as drawn, not ruled
+    const bend = (i % 2 ? 1 : -1) * 90;
+    const mx = bx + dx * far * 0.35 - dy * bend;
+    const my = by + dy * far * 0.35 + dx * bend;
+    return { k, i, d: `M${bx},${by} Q${mx},${my} ${ex},${ey}` };
+  });
   return (
     <div className="perc" aria-label="Beside this">
+      <svg className="wires perc__tethers" aria-hidden="true">
+        {tethers.map((t) => (
+          <g key={t.k} style={{ '--d': `${0.85 + t.i * 0.13}s` }}>
+            <mask id={`tether-${t.i}`} maskUnits="userSpaceOnUse" x="-3000" y="-3000" width="6000" height="6000">
+              <path className="wires__reveal" d={t.d} pathLength="1" />
+            </mask>
+            <path className="wires__line" d={t.d} mask={`url(#tether-${t.i})`} />
+          </g>
+        ))}
+      </svg>
       {items.map(({ k, s, big: b }, i) => (
         <motion.a
           key={k}

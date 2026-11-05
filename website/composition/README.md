@@ -46,7 +46,11 @@ The homepage and every record's address (`/`, `/films/*`, `/toolbox/*`,
     above, one larger below and off the page's edge. They drift a little,
     are quiet (faded, no captions) until pointed at, and are a click
     away. Not a list: the sense that the thing sits in a body of
-    material (`Percolate` in `Page.jsx`).
+    material (`Percolate` in `Page.jsx`). Each neighbour is **tethered
+    outward**: a white dashed line runs from behind it, away from the
+    subject, off the page's edge, to the rest of the material it belongs
+    to. Never inward to the subject (the owner: "an internal tether would
+    be a mess"); the subject's own edges are the wants'.
   - *rest*: not on the page. Reachable (the sidebar, down, right), never
     listed. Citations and the like are actions in a record's title block.
 - **The graph is visible, in three places**, drawn like marker on a

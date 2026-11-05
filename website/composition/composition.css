@@ -387,6 +387,10 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 .pg { overflow-x: hidden; }
 .figure, .reading > :first-child { position: relative; z-index: 2; }
 .perc { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+/* outgoing tethers: from behind each neighbour, off the page's edge */
+.perc__tethers { z-index: 0; }
+.perc__tethers .wires__line { stroke-opacity: 0.6; stroke-width: 6; }
+.perc__tethers .wires__reveal { animation-duration: 1.1s; }
 .perc__bit {
   position: absolute;
   display: block;
