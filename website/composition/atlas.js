@@ -17,7 +17,8 @@
  * Node-safe: system-check.mjs walks the whole atlas.
  */
 import { LOOP } from '../system/catalog.js';
-import { TOUR, CHAPTERS } from './tour.js';
+import { TOUR, CHAPTERS, INTERMISSIONS } from './tour.js';
+import { entry } from '../system/content/ontology.js';
 
 const kindOf = (key) => key.slice(0, key.indexOf(':'));
 const depth = (slug) => (slug ? slug.split('/').length : 1);
@@ -83,17 +84,27 @@ export function buildAtlas(catalog, graph) {
     return [];
   };
 
-  const spine = TOUR.map((s, i) => ({
-    id: `stop:${s.id}`,
-    kind: 'stop',
-    stop: s,
-    index: i,
-    chapter: s.chapter || null,
-    label: s.title,
-    short: shortOf(s),
-    num: String(i + 1),
-    kids: kidsOfStop(s),
-  }));
+  // The story's stops, with an intermission after the stops that have
+  // one. `n` is a stop's number in the story (intermissions don't count).
+  const spine = [];
+  TOUR.forEach((s, i) => {
+    spine.push({
+      id: `stop:${s.id}`,
+      kind: 'stop',
+      stop: s,
+      index: spine.length,
+      n: i + 1,
+      chapter: s.chapter || null,
+      label: s.title,
+      short: shortOf(s),
+      num: String(i + 1),
+      kids: kidsOfStop(s),
+    });
+    for (const im of INTERMISSIONS.filter((x) => x.after === s.id)) {
+      const c = entry(`concept:${im.concept}`);
+      spine.push({ id: `pause:${im.concept}`, kind: 'pause', concept: im.concept, index: spine.length, chapter: s.chapter || null, label: c?.name || im.concept, short: c?.name || im.concept, num: null, kids: [] });
+    }
+  });
   const root = { id: 'root', kind: 'root', kids: spine };
 
   /** The node at an address (or null). */
@@ -128,9 +139,9 @@ export function buildAtlas(catalog, graph) {
   };
   for (const r of catalog.records.values()) {
     let s = -1;
-    if (r.kind === 'guidance') s = spine.findIndex((n) => n.stop.at === `column:${r.phase}`);
-    else if (r.kind === 'paper') s = spine.findIndex((n) => Array.isArray(n.stop.at) && n.stop.at.includes(r.key));
-    else s = spine.findIndex((n) => n.stop.at === r.key);
+    if (r.kind === 'guidance') s = spine.findIndex((n) => n.stop?.at === `column:${r.phase}`);
+    else if (r.kind === 'paper') s = spine.findIndex((n) => Array.isArray(n.stop?.at) && n.stop?.at.includes(r.key));
+    else s = spine.findIndex((n) => n.stop?.at === r.key);
     const a = s >= 0 ? find([s], r.key) : null;
     if (a) home.set(r.key, a);
   }
@@ -138,7 +149,7 @@ export function buildAtlas(catalog, graph) {
   // level headings) live with their step of the loop.
   for (const g of catalog.list('guidance')) {
     if (home.has(g.key)) continue;
-    const s = spine.findIndex((n) => n.stop.at === `column:${g.phase}`);
+    const s = spine.findIndex((n) => n.stop?.at === `column:${g.phase}`);
     if (s >= 0) home.set(g.key, [s]);
   }
 

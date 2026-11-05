@@ -31,10 +31,12 @@ import { buildAtlas } from './atlas';
 import Page, { labelOf } from './Page';
 import Sidebar from './Sidebar';
 import LibraryMap from './LibraryMap';
+import Intermission from './Intermission';
 import '../system/system.css';
 import './composition.css';
 
 const ATLAS = buildAtlas(catalog, graph);
+const TOUR_LENGTH = ATLAS.spine.filter((n) => n.kind === 'stop').length;
 const clamp = (lo, v, hi) => Math.max(lo, Math.min(hi, v));
 const EASE = [0.32, 0.72, 0, 1];
 const same = (a, b) => a && b && a.length === b.length && a.every((v, i) => v === b[i]);
@@ -152,7 +154,7 @@ export default function Composition() {
   // next door goes sideways; anything else, where it lives.
   const pick = useCallback((id) => {
     if (id.startsWith('head:')) {
-      const s = ATLAS.spine.findIndex((n) => n.stop.at === `column:${id.slice(5)}`);
+      const s = ATLAS.spine.findIndex((n) => n.stop?.at === `column:${id.slice(5)}`);
       if (s >= 0) go([s]);
       return;
     }
@@ -276,7 +278,12 @@ export default function Composition() {
   );
 
   return (
-    <div className="cmp" ref={root} data-depth={cur.length - 1} style={{ '--side': `${room.side}px` }}>
+    <div className="cmp" ref={root} data-depth={cur.length - 1} data-pause={node.kind === 'pause' && !searching ? '' : undefined} style={{ '--side': `${room.side}px` }}>
+      {/* An intermission's explainer takes the whole screen, edge to edge,
+          under the frosted sidebar too. */}
+      <AnimatePresence>
+        {node.kind === 'pause' && !searching && <Intermission key={node.concept} concept={node.concept} />}
+      </AnimatePresence>
       {!room.phone && (
         <aside className="cmp__side">
           <header className="cmp__mast">
@@ -353,7 +360,7 @@ export default function Composition() {
       {room.phone && (
         <nav className="cmp__phonebar" aria-label="Pages">
           <a href="/" onClick={(e) => { e.preventDefault(); go([0]); }}>Neoflix</a>
-          <span>{cur.length > 1 ? nameOf(ATLAS.at(cur.slice(0, -1))) : `${cur[0] + 1} of ${ATLAS.spine.length}`}</span>
+          <span>{cur.length > 1 ? nameOf(ATLAS.at(cur.slice(0, -1))) : node.kind === 'pause' ? 'Intermission' : `${node.n} of ${TOUR_LENGTH}`}</span>
           <button type="button" disabled={!ways.left} onClick={() => step('left')} aria-label="Back out">←</button>
           <button type="button" disabled={!ways.up} onClick={() => step('up')} aria-label="Previous page">↑</button>
           <button type="button" disabled={!ways.down} onClick={() => step('down')} aria-label="Next page">↓</button>

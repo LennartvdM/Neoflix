@@ -14,7 +14,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildCatalog, parseKey, LOOP } from '../system/catalog.js';
-import { TOUR, CHAPTERS, DOORS, tourKeys } from '../composition/tour.js';
+import { TOUR, CHAPTERS, DOORS, INTERMISSIONS, tourKeys } from '../composition/tour.js';
 import { buildGraph } from '../system/graph.js';
 import { urlFor, keyForPath } from '../system/urls.js';
 import { planRecord } from '../system/modules/plans.js';
@@ -55,6 +55,10 @@ check('every tour stop points at a record that exists', () => {
     if (m && !LOOP.some((l) => l.id === m[1])) fail(`tour stop ${s.id}: no column "${m[1]}"`);
   }
   for (const d of DOORS) if (d.path && !catalog.path(d.path)) fail(`tour door ${d.id}: unknown path "${d.path}"`);
+  for (const im of INTERMISSIONS) {
+    if (!TOUR.some((s) => s.id === im.after)) fail(`intermission ${im.concept}: no stop "${im.after}"`);
+    if (!entry(`concept:${im.concept}`)) fail(`intermission: unknown concept "${im.concept}"`);
+  }
 });
 
 check('every record has one address that maps back to it', () => {

@@ -573,24 +573,30 @@ a.card:hover, button.card:hover { transform: translateY(-2px); box-shadow: var(-
 .cmp .sys { --k-paper: #3b5bdb; --k-film: #14868c; }
 .cmp .sys mark { background: rgba(140, 174, 244, 0.28); }
 
-/* ── explainers: slots for abstract moving illustrations (placeholders) ── */
-.explainer { margin: 0 0 30px; max-width: 420px; }
-.pg--scene .explainer { margin: 0 0 28px; }
-.explainer__stage {
-  position: relative;
-  aspect-ratio: 2 / 1;
-  overflow: hidden;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(205, 220, 240, 0.4));
-  box-shadow: inset 0 0 0 1px rgba(28, 28, 110, 0.06);
-}
-.explainer__stage i { position: absolute; border-radius: 50%; background: rgba(59, 91, 219, 0.16); animation: expl 7s ease-in-out infinite alternate; }
-.explainer__stage i:nth-child(1) { width: 34%; aspect-ratio: 1; left: 12%; top: 22%; }
-.explainer__stage i:nth-child(2) { width: 22%; aspect-ratio: 1; left: 52%; top: 40%; background: rgba(20, 134, 140, 0.16); animation-delay: -2.3s; }
-.explainer__stage i:nth-child(3) { width: 14%; aspect-ratio: 1; left: 74%; top: 16%; background: rgba(28, 28, 110, 0.12); animation-delay: -4.1s; }
-@keyframes expl { from { transform: translate(0, 0) scale(1); } to { transform: translate(14%, -10%) scale(1.15); } }
-.explainer figcaption { display: grid; gap: 3px; margin-top: 12px; }
-.explainer__tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
-.explainer strong { font-family: var(--display); font-size: 17px; font-weight: 500; color: var(--brand); }
-.explainer figcaption > span:last-child { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
-@media (prefers-reduced-motion: reduce) { .explainer__stage i { animation: none; } }
+/* ── intermissions: an explainer, edge to edge ─────────────────────────
+   The whole screen, under the frosted sidebar too: the story stops
+   talking. Placeholder stage until the real animations exist. Cool and
+   deep, like the scenes. */
+.intermission { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: radial-gradient(120% 100% at 60% 40%, #1a2440 0%, #0f1628 55%, #0a0f1d 100%); }
+.intermission__stage { position: absolute; inset: 0; }
+.intermission__stage i { position: absolute; border-radius: 50%; filter: blur(2px); animation: inter 18s ease-in-out infinite alternate; }
+.intermission__stage i:nth-child(1) { width: 46vmax; height: 46vmax; left: -8vmax; top: 10vh; background: radial-gradient(circle, rgba(93, 123, 240, 0.35), transparent 68%); }
+.intermission__stage i:nth-child(2) { width: 38vmax; height: 38vmax; right: -10vmax; top: -12vh; background: radial-gradient(circle, rgba(115, 194, 201, 0.3), transparent 68%); animation-duration: 23s; animation-delay: -6s; }
+.intermission__stage i:nth-child(3) { width: 30vmax; height: 30vmax; left: 38%; bottom: -14vh; background: radial-gradient(circle, rgba(170, 189, 240, 0.22), transparent 68%); animation-duration: 21s; animation-delay: -11s; }
+.intermission__stage i:nth-child(4) { width: 12vmax; height: 12vmax; left: 58%; top: 24%; background: rgba(233, 240, 255, 0.07); animation-duration: 14s; animation-delay: -3s; }
+.intermission__stage i:nth-child(5) { width: 7vmax; height: 7vmax; left: 30%; top: 58%; background: rgba(115, 194, 201, 0.12); animation-duration: 11s; animation-delay: -8s; }
+@keyframes inter { from { transform: translate(0, 0) scale(1); } to { transform: translate(6vmax, -4vmax) scale(1.12); } }
+.intermission__brief { position: absolute; right: 28px; top: 24px; max-width: 360px; font-size: 12px; line-height: 1.5; color: rgba(205, 214, 240, 0.45); text-align: right; }
+.intermission__brief b { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(159, 182, 245, 0.55); }
+.cmp[data-pause] .cmp__area { z-index: 1; }
+.cmp[data-pause] .cmp__side { background: linear-gradient(180deg, rgba(248, 250, 255, 0.55) 0%, rgba(255, 255, 255, 0.62) 100%); }
+.cmp[data-pause] .way { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.18); color: #e6ecfb; }
+.cmp[data-pause] .way:hover { background: rgba(255, 255, 255, 0.24); color: #fff; }
+.cmp[data-pause] .way i { color: #9fdde3; }
+/* the page itself: only the concept's name and one sentence, low on the left */
+.pg--pause { display: flex; align-items: flex-end; padding: 0 92px 120px 44px; overflow: hidden; }
+.pause__words { max-width: 560px; }
+.pause__tag { margin-bottom: 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #9fdde3; }
+.pause__name { margin: 0 0 14px; font-family: var(--display); font-size: clamp(40px, 4.4vw, 64px); font-weight: 500; line-height: 1.02; letter-spacing: -0.025em; color: #fff; }
+.pause__brief { max-width: 44ch; font-size: 17px; line-height: 1.6; color: #c9d3ec; }
+@media (prefers-reduced-motion: reduce) { .intermission__stage i { animation: none; } }

@@ -42,11 +42,18 @@ findings.
 ## What's wired so far
 
 - The data and its integrity check.
-- Explainer placeholders: every page whose subject has a concept shows
-  a "How it works · placeholder" frame with the concept's name and brief
-  (a story stop's film via its claim, a toolbox page via its practice, a
-  paper via its findings). The animation brief (`motion`) is in the
-  frame's tooltip and the data.
+- Explainers are **intermissions**, not page furniture (the owner:
+  "the animations need to hit the edges, like an intermission so it
+  doesn't feel all cluttered"). An intermission is its own page in the
+  story (`INTERMISSIONS` in `tour.js`): the explainer takes the whole
+  screen, edge to edge and under the frosted sidebar, with only the
+  concept's name and one sentence on it (`Intermission.jsx`). Three for
+  now, at the turns of the argument: *memory against a recording*
+  (after Focus), *one shared picture* (after Team), *the loop* (before
+  the toolbox). They're breaths, not places: not in the sidebar's list,
+  not counted in "n of 17". The stage is a placeholder (a deep, cool
+  field with slow shapes) with the animation brief (`motion`) written
+  faintly in the corner for whoever makes the real one.
 
 Not yet: pages aren't assembled from claims and findings (they still
 read films.js and papers.js), and roles have no entry point.

@@ -138,6 +138,8 @@ export function buildOntology({ catalog, graph }) {
     if (node.kind === 'search') return { layout: 'list', list: node.hits.slice(0, 9), want: [] };
     if (node.kind === 'path') return { layout: 'list', list: node.kids.map((k) => k.key), ordered: true, want: [] };
     if (node.kind === 'step') return { layout: 'list', list: node.kids.map((k) => k.key), want: [] };
+    // An intermission: the explainer alone, edge to edge. Nothing else.
+    if (node.kind === 'pause') return { layout: 'pause', concept: node.concept, want: [] };
     if (node.kind === 'record') {
       const r = catalog.get(node.key);
       if (!r) return { layout: 'read', modules: [], want: [] };

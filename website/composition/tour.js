@@ -198,6 +198,20 @@ export const TOUR = [
 ];
 
 /**
+ * Intermissions: where the story stops talking and an explainer (an
+ * abstract moving illustration of a concept, system/content/ontology.js)
+ * takes the whole screen, edge to edge. A breath at the turns of the
+ * argument, so explanation never crowds a page: after the moment's
+ * problems (memory against a recording), after the team (one shared
+ * picture), before the toolbox (the loop).
+ */
+export const INTERMISSIONS = [
+  { after: 'focus', concept: 'memory-vs-recording' },
+  { after: 'team', concept: 'shared-picture' },
+  { after: 'cords', concept: 'the-loop' },
+];
+
+/**
  * Where the impatient and the returning go instead. `path` walks one of
  * the library's paths (system/content/paths.js); 'look' leaves the
  * reader with everything on screen.

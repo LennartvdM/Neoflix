@@ -65,7 +65,10 @@ export default function Sidebar({ atlas, cur, onGo, searching, query }) {
   };
 
   const groups = [];
+  const here = atlas.spine[cur[0]];
   atlas.spine.forEach((n, i) => {
+    // Intermissions aren't places in the index; they're breaths between them.
+    if (n.kind === 'pause') return;
     const g = groups[groups.length - 1];
     if (n.chapter && g && g.chapter === n.chapter) g.items.push([n, i]);
     else groups.push({ chapter: n.chapter, items: [[n, i]] });
@@ -76,7 +79,7 @@ export default function Sidebar({ atlas, cur, onGo, searching, query }) {
       <ul className="sb__nav">
         {groups.map((g) => {
           const ch = atlas.chapters.find((c) => c.id === g.chapter);
-          const mine = g.items.some(([, i]) => i === cur[0]);
+          const mine = g.items.some(([, i]) => i === cur[0]) || (here.kind === 'pause' && here.chapter && here.chapter === g.chapter);
           if (ch && !mine) {
             return (
               <li key={g.chapter}>
@@ -109,7 +112,7 @@ export default function Sidebar({ atlas, cur, onGo, searching, query }) {
         })}
       </ul>
       <div className="sb__foot">
-        {searching ? <p>Search{query ? `: “${query}”` : ''}</p> : <p>{cur[0] + 1} of {atlas.spine.length}{cur.length > 1 ? ` · ${cur.length - 1} deeper` : ''}</p>}
+        {searching ? <p>Search{query ? `: “${query}”` : ''}</p> : here.kind === 'pause' ? <p>Intermission · {here.short}</p> : <p>{here.n} of {atlas.spine.filter((n) => n.kind === 'stop').length}{cur.length > 1 ? ` · ${cur.length - 1} deeper` : ''}</p>}
         <p className="sb__keys">↑ ↓ the story · → deeper · ← back</p>
       </div>
     </nav>
