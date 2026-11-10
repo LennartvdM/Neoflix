@@ -57,6 +57,23 @@ left/top/width/height carry it from slot to slot.
 A place a unit has not answered is still a place: "Not said." in a ghost
 card, and you can travel to it.
 
+### Tracks: the lines you travel along
+
+The broad dashed lines are the graph around the place you are on
+(`tracks` in `world.js`), after the owner (2026-11): the dashed lines
+imply planning, coordination, protocol, "but we don't travel along them
+yet; ideally they form a graph along which the percolation moves". One
+line runs through the units, one through the questions, each through
+the middle of every slot on it. So a card going from slot to slot goes
+along its line, the dashes flow with it on every step, and what comes
+up when you stay comes out along a line: two steps on from behind one
+step on, the film moment and the open question down a spur from the
+subject. A line runs on off the stage only where the world does (at the
+last unit nothing leads right). The spur to what nobody has said is the
+one line that stops on the stage. The slots keep 50 to 80 px from the
+subject so a stretch of track shows between places; before this the
+lines were tethers that only pointed off the stage.
+
 ### Seams: what is inside a card
 
 Between cards the language is overlap: over = part of it, under = what

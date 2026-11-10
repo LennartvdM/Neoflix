@@ -130,10 +130,16 @@
 .trv-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* ── the field ────────────────────────────────────────────────────── */
-/* Tethers run outward, off the stage: to the rest of the material a
-   neighbour belongs to. Never inward to the subject. */
-.trv-tethers { position: absolute; inset: 0; width: 1440px; height: 900px; pointer-events: none; z-index: 1; }
-.trv-tethers path { fill: none; stroke: #fff; stroke-opacity: 0.8; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 14 17; }
+/* The tracks: the graph around the place you are on, and what you
+   travel along (see `tracks` in world.js). Marker on a whiteboard, not
+   traces on a circuit board: broad, dashed, white. They lie under the
+   cards, so a line shows between them, through the faint ones, and
+   where it runs on off the stage. On a step the dashes flow with the
+   cards, on the same curve and clock. */
+.trv-tracks { position: absolute; inset: 0; width: 1440px; height: 900px; pointer-events: none; z-index: 1; }
+.trv-tracks path { fill: none; stroke: #fff; stroke-opacity: 0.8; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 14 17; transition: stroke-dashoffset 0.62s var(--ease); animation: trv-appear 0.6s ease-out both; }
+.trv-tracks circle { fill: #fff; fill-opacity: 0.9; animation: trv-appear 0.6s ease-out both; }
+@keyframes trv-appear { from { opacity: 0; } }
 .trv-field { position: absolute; inset: 0; z-index: 2; }
 
 /* One element per place. It keeps its identity as its role changes, so
@@ -199,7 +205,8 @@
 
 /* what is ahead, what is behind */
 .trv-card.near .trv-card__hd { font-size: 32px; }
-.trv-card.far { opacity: 0.55; }
+/* Two steps on comes out from behind one step on, so it lies beneath it. */
+.trv-card.far { opacity: 0.55; z-index: 2; }
 .trv-card.far .trv-card__hd { font-size: 20px; }
 .trv-card.far .trv-card__bd,
 .trv-card.passed .trv-card__bd,
@@ -212,7 +219,7 @@
 .trv-card.qfar .trv-card__tag { color: var(--teal); }
 .trv-card.ques .trv-card__hd { font-size: 19px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .trv-card.ques::after { content: attr(data-arrow); position: absolute; right: 16px; top: 50%; translate: 0 -50%; font-size: 18px; color: var(--teal); }
-.trv-card.qfar { opacity: 0.5; padding: 11px 16px; }
+.trv-card.qfar { z-index: 2; opacity: 0.5; padding: 11px 16px; }
 .trv-card.qfar .trv-card__hd { font-size: 15px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .trv-card.near:hover,
 .trv-card.passed:hover,
@@ -258,7 +265,7 @@
 .trv-card.edge .trv-card__hd { font-size: 19px; line-height: 1.25; color: var(--brand); opacity: 0.82; margin-top: 8px; }
 
 /* ── depth by staying ─────────────────────────────────────────────── */
-.trv-meter { position: absolute; left: 986px; top: 112px; display: flex; align-items: center; gap: 6px; z-index: 6; }
+.trv-meter { position: absolute; left: 990px; top: 112px; display: flex; align-items: center; gap: 6px; z-index: 6; }
 .trv-meter button { border: 0; background: rgba(255, 255, 255, 0.5); color: var(--ink-mute); font-size: 11.5px; font-weight: 600; padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all 0.4s; }
 .trv-meter button.on { background: #fff; color: var(--brand); box-shadow: var(--shadow); }
 .trv-meter i { font-style: normal; font-size: 11.5px; color: var(--ink-mute); margin-left: 10px; }
@@ -288,7 +295,7 @@
 .trv.flow .trv-head { position: static; flex-wrap: wrap; }
 .trv.flow .trv-head span { display: none; }
 .trv.flow .trv-switch { position: static; align-self: flex-start; }
-.trv.flow .trv-tethers { display: none; }
+.trv.flow .trv-tracks { display: none; }
 .trv.flow .trv-field { position: static; display: flex; flex-direction: column; gap: 12px; }
 .trv.flow .trv-card { position: relative; left: auto !important; top: auto !important; width: auto !important; height: auto !important; animation: none; min-height: 0; }
 .trv.flow .trv-card.subject { min-height: 300px; padding: 28px 24px; }
@@ -309,4 +316,5 @@
   .trv-card { transition: opacity 0.2s; animation: none !important; }
   .trv-card.enter,
   .trv-card.leave { transform: none; }
+  .trv-tracks path { transition: none; animation: none; }
 }

@@ -16,20 +16,23 @@ import { QUESTIONS, UNITS } from './places.js';
 export const STAGE = { w: 1440, h: 900 };
 
 // Where each role stands, in stage coordinates.
+// The places keep their distance from the subject (some 50 to 80 px), so
+// a stretch of track shows between any two of them. Move a slot and the
+// line through its middle (TRACK, below) has to move with it.
 export const SLOTS = {
-  subject: { x: 430, y: 176, w: 520, h: 430 },
-  near: { x: 986, y: 176, w: 300, h: 250 },
-  far: { x: 1306, y: 206, w: 230, h: 190 }, // cropped by the stage's edge
+  subject: { x: 430, y: 200, w: 480, h: 400 },
+  near: { x: 990, y: 176, w: 270, h: 250 },
+  far: { x: 1330, y: 206, w: 230, h: 190 }, // cropped by the stage's edge
   passed: { x: 286, y: 236, w: 196, h: 300 }, // half behind the subject
-  up: { x: 430, y: 84, w: 340, h: 76 },
-  down: { x: 430, y: 632, w: 300, h: 84 },
-  downFar: { x: 446, y: 752, w: 262, h: 70 },
+  up: { x: 430, y: 84, w: 340, h: 70 },
+  down: { x: 430, y: 650, w: 270, h: 80 },
+  downFar: { x: 446, y: 780, w: 230, h: 70 },
   slip: [
-    { x: 736, y: 580, w: 100, h: 96 },
-    { x: 846, y: 580, w: 100, h: 96 },
+    { x: 700, y: 574, w: 100, h: 96 },
+    { x: 810, y: 574, w: 100, h: 96 },
   ],
-  film: { x: 986, y: 446, w: 300, h: 250 },
-  edge: { x: 1000, y: 722, w: 330, h: 90 },
+  film: { x: 990, y: 450, w: 270, h: 250 },
+  edge: { x: 1000, y: 730, w: 330, h: 90 },
 };
 
 // One step of the world, in stage pixels: how far a card is carried in
@@ -54,13 +57,59 @@ export const DEPTHS = [
 // with what it rests on, because both are what the answer is made of.
 export const SEAMS_OPEN_AT = 3;
 
-// Outward tethers, by what they hang from. Each runs off the stage.
-export const TETHERS = {
-  near: 'M1286 300 Q1380 292 1470 252',
-  up: 'M770 122 Q960 110 1040 -24',
-  down: 'M580 716 Q556 810 600 930',
-  edge: 'M1330 768 Q1400 800 1470 870',
+/**
+ * The tracks: the graph around the place you are on, drawn as broad
+ * dashed lines. They are what you travel along. One line runs through
+ * the units (the row), one through the questions (the column); each
+ * passes through the middle of every slot on it, so a card moving from
+ * slot to slot moves along its line, and what comes up when you stay
+ * comes out along a line too.
+ *
+ * A line runs on, off the stage, only where the world does: at the last
+ * unit there is nothing to the right, so no line goes there. Two spurs
+ * leave the subject: to the film moment, and to what nobody has said,
+ * where the line stops on the stage (the one place a track ends).
+ *
+ * Row segments are written left to right and column segments top to
+ * bottom, so one dash offset per axis makes every dash flow the same way.
+ */
+const TRACK = {
+  // row
+  passed: 'M262 388 L670 400',
+  near: 'M670 400 C860 400 950 301 1125 301',
+  beyondNear: 'M1125 301 L1480 298',
+  // column
+  beyondUp: 'M640 -30 C615 30 600 70 600 119',
+  up: 'M600 119 C600 230 670 290 670 400',
+  down: 'M670 400 C670 520 565 590 565 690',
+  beyondDown: 'M565 690 C565 790 565 860 590 930',
+  // spurs
+  film: 'M670 400 C880 430 990 520 1125 575',
+  edge: 'M670 400 C740 610 870 740 978 762',
 };
+// Where the edge spur stops.
+export const TERMINUS = { x: 978, y: 762 };
+
+// How far the dashes flow per step, per axis: about one step of the world.
+export const DASH_FLOW = { row: 372, column: 248 };
+
+/** The lines on the stage for the place (q, u) at a depth. */
+export function tracks(q, u, depth) {
+  const lastQ = QUESTIONS.length - 1;
+  const lastU = UNITS.length - 1;
+  const out = [];
+  const line = (key, axis) => out.push({ key, axis, d: TRACK[key] });
+  if (u > 0) line('passed', 'row');
+  if (u < lastU) line('near', 'row');
+  if (u < lastU - 1) line('beyondNear', 'row');
+  if (q > 1) line('beyondUp', 'column');
+  if (q > 0) line('up', 'column');
+  if (q < lastQ) line('down', 'column');
+  if (q < lastQ - 1) line('beyondDown', 'column');
+  if (depth >= 3 && cellOf(q, u)?.film) line('film', null);
+  if (depth >= 4) line('edge', null);
+  return out;
+}
 
 export const inWorld = (q, u) => q >= 0 && q < QUESTIONS.length && u >= 0 && u < UNITS.length;
 export const cellOf = (q, u) => QUESTIONS[q].cells[u];

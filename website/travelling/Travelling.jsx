@@ -6,7 +6,9 @@ import {
   PITCH,
   DEPTHS,
   SEAMS_OPEN_AT,
-  TETHERS,
+  TERMINUS,
+  DASH_FLOW,
+  tracks,
   WHEEL,
   START,
   around,
@@ -54,8 +56,9 @@ function startBox(item, moving, move) {
   if (moving && item.q !== undefined) {
     return { ...slot, x: slot.x + move[1] * PITCH.x, y: slot.y + move[0] * PITCH.y };
   }
-  // On staying, it comes out from behind the middle of the subject.
-  const s = SLOTS.subject;
+  // On staying, it comes out along its line: what lies two steps on from
+  // behind the place one step on, everything else from behind the subject.
+  const s = item.role === 'far' ? SLOTS.near : item.role === 'qfar' ? SLOTS.down : SLOTS.subject;
   return { ...slot, x: s.x + s.w / 2 - slot.w / 2, y: s.y + s.h / 2 - slot.h / 2 };
 }
 
@@ -236,7 +239,8 @@ function Card({ card, onGo, apart }) {
     <button
       type="button"
       className={classes}
-      style={{ ...style, '--hs': `${headlineSize(headline)}px` }}
+      // An answer shown in parts needs the room: its headline steps down.
+      style={{ ...style, '--hs': `${cell?.parts ? Math.min(headlineSize(headline), 56) : headlineSize(headline)}px` }}
       data-arrow={item.role === 'ques' ? ARROW[item.dir] : undefined}
       tabIndex={isSubject || leaving ? -1 : 0}
       aria-current={isSubject ? 'true' : undefined}
@@ -504,10 +508,7 @@ export default function Travelling() {
   const question = QUESTIONS[q];
   const unit = UNITS[u];
   const cell = cellOf(q, u);
-  const tethers = cards
-    .filter((card) => card.phase !== 'leave')
-    .map((card) => (card.item.role === 'ques' ? card.item.dir : card.item.role))
-    .filter((name) => TETHERS[name]);
+  const lines = tracks(q, u, depth);
 
   return (
     <div className={`trv${flow ? ' flow' : ''}`} style={{ '--s': scale }}>
@@ -553,10 +554,16 @@ export default function Travelling() {
             <AsPublished question={question} />
           ) : (
             <>
-              <svg className="trv-tethers" viewBox={`0 0 ${STAGE.w} ${STAGE.h}`} aria-hidden="true">
-                {tethers.map((name) => (
-                  <path key={name} d={TETHERS[name]} />
+              <svg className="trv-tracks" viewBox={`0 0 ${STAGE.w} ${STAGE.h}`} aria-hidden="true">
+                {lines.map((line) => (
+                  <path
+                    key={line.key}
+                    d={line.d}
+                    // The dashes pass with the world: a step right sends them left.
+                    style={{ strokeDashoffset: line.axis === 'row' ? u * DASH_FLOW.row : line.axis === 'column' ? q * DASH_FLOW.column : 0 }}
+                  />
                 ))}
+                {depth >= DEPTHS.length ? <circle cx={TERMINUS.x} cy={TERMINUS.y} r="7" /> : null}
               </svg>
               <div className="trv-field">
                 {cards.map((card) => (
