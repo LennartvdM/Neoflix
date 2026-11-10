@@ -50,6 +50,10 @@ export const DEPTHS = [
   { name: 'Where it stops', after: 5200 }, // what nobody has said
 ];
 
+// The depth at which the place you are on comes apart into its parts:
+// with what it rests on, because both are what the answer is made of.
+export const SEAMS_OPEN_AT = 3;
+
 // Outward tethers, by what they hang from. Each runs off the stage.
 export const TETHERS = {
   near: 'M1286 300 Q1380 292 1470 252',

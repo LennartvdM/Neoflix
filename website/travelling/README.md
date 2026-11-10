@@ -57,6 +57,22 @@ left/top/width/height carry it from slot to slot.
 A place a unit has not answered is still a place: "Not said." in a ghost
 card, and you can travel to it.
 
+### Seams: what is inside a card
+
+Between cards the language is overlap: over = part of it, under = what
+it rests on, separate = elsewhere (the owner, 2026-11: the overlaps are
+the more intuitive language and stay). **Seams are only for what is
+inside one card**: an answer that has parts (`parts` in `places.js`:
+three moments of consent, two hospitals, three changes) is one surface
+cut where the parts meet. Fused on arrival, it reads as one block; at
+"Underneath" the seams open from a hairline and the corners round as
+the gap grows. What holds for every part (`all`) stays fused beneath
+them, so the parts are teeth on one spine. After the owner's Splits
+sandbox (talentexecutive, `splits.js`: a layout is a tree of seams, each
+open or fused). This is plain CSS, enough for a row on a spine; the
+hollow corners where a tooth meets the spine stay square, which the
+real engine would round.
+
 Depth by staying (`DEPTHS` in `world.js`): the ways on at once; `far`
 and `qfar` after 1.2 s; `slip` and `film` after 3 s; `edge` after 5.2 s.
 Every move resets it. Space brings the next depth now; the four pills

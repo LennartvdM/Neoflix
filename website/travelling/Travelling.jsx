@@ -5,6 +5,7 @@ import {
   SLOTS,
   PITCH,
   DEPTHS,
+  SEAMS_OPEN_AT,
   TETHERS,
   WHEEL,
   START,
@@ -180,7 +181,7 @@ const ARROW = { up: '↑', down: '↓' };
 // The answer's size follows its length: a two-word answer fills the card.
 const headlineSize = (text) => (text.length <= 12 ? 80 : text.length <= 20 ? 62 : text.length <= 27 ? 50 : 42);
 
-function Card({ card, onGo }) {
+function Card({ card, onGo, apart }) {
   const { item, box, phase, slide } = card;
   const leaving = phase === 'leave';
   const state = [phase !== 'in' && phase, slide && 'slide'].filter(Boolean).join(' ');
@@ -246,7 +247,22 @@ function Card({ card, onGo }) {
       <span className="trv-card__src">{cell ? 'from the unit’s own page' : 'an open place'}</span>
       <span className="trv-card__tag">{tag}</span>
       <span className="trv-card__hd">{headline}</span>
-      <span className="trv-card__bd">{body}</span>
+      {isSubject && cell?.parts ? (
+        // One surface, cut where the answer has parts. Staying opens the
+        // seams; what holds for every part stays fused beneath them.
+        <span className={`trv-parts${apart ? ' apart' : ''}${cell.all ? ' has-all' : ''}`}>
+          <span className="trv-parts__row">
+            {cell.parts.map((part) => (
+              <span key={part} className="trv-part">
+                {part}
+              </span>
+            ))}
+          </span>
+          {cell.all ? <span className="trv-parts__all">{cell.all}</span> : null}
+        </span>
+      ) : (
+        <span className="trv-card__bd">{body}</span>
+      )}
     </button>
   );
 }
@@ -540,7 +556,7 @@ export default function Travelling() {
               </svg>
               <div className="trv-field">
                 {cards.map((card) => (
-                  <Card key={card.id} card={card} onGo={go} />
+                  <Card key={card.id} card={card} onGo={go} apart={depth >= SEAMS_OPEN_AT} />
                 ))}
               </div>
               <div className="trv-meter" role="group" aria-label="Depth">

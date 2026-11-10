@@ -17,6 +17,12 @@
  *   (system/content/session-film.js). `film.frame` names a still in
  *   public/videos/session/<frame>.webp.
  *
+ * - `parts` (optional) is `b` again, cut where the answer itself has
+ *   parts: things that stand side by side. `all` is what holds for every
+ *   part. The place you are on shows them as one surface that comes
+ *   apart along its seams when you stay (see README, "Seams"). Same
+ *   sentences as `b`, no new facts; keep the two in step.
+ *
  * A `null` cell is a unit that has not answered. It is still a place:
  * it can be travelled to and renders "Not said."
  *
@@ -45,6 +51,7 @@ export const QUESTIONS = [
       {
         h: "Every birth, hands only.",
         b: "Two fixed cameras film each stabilization: hands and infant, no sound. Intubations, surfactant and lines are filmed with a room camera or glasses, with faces and sound.",
+        parts: ["Two fixed cameras film each stabilization: hands and infant, no sound.", "Intubations, surfactant and lines are filmed with a room camera or glasses, with faces and sound."],
         film: { frame: "p003", at: "0:05", who: "Ruben", line: "Yes, it’s working." },
       },
       {
@@ -98,6 +105,8 @@ export const QUESTIONS = [
       {
         h: "Three times.",
         b: "Before recording, after it, and before a session. Anyone can say no at any of the three, and the video is then not used.",
+        parts: ["Before recording.", "After it.", "Before a session."],
+        all: "Anyone can say no at any of the three, and the video is then not used.",
       },
       {
         h: "Verbally.",
@@ -110,6 +119,8 @@ export const QUESTIONS = [
       {
         h: "A word, then a signature.",
         b: "A verbal yes before filming and a firmer one before review. The session’s sign-in sheet doubles as agreement to its rules.",
+        parts: ["A verbal yes before filming.", "A firmer one before review."],
+        all: "The session’s sign-in sheet doubles as agreement to its rules.",
       },
     ],
     under: [["Paper 2", "What it is like"], ["Paper 4", "The guideline"]],
@@ -150,11 +161,14 @@ export const QUESTIONS = [
       {
         h: "Until the session.",
         b: "Recordings with faces are deleted after use. Hands-only recordings stay in the medical record.",
+        parts: ["Recordings with faces are deleted after use.", "Hands-only recordings stay in the medical record."],
       },
       null,
       {
         h: "28 days, or 45.",
         b: "Deleted after 28 days at one hospital and 45 at the other, unless parents consent to longer.",
+        parts: ["Deleted after 28 days at one hospital.", "After 45 at the other."],
+        all: "Unless parents consent to longer.",
       },
       {
         h: "Seven years.",
@@ -210,6 +224,8 @@ export const QUESTIONS = [
       {
         h: "Doctors and nurses, apart.",
         b: "Sessions for junior doctors and for nurses are held separately. A few are mixed.",
+        parts: ["Sessions for junior doctors.", "Sessions for nurses."],
+        all: "Held separately. A few are mixed.",
       },
     ],
     under: [["Paper 4", "The guideline"], ["Toolbox 11.1", "The session"]],
@@ -224,11 +240,15 @@ export const QUESTIONS = [
       {
         h: "Gloves, words, a time-out.",
         b: "Sterile gloves moved away from the sink. Intubation commands got one meaning. A time-out before procedures. Each was checked on a later recording.",
+        parts: ["Sterile gloves moved away from the sink.", "Intubation commands got one meaning.", "A time-out before procedures."],
+        all: "Each was checked on a later recording.",
         film: { frame: "p131", at: "5:25", who: "Ruben", line: "For me the key takeaway is the catheter bend. I’ll definitely do that next time." },
       },
       {
         h: "What it saw in Leiden.",
         b: "After five joint sessions: more CO₂ detectors at intubation, ultrasound training for line tips, a new draping checklist.",
+        parts: ["More CO₂ detectors at intubation.", "Ultrasound training for line tips.", "A new draping checklist."],
+        all: "After five joint sessions.",
       },
       null,
       null,
