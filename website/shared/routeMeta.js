@@ -85,6 +85,15 @@ export const ROUTE_META = {
     // index, so it points at the library and stays out of the sitemap.
     canonicalPath: '/toolbox',
   },
+  '/travelling': {
+    title: `Four units, the same questions | ${SITE_NAME}`,
+    description:
+      'A design study: how four neonatal units answer the same questions about recording and reviewing care, as places you travel between.',
+    // A design study whose answers are shortened, not the researcher's
+    // wording: reachable by link, but it points at the homepage and
+    // stays out of the sitemap.
+    canonicalPath: '/',
+  },
   '/toolbox': {
     title: `Toolbox | ${SITE_NAME}`,
     description:

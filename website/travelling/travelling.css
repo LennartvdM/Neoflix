@@ -1,0 +1,292 @@
+/* The travelling interface (website/travelling). One sheet.
+
+   One screen, no camera. Moving goes sideways: the world passes one
+   step in the direction you chose. Staying goes deeper: the place comes
+   up from behind the thing you are on. Nothing zooms.
+
+   Cold palette only ("warm is a deviation from sterility"). The inks,
+   the display face and the card lift are the composition's
+   (composition/composition.css); night, teal and mint are this
+   interface's own. Every class is prefixed, so nothing here can reach
+   into another route's markup or be reached by its sheet. */
+
+.trv {
+  --ink: #16163a;
+  --ink-soft: #55597a;
+  --ink-mute: #8d91ae;
+  --brand: #1c1c6e;
+  --accent: #3b5bdb;
+  --teal: #14868c;
+  --mint: #9fdde3;
+  --night: #0f1628;
+  --night-soft: #cfd8ee;
+  --card: #ffffff;
+  --bg0: #eef3fb;
+  --bg1: #dfe7f3;
+  --bg2: #d3deed;
+  --page: #cfd9e8;
+  --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --text: 'Inter', system-ui, sans-serif;
+  --shadow: 0 1px 2px rgba(20, 20, 58, 0.05), 0 12px 34px rgba(20, 20, 58, 0.09);
+  --shadow-hi: 0 2px 4px rgba(20, 20, 58, 0.08), 0 18px 44px rgba(20, 20, 58, 0.16);
+  /* A little overshoot: a card arrives and settles. */
+  --ease: cubic-bezier(0.2, 0.9, 0.25, 1.06);
+
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 12px 16px;
+  background: var(--page);
+  color: var(--ink);
+  font: 400 14px/1.5 var(--text);
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+.trv *,
+.trv *::before,
+.trv *::after { box-sizing: border-box; }
+.trv :where(button) { font: inherit; color: inherit; }
+.trv :where(h1, h2, h3, p, ol) { margin: 0; }
+
+.trv-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* The stage is drawn at 1440×900 and scaled as one piece (--s), so every
+   slot below is a plain design coordinate. */
+.trv-fit { position: relative; width: calc(1440px * var(--s, 1)); height: calc(900px * var(--s, 1)); }
+.trv-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 900px;
+  transform: scale(var(--s, 1));
+  transform-origin: 0 0;
+  border-radius: 28px;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 70% 8%, var(--bg0) 0%, var(--bg1) 58%, var(--bg2) 100%);
+}
+
+/* ── the anchor ───────────────────────────────────────────────────── */
+.trv-side {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  bottom: 14px;
+  width: 240px;
+  padding: 26px 18px 20px;
+  border-radius: 22px;
+  background: rgba(248, 251, 255, 0.74);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.35), var(--shadow);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+.trv-side h1 { font: 600 21px var(--display); color: var(--brand); }
+.trv-side__sub { font-size: 11.5px; color: var(--ink-mute); margin-top: 3px; }
+
+/* The whole, small: a row per question, a column per unit. */
+.trv-matrix { position: relative; margin-top: 26px; display: grid; grid-template-columns: 1fr repeat(var(--units, 4), 22px); align-items: center; }
+.trv-matrix__col { height: 22px; font: 600 10.5px var(--text); letter-spacing: 0.08em; color: var(--ink-mute); text-align: center; }
+.trv-matrix__lab { height: 36px; display: flex; align-items: center; font-size: 12.5px; color: var(--ink-soft); padding-left: 8px; white-space: nowrap; overflow: hidden; }
+.trv-matrix__lab.on { color: var(--brand); font-weight: 600; }
+.trv-matrix__cell { height: 36px; display: grid; place-items: center; background: none; border: 0; padding: 0; cursor: pointer; position: relative; z-index: 1; }
+.trv-matrix__cell:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 8px; }
+.trv-matrix__dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(28, 28, 110, 0.2); transition: all 0.35s; }
+.trv-matrix__cell.nb .trv-matrix__dot { background: rgba(59, 91, 219, 0.55); }
+.trv-matrix__cell.seen .trv-matrix__dot { box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.18); }
+.trv-matrix__cell.none .trv-matrix__dot { background: none; border: 1.5px dashed rgba(28, 28, 110, 0.35); }
+.trv-matrix__cell.on .trv-matrix__dot { width: 15px; height: 15px; background: var(--night); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9); }
+.trv-matrix__cell.on.none .trv-matrix__dot { background: #fff; border: 1.5px dashed var(--brand); }
+/* The trail lies over the dot columns only, in their own units
+   (22 wide, 36 high), so it needs no measuring. */
+.trv-matrix__trail { position: absolute; right: 0; top: 22px; pointer-events: none; overflow: visible; }
+.trv-matrix__trail polyline { fill: none; stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.trv-way { margin-top: 22px; font-size: 12px; line-height: 1.75; color: var(--ink-soft); }
+.trv-way__t { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: 4px; }
+.trv-way__st { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trv-way__st:last-child { color: var(--brand); font-weight: 600; }
+.trv-way__st i { font-style: normal; color: var(--accent); display: inline-block; width: 18px; }
+
+.trv-side__hint { margin-top: auto; font-size: 11.5px; line-height: 1.6; color: var(--ink-mute); border-top: 1px solid rgba(28, 28, 110, 0.1); padding-top: 14px; }
+.trv-side__hint b { color: var(--ink-soft); font-weight: 600; }
+.trv-side__note { font-size: 10.5px; color: var(--ink-mute); margin-top: 10px; line-height: 1.5; }
+
+/* ── running head ─────────────────────────────────────────────────── */
+.trv-head { position: absolute; left: 300px; top: 28px; display: flex; align-items: center; gap: 14px; z-index: 6; }
+.trv-head b { padding: 2px 9px; border-radius: 999px; background: var(--brand); color: #fff; font: 600 12px var(--text); font-variant-numeric: tabular-nums; }
+.trv-head h2 { font: 500 24px var(--display); color: var(--brand); }
+.trv-head span { font-size: 12px; color: var(--ink-mute); }
+
+.trv-switch { position: absolute; right: 60px; top: 26px; display: flex; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, 0.6); box-shadow: var(--shadow); z-index: 30; }
+.trv-switch button { border: 0; background: none; padding: 7px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
+.trv-switch button[aria-pressed='true'] { background: var(--brand); color: #fff; }
+.trv-switch button:focus-visible,
+.trv-meter button:focus-visible,
+.trv-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ── the field ────────────────────────────────────────────────────── */
+/* Tethers run outward, off the stage: to the rest of the material a
+   neighbour belongs to. Never inward to the subject. */
+.trv-tethers { position: absolute; inset: 0; width: 1440px; height: 900px; pointer-events: none; z-index: 1; }
+.trv-tethers path { fill: none; stroke: #fff; stroke-opacity: 0.8; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 14 17; }
+.trv-field { position: absolute; inset: 0; z-index: 2; }
+
+/* One element per place. It keeps its identity as its role changes, so
+   these transitions are what carries it from slot to slot. */
+.trv-card {
+  position: absolute;
+  border: 0;
+  margin: 0;
+  text-align: left;
+  background: var(--card);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 16px 20px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  z-index: 3;
+  transition:
+    left 0.62s var(--ease), top 0.62s var(--ease), width 0.62s var(--ease), height 0.62s var(--ease),
+    background-color 0.45s, color 0.45s, opacity 0.45s, transform 0.62s var(--ease),
+    box-shadow 0.45s, border-radius 0.45s, padding 0.45s;
+}
+/* Arriving by staying: out from behind the subject. Arriving or leaving
+   by moving (.slide): carried along, no scaling. */
+.trv-card.enter { opacity: 0; transform: scale(0.5); }
+.trv-card.leave { opacity: 0; transform: scale(0.88); pointer-events: none; }
+.trv-card.enter.slide,
+.trv-card.leave.slide { transform: none; }
+
+.trv-card__tag { font-size: 10.5px; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 600; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: none; }
+.trv-card__hd { font-family: var(--display); font-weight: 500; color: var(--brand); line-height: 1.1; margin-top: 7px; text-wrap: balance; flex: none; }
+.trv-card__bd { font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin-top: 9px; flex: none; }
+.trv-card__city,
+.trv-card__src { display: none; }
+
+/* the thing you are on: the one dark object */
+.trv-card.subject { background: var(--night); color: #e6ecfb; border-radius: 26px; padding: 34px 40px; justify-content: flex-end; cursor: default; z-index: 5; box-shadow: 0 2px 6px rgba(12, 18, 34, 0.16), 0 22px 48px rgba(12, 18, 34, 0.3); }
+.trv-card.subject .trv-card__tag { color: var(--mint); }
+.trv-card.subject .trv-card__hd { color: #fff; font-size: var(--hs, 56px); line-height: 1.04; margin-top: 10px; }
+.trv-card.subject .trv-card__bd { color: var(--night-soft); font-size: 17px; line-height: 1.6; padding-left: 18px; border-left: 2px solid #6fc7cf; margin-top: 22px; max-width: 27em; }
+.trv-card.subject .trv-card__city { display: block; position: absolute; left: 30px; top: -4px; font: 600 148px/1 var(--display); letter-spacing: -0.045em; color: rgba(255, 255, 255, 0.055); white-space: nowrap; pointer-events: none; }
+.trv-card.subject .trv-card__src { display: block; position: absolute; right: 26px; top: 24px; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(230, 236, 251, 0.45); }
+
+/* what is ahead, what is behind */
+.trv-card.near .trv-card__hd { font-size: 32px; }
+.trv-card.far { opacity: 0.55; }
+.trv-card.far .trv-card__hd { font-size: 20px; }
+.trv-card.far .trv-card__bd,
+.trv-card.passed .trv-card__bd,
+.trv-card.qfar .trv-card__bd,
+.trv-card.ques .trv-card__bd { display: none; }
+.trv-card.passed { z-index: 2; opacity: 0.85; padding: 18px 66px 18px 18px; justify-content: center; }
+.trv-card.passed .trv-card__hd { font-size: 17px; line-height: 1.2; }
+.trv-card.ques { padding: 13px 46px 13px 18px; }
+.trv-card.ques .trv-card__tag,
+.trv-card.qfar .trv-card__tag { color: var(--teal); }
+.trv-card.ques .trv-card__hd { font-size: 19px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trv-card.ques::after { content: attr(data-arrow); position: absolute; right: 16px; top: 50%; translate: 0 -50%; font-size: 18px; color: var(--teal); }
+.trv-card.qfar { opacity: 0.5; padding: 11px 16px; }
+.trv-card.qfar .trv-card__hd { font-size: 15px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trv-card.near:hover,
+.trv-card.passed:hover,
+.trv-card.far:hover,
+.trv-card.qfar:hover,
+.trv-card.ques:hover { box-shadow: var(--shadow-hi); }
+/* The ways on are alive: they drift a little. Two tempos, so they never
+   move as one. */
+.trv-card.near,
+.trv-card.ques { animation: trv-drift 7s ease-in-out infinite alternate; }
+.trv-card.near.alt,
+.trv-card.ques.alt { animation-duration: 9s; animation-direction: alternate-reverse; }
+@keyframes trv-drift { from { translate: 0 0; } to { translate: 3px -4px; } }
+
+/* a place nobody has filled */
+.trv-card.none { background: rgba(255, 255, 255, 0.28); box-shadow: none; }
+.trv-card.none .trv-card__hd,
+.trv-card.none .trv-card__tag { color: var(--ink-mute); }
+/* Still a ghost, but dense enough to hide what is tucked behind it. */
+.trv-card.subject.none { background: rgba(233, 240, 249, 0.95); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.95); color: var(--ink); }
+.trv-card.subject.none .trv-card__hd { color: var(--brand); }
+.trv-card.subject.none .trv-card__bd { color: var(--ink-soft); border-left-color: var(--ink-mute); }
+.trv-card.subject.none .trv-card__city { color: rgba(28, 28, 110, 0.06); }
+.trv-card.subject.none .trv-card__tag { color: var(--teal); }
+.trv-card.subject.none .trv-card__src { color: var(--ink-mute); }
+
+/* under: what it rests on, tucked beneath the subject's bottom edge */
+.trv-card.slip { border-radius: 0 0 14px 14px; padding: 28px 13px 10px; cursor: default; z-index: 4; font-size: 11px; color: var(--ink-mute); transition: top 0.7s var(--ease), opacity 0.5s, left 0.62s var(--ease); }
+.trv-card.slip.enter { transform: none; }
+.trv-card.slip b { display: block; font: 500 13px/1.2 var(--display); color: var(--brand); margin-top: 2px; }
+
+/* on film: feathered into a dark card (the moment, not the record) */
+.trv-card.film { background: var(--night) center top / cover no-repeat; color: #fff; cursor: default; justify-content: flex-end; padding: 20px 22px; }
+.trv-card.film::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 22, 40, 0) 22%, rgba(15, 22, 40, 0.88) 62%, #0f1628 86%); }
+.trv-card.film > * { position: relative; }
+.trv-card.film .trv-card__tag { color: var(--mint); }
+.trv-card__who { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(230, 236, 251, 0.6); margin-top: 10px; }
+.trv-card__line { font-size: 14.5px; line-height: 1.45; color: #eef2fc; margin-top: 3px; }
+
+/* where it stops: words only, no card */
+.trv-card.edge { background: none; box-shadow: none; padding: 0; cursor: default; overflow: visible; }
+.trv-card.edge .trv-card__tag { color: var(--ink-mute); }
+.trv-card.edge .trv-card__hd { font-size: 19px; line-height: 1.25; color: var(--brand); opacity: 0.82; margin-top: 8px; }
+
+/* ── depth by staying ─────────────────────────────────────────────── */
+.trv-meter { position: absolute; left: 986px; top: 112px; display: flex; align-items: center; gap: 6px; z-index: 6; }
+.trv-meter button { border: 0; background: rgba(255, 255, 255, 0.5); color: var(--ink-mute); font-size: 11.5px; font-weight: 600; padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all 0.4s; }
+.trv-meter button.on { background: #fff; color: var(--brand); box-shadow: var(--shadow); }
+.trv-meter i { font-style: normal; font-size: 11.5px; color: var(--ink-mute); margin-left: 10px; }
+
+/* ── as published: the control ────────────────────────────────────── */
+.trv-docs { position: absolute; left: 300px; top: 84px; width: 1080px; height: 780px; border-radius: 14px; background: #fff; box-shadow: var(--shadow); display: grid; grid-template-columns: 300px 1fr; overflow: hidden; z-index: 10; }
+.trv-docs nav { border-right: 1px solid #e6e9f2; padding: 18px 0; overflow: auto; font-size: 13px; }
+.trv-docs__lv { padding: 14px 22px 6px; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+.trv-docs__it { padding: 5px 22px; color: var(--ink-soft); }
+.trv-docs__it.sub { padding-left: 38px; font-size: 12.5px; }
+.trv-docs__it.hit { color: var(--brand); font-weight: 600; background: rgba(59, 91, 219, 0.09); box-shadow: inset 3px 0 0 var(--accent); }
+.trv-docs__page { padding: 44px 56px; overflow: auto; }
+.trv-docs__crumb { font-size: 12px; color: var(--ink-mute); }
+.trv-docs__page h3 { font: 500 30px var(--display); color: var(--ink); margin: 10px 0 14px; }
+.trv-docs__page p { font-size: 15px; line-height: 1.65; color: var(--ink-soft); max-width: 34em; margin: 0 0 12px; }
+.trv-docs__page ol { margin: 18px 0 0; padding-left: 0; list-style: none; font-size: 15px; line-height: 1.9; color: var(--ink); }
+.trv-docs__page ol small { color: var(--ink-mute); font-size: 12.5px; margin-left: 6px; }
+.trv-docs__page .trv-docs__back { margin-top: 22px; }
+
+/* ── narrow: the same things, stacked. Not designed, only made not to
+   break; this interface is drawn for a desk. ─────────────────────── */
+.trv.flow { display: block; overflow: auto; padding: 0; }
+.trv.flow .trv-fit { width: auto; height: auto; }
+.trv.flow .trv-stage { position: static; width: auto; height: auto; min-height: 100%; transform: none; overflow: visible; border-radius: 0; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+.trv.flow .trv-side { position: static; width: auto; }
+.trv.flow .trv-side__hint { margin-top: 18px; }
+.trv.flow .trv-head { position: static; flex-wrap: wrap; }
+.trv.flow .trv-head span { display: none; }
+.trv.flow .trv-switch { position: static; align-self: flex-start; }
+.trv.flow .trv-tethers { display: none; }
+.trv.flow .trv-field { position: static; display: flex; flex-direction: column; gap: 12px; }
+.trv.flow .trv-card { position: relative; left: auto !important; top: auto !important; width: auto !important; height: auto !important; animation: none; min-height: 0; }
+.trv.flow .trv-card.subject { min-height: 300px; padding: 28px 24px; }
+.trv.flow .trv-card.subject .trv-card__hd { font-size: 40px; }
+.trv.flow .trv-card.subject .trv-card__city { font-size: 96px; }
+.trv.flow .trv-card.subject .trv-card__src { display: none; }
+.trv.flow .trv-card.passed { padding: 14px 18px; }
+.trv.flow .trv-card.slip { border-radius: 14px; padding: 12px 14px; }
+.trv.flow .trv-card.film { min-height: 230px; }
+.trv.flow .trv-card.edge { padding: 6px 4px; }
+.trv.flow .trv-meter { position: static; flex-wrap: wrap; }
+.trv.flow .trv-docs { position: static; width: auto; height: auto; grid-template-columns: 1fr; }
+.trv.flow .trv-docs nav { display: none; }
+.trv.flow .trv-docs__page { padding: 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trv-card { transition: opacity 0.2s; animation: none !important; }
+  .trv-card.enter,
+  .trv-card.leave { transform: none; }
+}

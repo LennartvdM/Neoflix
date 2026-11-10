@@ -85,6 +85,13 @@ working in; they're short, and GitHub renders them when browsing too.
   single-file starter artifact, screenshots, the code minus large media,
   and `START-HERE.md` / `DIRECTION.md` (the owner's own words). Rebuild
   it when the design or the material moves on.
+- **The travelling interface** → `website/travelling/` (read its README),
+  at `/travelling`. Four units' answers to the same questions as a grid
+  of places: moving goes sideways (one gesture, one place), staying goes
+  deeper, nothing zooms, and the whole is only ever the small matrix in
+  the sidebar. Ported from the owner's prototype (2026-11); the newest
+  interface logic, and where the new site continues from. Its answers
+  are shortened by Claude, not the researcher's wording, and it says so.
 - **Two surfaces** → each of Home/Neoflix/Publications renders a
   desktop tree or a mobile tree (`< 600px`) — separate lazy chunks.
   **Mobile is out of scope for design work (owner's decision, 2026-11).**

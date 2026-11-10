@@ -23,6 +23,10 @@ const PublicationsPage = lazy(() => import('./pages/publications/PublicationsPag
 // renders outside the navbar and the page slide. (website/space, the
 // zoomable plane it replaced, is kept in the tree, unrouted.)
 const Composition = lazy(() => import('./composition/Composition'));
+// The travelling interface (website/travelling): the four units' answers
+// to the same questions, as places you move between. Its own chrome,
+// like the composition, so it renders outside the navbar and the slide.
+const Travelling = lazy(() => import('./travelling/Travelling'));
 const PackPage = lazy(() => import('./system/pages/PackPage'));
 // The library's interface over the intro and the elaboration, growing as
 // the reader ripens (system/ripeness.js). Outside the page slide, like the
@@ -33,8 +37,11 @@ const NotFoundPage = lazy(() => import('./pages/not-found/NotFoundPage'));
 // The addresses the composition answers: the homepage, every record, paths and search.
 const SPACE_ROUTES = /^\/(?:$|toolbox(?:\/|$)|films\/|publications\/[^/]|paths(?:\/|$)|search\/?$)/;
 
+const TRAVELLING_ROUTE = /^\/travelling\/?$/;
+
 function AppShell() {
   const location = useLocation();
+  const inTravelling = TRAVELLING_ROUTE.test(location.pathname);
   const inSpace = SPACE_ROUTES.test(location.pathname);
   const { width } = useTabletLayout();
   const isNeoflix = location.pathname === '/neoflix' || location.pathname.startsWith('/neoflix/');
@@ -60,6 +67,18 @@ function AppShell() {
     }
     mainRef.current?.focus({ preventScroll: true });
   }, [location.pathname]);
+
+  if (inTravelling) {
+    return (
+      <main id="main-content" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
+        <ErrorBoundary>
+          <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#cfd9e8' }} />}>
+            <Travelling />
+          </Suspense>
+        </ErrorBoundary>
+      </main>
+    );
+  }
 
   if (inSpace) {
     return (
