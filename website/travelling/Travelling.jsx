@@ -441,7 +441,11 @@ export default function Travelling() {
   // history: Back leaves the interface, the trail is the way back in it.
   useEffect(() => {
     if (step === 0) return;
-    window.history.replaceState(window.history.state, '', window.location.pathname + addressOf(q, u));
+    try {
+      window.history.replaceState(window.history.state, '', window.location.pathname + addressOf(q, u));
+    } catch {
+      // A sandboxed frame may refuse; the address is a convenience.
+    }
   }, [step, q, u]);
 
   useEffect(() => {
